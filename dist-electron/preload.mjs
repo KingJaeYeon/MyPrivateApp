@@ -20,3 +20,12 @@ electron.contextBridge.exposeInMainWorld("ipcRenderer", {
   // You can expose other APTs you need here.
   // ...
 });
+electron.contextBridge.exposeInMainWorld("pref", {
+  get: (key) => electron.ipcRenderer.invoke("config:get", key),
+  set: (key, value) => electron.ipcRenderer.invoke("config:set", key, value),
+  clear: () => electron.ipcRenderer.invoke("config:clear"),
+  deleteKey: (key) => electron.ipcRenderer.invoke("config:deleteKey", key)
+});
+electron.contextBridge.exposeInMainWorld("electronAPI", {
+  openExternal: (url) => electron.shell.openExternal(url)
+});

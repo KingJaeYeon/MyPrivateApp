@@ -1,111 +1,15 @@
 @import "tailwindcss";
-
-@plugin "tailwindcss-animate";
 @import "tw-animate-css";
-
-@custom-variant dark (&:is(.dark *));
-
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+@plugin "tailwindcss-animate";
+/*@custom-variant dark (&:is(.dark *));*/
+@layer utilities {
+  .drag {
+    -webkit-app-region: drag;
   }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
+  .no-drag {
+    -webkit-app-region: no-drag;
   }
 }
-
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -142,6 +46,66 @@ button:focus-visible {
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-switch-theme-thumb: hsl(var(--switch-theme-thumb));
+  --color-switch-theme: hsl(var(--switch-theme));
+  /* on 상태 */
+  --color-switch-on-thumb: hsl(var(--switch-thumb-on));
+  --color-switch-on: hsl(var(--switch-on));
+  /* off 상태 */
+  --color-switch-off-thumb: hsl(var(--switch-thumb-off));
+  --color-switch-off: hsl(var(--switch-off));
+}
+
+:root {
+  --white: 0 0% 100%;
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+
+  --gray-pale: 0 0% 95%;
+  --gray-weak: 0 0% 92%;
+  --gray-light: 0 0% 85%;
+  --gray-normal: 0 0% 61%;
+  --gray-neutral: 0 0% 49%;
+  --gray-deep: 0 0% 36%;
+  --gray-drak: 228 5% 20%;
+
+  --switch-theme-thumb: 228 3% 34%;
+  --switch-theme: 180 1% 86%;
+  --switch-off: var(--gray-weak);
+  --switch-thumb-off: var(--gray-neutral);
+  --switch-on: var(--gray-drak);
+  --switch-thumb-on: var(--white);
 }
 
 .dark {
@@ -176,6 +140,20 @@ button:focus-visible {
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  --gray-pale: 180 1% 86%;
+  --gray-light: 210 1% 69%;
+  --gray-neutral: 208 8% 56%;
+  --gray-deep: 228 3% 34%;
+  --gray-drak: 228 5% 20%;
+  --gray-drakest: 230 10% 11%;
+
+  --switch-theme-thumb: var(--gray-pale);
+  --switch-theme: var(--gray-deep);
+  --switch-off: var(--gray-deep);
+  --switch-thumb-off: var(--gray-pale);
+  --switch-on: var(--white);
+  --switch-thumb-on: var(--gray-deep);
 }
 
 @layer base {
@@ -185,4 +163,9 @@ button:focus-visible {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.scrollWidth3 {
+  scrollbar-width: thin;
+  scrollbar-color: #888888 transparent;
 }
