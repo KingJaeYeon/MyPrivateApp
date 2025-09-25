@@ -1,8 +1,8 @@
 // src/service/youtube.channel.ts
 import { request_youtube } from '@/service/axios';
-import { isoAfterNDays, parseISODurationToSec, formatDuration } from '@/util/date';
+import { isoAfterNDays, parseISODurationToSec, formatDuration } from '@/lib/date';
 import { differenceInHours, parseISO } from 'date-fns';
-import { chunk } from '@/util/util';
+import { chunk } from '@/lib/utils';
 import type { VideoRow } from '@/service/youtube';
 
 // ── 유틸: 채널 입력 정규화 (URL/핸들 → id)

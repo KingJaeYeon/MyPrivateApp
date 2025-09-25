@@ -1,6 +1,6 @@
-import { formatDuration, isoAfterNDays, parseISODurationToSec } from '@/util/date.ts';
+import { formatDuration, isoAfterNDays, parseISODurationToSec } from '@/lib/date.ts';
 import { request_youtube } from '@/service/axios.ts';
-import { chunk } from '@/util/util.ts';
+import { chunk } from '@/lib/utils.ts';
 import { differenceInHours, parseISO } from 'date-fns';
 import { useLogStore } from '@/store/search-video-log.ts';
 import useApiStore from '@/store/api.ts';

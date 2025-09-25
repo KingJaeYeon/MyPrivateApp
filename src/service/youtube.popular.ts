@@ -1,8 +1,8 @@
 import type { VideoRow } from '@/service/youtube.ts';
-import { isoAfterNDays, formatDuration, parseISODurationToSec } from '@/util/date.ts';
+import { isoAfterNDays, formatDuration, parseISODurationToSec } from '@/lib/date.ts';
 import { request_youtube } from '@/service/axios.ts';
 import { differenceInHours, parseISO } from 'date-fns';
-import { chunk } from '@/util/util.ts';
+import { chunk } from '@/lib/utils.ts';
 import useApiStore from '@/store/api.ts';
 import { useLogStore } from '@/store/search-video-log.ts';
 

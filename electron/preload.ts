@@ -24,13 +24,13 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
 })
 
 // --------- Expose some config API to the Renderer process ---------
-contextBridge.exposeInMainWorld("pref", {
-  get: (key: any) => ipcRenderer.invoke("config:get", key),
-  set: (key: any, value: any) => ipcRenderer.invoke("config:set", key, value),
-  clear: () => ipcRenderer.invoke("config:clear"),
-  deleteKey: (key: any) => ipcRenderer.invoke("config:deleteKey", key),
-});
+contextBridge.exposeInMainWorld('pref', {
+  get: (key: string) => ipcRenderer.invoke('config:get', key),
+  set: (key: string, value: unknown) => ipcRenderer.invoke('config:set', key, value),
+  clear: () => ipcRenderer.invoke('config:clear'),
+  deleteKey: (key: string) => ipcRenderer.invoke('config:deleteKey', key),
+})
 
-contextBridge.exposeInMainWorld("electronAPI", {
+contextBridge.exposeInMainWorld('electronAPI', {
   openExternal: (url: string) => shell.openExternal(url),
-});
+})
