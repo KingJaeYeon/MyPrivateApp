@@ -1,5 +1,7 @@
 /// <reference types="vite-plugin-electron/electron-env" />
 
+import {AppPathKey} from "./app-service.ts";
+
 declare namespace NodeJS {
     interface ProcessEnv {
         /**
@@ -36,5 +38,9 @@ interface Window {
         winClose: () => void
         onFullscreenChange: (cb: (isFullscreen: boolean) => void) => () => void
         openExternal: (url: string) => void
+    }
+    api: {
+        pickFolder: (opts?: { defaultPath?: string }) => Promise<string | null>
+        getAppPath: (key: AppPathKey) => Promise<string>
     }
 }

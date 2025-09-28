@@ -1,10 +1,10 @@
 import {app, BrowserWindow} from 'electron'
-import {createRequire} from 'node:module'
 import {fileURLToPath} from 'node:url'
 import path from 'node:path'
 
 import {setupConfigHandlers} from './config-service.ts'
-const require = createRequire(import.meta.url)
+import {setupAppHandlers} from "./app-service.ts";
+// const require = createRequire(import.meta.url)
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 // The built directory structure
@@ -28,9 +28,9 @@ let win: BrowserWindow | null
 
 function createWindow() {
     win = new BrowserWindow({
-        icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
+        icon: path.join(process.env.VITE_PUBLIC!!, 'electron-vite.svg'),
         show: false,
-        width: 1100,
+        width: 1400,
         height: 800,
         trafficLightPosition: { x: 12, y: 10 },
         titleBarStyle: 'hidden',
@@ -87,5 +87,6 @@ app.on('activate', () => {
 
 app.whenReady().then(() => {
     createWindow()
+    setupAppHandlers();
     setupConfigHandlers()
 })

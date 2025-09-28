@@ -1,6 +1,7 @@
 /// <reference types="vite/client" />
 import type { FilterData } from '@/store/search-video.ts';
 import type { VideoRow } from '@/service/youtube.ts';
+import {AppPathKey} from "../electron/app-service.ts";
 
 interface Config {
     // 앱 설정
@@ -25,6 +26,11 @@ declare global {
             onFullscreenChange: (cb: (isFullscreen: boolean) => void) => () => void;
             openExternal: (url: string) => void;
         };
+        api: {
+            pickFolder: (opts?: { defaultPath?: string }) => Promise<string | null>
+            getAppPath: (key: AppPathKey) => Promise<string>
+        }
+        ipcRenderer: import('electron').IpcRenderer
     }
 }
 

@@ -1,5 +1,5 @@
 import useApiStore from '@/store/api.ts';
-import {useState} from 'react';
+import {useRef, useState} from 'react';
 import {Label} from '@/components/ui/label.tsx';
 import {Input} from '@/components/ui/input.tsx';
 import {
@@ -9,10 +9,7 @@ import {
     EditButton,
 } from '@/pages/home/components/buttons.tsx';
 import {Button} from '@/components/ui/button.tsx';
-import fs from 'fs';
-import electron from 'electron';
-// const remote = electron.remote
-// const {dialog} = remote
+// import fs from 'fs';
 
 export type ApiType = 'youtubeApiKey';
 
@@ -95,8 +92,10 @@ export function Home() {
 
 function NTest() {
 
-    const [folderPath, setFolderPath] = useState('');
-    const handleSelectFolder = (e) => {
+    const [folderPath] = useState('');
+    const inputRef = useRef<HTMLInputElement | null>(null);
+    const handleSelectFolder = (e:any) => {
+        e
         // try{
         //   dialog.showOpenDialog({ properties: ['openDirectory',] })
         //     .then(result => {
@@ -123,14 +122,38 @@ function NTest() {
         //   console.error(error);
         // }
     }
-    const onClick = () => {
+    // const onClick = () => {
+    //
+    // }
 
+    async function handleClick() {
+        window.api.pickFolder().then((result) => {
+            if (result) {
+                alert(result)
+            }
+        })
+
+        // if (!inputRef.current) return;
+        // inputRef.current.click(); // 숨겨진 file input의 클릭 이벤트를 실행
+    }
+
+    function onChangePath(e:any) {
+        const result = e.target
+        console.log(e)
+        alert(result)
+        const selectFolderPath = result.filePaths[0];
+        alert(selectFolderPath)
     }
 
     return (
         <div className={'flex gap-4'}>
-            <Input value={folderPath}/>
+            <Input value={folderPath} readOnly onClick={handleClick} placeholder={'폴더를 지정해주세요.'}/>
+            <form>
+                <Input type={'file'} accept={'.xls,.xlsx'} webkitdirectory={'true'} hidden ref={inputRef}
+                       onChange={onChangePath}/>
+            </form>
             <Button variant={'secondary'} onClick={e => handleSelectFolder(e)}>Excel 생성</Button>
+
         </div>
     );
 }
