@@ -112,8 +112,8 @@ const seed: State['data'] = {
     folder: {
         location: '',
         name: {
-            tag: '', channel: '', result: '', prompt: '',
-            reference: '', english: '', progress: ''
+            tag: 'tags.xlsx', channel: 'channel.xlsx', result: '[result-yyyy:MM:dd]', prompt: 'prompt.xlsx',
+            reference: 'reference.xlsx', english: 'english.xlsx', progress: 'progress.xlsx'
         }
     },
     youtube: {apiKey: '', usedQuota: 0},

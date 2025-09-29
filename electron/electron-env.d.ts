@@ -1,6 +1,7 @@
 /// <reference types="vite-plugin-electron/electron-env" />
 
 import {AppPathKey} from "./app-service.ts";
+
 interface Config {
     settings: State['data']
 }
@@ -27,6 +28,7 @@ declare namespace NodeJS {
 }
 
 // Used in Renderer process, expose in `preload.ts`
+// Used in Renderer process, expose in `preload.ts`
 interface Window {
     ipcRenderer: import('electron').IpcRenderer
     pref: {
@@ -36,14 +38,43 @@ interface Window {
         deleteKey: (key: keyof Config) => Promise<boolean>
     }
     electronAPI: {
-        winMinimize: () => void
-        winMaxToggle: () => void // mac은 full screen, win은 maximize 토글
-        winClose: () => void
-        onFullscreenChange: (cb: (isFullscreen: boolean) => void) => () => void
         openExternal: (url: string) => void
-    }
-    api: {
         pickFolder: (opts?: { defaultPath?: string }) => Promise<string | null>
         getAppPath: (key: AppPathKey) => Promise<string>
+    }
+    fsApi: {
+        // existence & directory
+        exists: (p: string) => Promise<boolean>
+        ensureDir: (dir: string) => Promise<boolean>
+        list: (
+            dir: string,
+            opts?: {
+                exts?: string[]
+                excludeHidden?: boolean
+                includeDirs?: boolean
+                sortBy?: 'name' | 'mtime' | 'size'
+                desc?: boolean
+            }
+        ) => Promise<Array<{
+            name: string
+            fullPath: string
+            isDir: boolean
+            size: number
+            mtimeMs: number
+            ext: string
+        }>>
+        listExcel: (dir: string) => Promise<string[]>
+        // text/binary IO
+        readText: (p: string, encoding?: BufferEncoding) => Promise<string>
+        writeText: (p: string, content: string, encoding?: BufferEncoding) => Promise<boolean>
+        readBinary: (p: string) => Promise<Uint8Array>
+        writeBinary: (p: string, data: Uint8Array) => Promise<boolean>
+
+        // file ops
+        rm: (p: string, opts?: { recursive?: boolean; force?: boolean }) => Promise<boolean>
+        rename: (fromPath: string, toPath: string) => Promise<boolean>
+
+        // safe write inside baseDir
+        safeWriteText: (baseDir: string, relativePath: string, content: string) => Promise<string>
     }
 }

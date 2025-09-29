@@ -4,6 +4,7 @@ import path from 'node:path'
 
 import {setupConfigHandlers} from './config-service.ts'
 import {setupAppHandlers} from "./app-service.ts";
+import {setupFsHandlers} from "./fs-service.ts";
 // const require = createRequire(import.meta.url)
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -32,16 +33,15 @@ function createWindow() {
         show: false,
         width: 1400,
         height: 800,
-        trafficLightPosition: { x: 12, y: 10 },
+        trafficLightPosition: {x: 12, y: 10},
         titleBarStyle: 'hidden',
         frame: false,
-        ...(process.platform !== 'darwin' ? { titleBarOverlay: true } : {}),
+        ...(process.platform !== 'darwin' ? {titleBarOverlay: true} : {}),
         backgroundColor: "#0b0b0e",
         webPreferences: {
             preload: path.join(__dirname, 'preload.mjs'),
-            nodeIntegration: true,
-            sandbox: false,
-            contextIsolation: true,
+            contextIsolation: true,   // ✅
+            nodeIntegration: false,   // ✅
         },
     })
 
@@ -86,7 +86,8 @@ app.on('activate', () => {
 })
 
 app.whenReady().then(() => {
-    createWindow()
     setupAppHandlers();
     setupConfigHandlers()
+    setupFsHandlers()
+    createWindow()
 })

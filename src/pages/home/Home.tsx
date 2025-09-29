@@ -1,27 +1,17 @@
 import useSettingStore from '@/store/setting.ts';
-import {useRef, useState} from 'react';
+import {useState} from 'react';
 import {Label} from '@/components/ui/label.tsx';
 import {Input} from '@/components/ui/input.tsx';
-import {
-    CancelButton,
-    ConnectButton,
-    DeleteButton,
-    EditButton,
-} from '@/pages/home/components/buttons.tsx';
-import {Button} from '@/components/ui/button.tsx';
-// import fs from 'fs';
+import {CancelButton, ConnectButton, DeleteButton, EditButton,} from '@/pages/home/components/buttons.tsx';
+import {ExcelFilesLocation} from "@/pages/home/components/ExcelFilesLocation.tsx";
+import {FileNameRule} from "@/pages/home/components/FileNameRule.tsx";
 
 export type ApiType = 'youtubeApiKey';
 
 export function Home() {
     const youtubeApiKey = useSettingStore(r => r.data.youtube.apiKey);
-
-    const [editValues, setEditValues] = useState({
-        youtubeApiKey: '',
-    });
-    const [isEditing, setIsEditing] = useState({
-        youtubeApiKey: false,
-    });
+    const [editValues, setEditValues] = useState({youtubeApiKey: ''});
+    const [isEditing, setIsEditing] = useState({youtubeApiKey: false});
 
     const hasYoutubeApiKey = Boolean(youtubeApiKey);
 
@@ -47,7 +37,7 @@ export function Home() {
             return (
                 <div className="gap-2 flex">
                     <EditButton type={type} setIsEditing={setIsEditing} setEditValues={setEditValues}/>
-                    <DeleteButton />
+                    <DeleteButton/>
                 </div>
             );
         }
@@ -65,7 +55,7 @@ export function Home() {
     };
 
     return (
-        <div className={'flex flex-1 w-full p-4'}>
+        <div className={'flex flex-1 w-full p-4 flex-col gap-10'}>
             <div className={'flex flex-col gap-3 max-w-[800px] w-full'}>
                 <div className="flex w-full items-center gap-4">
                     <Label htmlFor="mode" className="min-w-[100px]">
@@ -81,51 +71,13 @@ export function Home() {
                     />
                     <ConnectionStatus type={'youtubeApiKey'} isConnect={hasYoutubeApiKey}/>
                 </div>
-                <div>
-                    <NTest/>
+                <div className="flex w-full items-center gap-4">
+                    <ExcelFilesLocation/>
                 </div>
             </div>
+            <FileNameRule/>
         </div>
     );
 }
 
 
-function NTest() {
-
-    const location = useSettingStore(r => r.data.folder.location)
-    const {updateIn} = useSettingStore()
-    const {data} = useSettingStore.getState()
-    const inputRef = useRef<HTMLInputElement | null>(null);
-
-    async function handleClick() {
-        window.api.pickFolder().then(async (result) => {
-            if (result) {
-                await updateIn('folder', {
-                    ...data.folder,
-                    location: result
-                })
-
-            }
-        })
-    }
-
-    function onChangePath(e: any) {
-        const result = e.target
-        console.log(e)
-        alert(result)
-        const selectFolderPath = result.filePaths[0];
-        alert(selectFolderPath)
-    }
-
-    return (
-        <div className={'flex gap-4'}>
-            <Input value={location} readOnly onClick={handleClick} placeholder={'폴더를 지정해주세요.'}/>
-            <form>
-                <Input type={'file'} accept={'.xls,.xlsx'} webkitdirectory={'true'} hidden ref={inputRef}
-                       onChange={onChangePath}/>
-            </form>
-            <Button variant={'secondary'} >Excel 생성</Button>
-
-        </div>
-    );
-}
