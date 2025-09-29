@@ -41,15 +41,13 @@ export function FileNameRule() {
         const { result, ...others } = editValues
         const files = Object.values(others)
         const allXlsx = files.every(f => /\.xlsx?$/.test(f.toLowerCase()))
+
         if (!allXlsx) {
-            alert("result를 제외한 모든 파일명이 .xlsx 확장자를 가져야 합니다.")
+            alert("result를 제외한 모든 파일명이 .xlsx, .xls 확장자를 가져야 합니다.")
             return
         }
 
-        await updateIn('folder', {
-            name: editValues,
-            location
-        })
+        await updateIn('folder', {name: editValues, location})
         alert('저장되었습니다.')
     }
 

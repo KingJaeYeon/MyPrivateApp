@@ -5,6 +5,7 @@ import path from 'node:path'
 import {setupConfigHandlers} from './config-service.ts'
 import {setupAppHandlers} from "./app-service.ts";
 import {setupFsHandlers} from "./fs-service.ts";
+import {setupExcelHandlers} from "./excel-service.ts";
 // const require = createRequire(import.meta.url)
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -89,5 +90,6 @@ app.whenReady().then(() => {
     setupAppHandlers();
     setupConfigHandlers()
     setupFsHandlers()
+    setupExcelHandlers()
     createWindow()
 })

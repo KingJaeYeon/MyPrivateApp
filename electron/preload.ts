@@ -61,3 +61,14 @@ contextBridge.exposeInMainWorld('fsApi', {
   rename: (from: string, to: string) => ipcRenderer.invoke('fs:rename', from, to),
   safeWriteText: (base: string, rel: string, c: string) => ipcRenderer.invoke('fs:safeWriteText', base, rel, c),
 })
+
+
+contextBridge.exposeInMainWorld("excelApi", {
+  create: (filePath: string, data: any[][]) =>
+      ipcRenderer.invoke("excel:create", filePath, data),
+  read: (filePath: string) => ipcRenderer.invoke("excel:read", filePath),
+  overwrite: (filePath: string, data: any[][], sheetName?: string) =>
+      ipcRenderer.invoke("excel:overwrite", filePath, data, sheetName),
+  append: (filePath: string, rows: any[], sheetName?: string) =>
+      ipcRenderer.invoke("excel:append", filePath, rows, sheetName),
+})
