@@ -6,11 +6,11 @@ import {Home} from "@/pages/home/Home.tsx";
 import SearchVideo from "@/pages/search-video/SearchVideo.tsx";
 import SearchVideoResult from "@/pages/search-video-result/SearchVideoResult.tsx";
 import {useEffect, useState} from "react";
-import useApiStore from "@/store/api.ts";
+import useSettingStore from "@/store/setting.ts";
 import {ThemeProvider} from "@/providers/theme-provider.tsx";
 
 function App() {
-    const { init } = useApiStore();
+    const { init } = useSettingStore();
     const [isLoading, setIsLoading] = useState(false);
 
     // 앱 시작 시 1) 저장된 키 자동 로드

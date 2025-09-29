@@ -1,6 +1,9 @@
 /// <reference types="vite-plugin-electron/electron-env" />
 
 import {AppPathKey} from "./app-service.ts";
+interface Config {
+    settings: State['data']
+}
 
 declare namespace NodeJS {
     interface ProcessEnv {

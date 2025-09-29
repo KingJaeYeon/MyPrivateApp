@@ -1,4 +1,4 @@
-import useApiStore from '@/store/api.ts';
+import useSettingStore from '@/store/setting.ts';
 import {useRef, useState} from 'react';
 import {Label} from '@/components/ui/label.tsx';
 import {Input} from '@/components/ui/input.tsx';
@@ -14,7 +14,7 @@ import {Button} from '@/components/ui/button.tsx';
 export type ApiType = 'youtubeApiKey';
 
 export function Home() {
-    const {youtubeApiKey} = useApiStore();
+    const youtubeApiKey = useSettingStore(r => r.data.youtube.apiKey);
 
     const [editValues, setEditValues] = useState({
         youtubeApiKey: '',
@@ -47,7 +47,7 @@ export function Home() {
             return (
                 <div className="gap-2 flex">
                     <EditButton type={type} setIsEditing={setIsEditing} setEditValues={setEditValues}/>
-                    <DeleteButton type={type}/>
+                    <DeleteButton />
                 </div>
             );
         }
@@ -92,52 +92,24 @@ export function Home() {
 
 function NTest() {
 
-    const [folderPath] = useState('');
+    const location = useSettingStore(r => r.data.folder.location)
+    const {updateIn} = useSettingStore()
+    const {data} = useSettingStore.getState()
     const inputRef = useRef<HTMLInputElement | null>(null);
-    const handleSelectFolder = (e:any) => {
-        e
-        // try{
-        //   dialog.showOpenDialog({ properties: ['openDirectory',] })
-        //     .then(result => {
-        //       console.log(result);
-        //       // 선택한 폴더의 경로
-        //       const selectFolderPath = result.filePaths[0];
-        //       // 선택한 폴더 정보
-        //       const selectFolderInfo = fs.statSync(selectFolderPath);
-        //       // 하위 파일 및 폴더
-        //       let childPath = [];
-        //
-        //       // 폴더인 경우
-        //       if(selectFolderInfo.isDirectory()) {
-        //         // 폴더 경로를 전달하여 폴더의 내용을 읽음
-        //         fs.readdirSync(selectFolderPath)
-        //           .map(file => {
-        //             childPath.push(file);
-        //           })
-        //       }
-        //       console.log(childPath);
-        //       setFolderPath(result.filePaths[0]);
-        //     })
-        // } catch(error) {
-        //   console.error(error);
-        // }
-    }
-    // const onClick = () => {
-    //
-    // }
 
     async function handleClick() {
-        window.api.pickFolder().then((result) => {
+        window.api.pickFolder().then(async (result) => {
             if (result) {
-                alert(result)
+                await updateIn('folder', {
+                    ...data.folder,
+                    location: result
+                })
+
             }
         })
-
-        // if (!inputRef.current) return;
-        // inputRef.current.click(); // 숨겨진 file input의 클릭 이벤트를 실행
     }
 
-    function onChangePath(e:any) {
+    function onChangePath(e: any) {
         const result = e.target
         console.log(e)
         alert(result)
@@ -147,12 +119,12 @@ function NTest() {
 
     return (
         <div className={'flex gap-4'}>
-            <Input value={folderPath} readOnly onClick={handleClick} placeholder={'폴더를 지정해주세요.'}/>
+            <Input value={location} readOnly onClick={handleClick} placeholder={'폴더를 지정해주세요.'}/>
             <form>
                 <Input type={'file'} accept={'.xls,.xlsx'} webkitdirectory={'true'} hidden ref={inputRef}
                        onChange={onChangePath}/>
             </form>
-            <Button variant={'secondary'} onClick={e => handleSelectFolder(e)}>Excel 생성</Button>
+            <Button variant={'secondary'} >Excel 생성</Button>
 
         </div>
     );

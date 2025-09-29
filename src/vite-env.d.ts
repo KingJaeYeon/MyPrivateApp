@@ -1,23 +1,18 @@
 /// <reference types="vite/client" />
-import type { FilterData } from '@/store/search-video.ts';
-import type { VideoRow } from '@/service/youtube.ts';
 import {AppPathKey} from "../electron/app-service.ts";
 
 interface Config {
-    // 앱 설정
-    youtubeApiKey?: string;
-    youtubeApiKeyQuota?: number;
-    youtubeApiKeyPending?: { apiKey: string; usedQuota: number }[];
-    youtubeHistory?: { data: FilterData; result: VideoRow[]; searchedAt: number }[];
+    settings: State['data']
 }
+
 
 declare global {
     interface Window {
         pref: {
-            get: <K extends keyof Config>(key: K) => Promise<Config[K]>;
-            set: <K extends keyof Config>(key: K, value: Config[K]) => Promise<boolean>;
-            clear: () => Promise<boolean>;
-            deleteKey: (key: keyof Config) => Promise<boolean>;
+            get: <K extends keyof Config>(key: K) => Promise<Config[K]>
+            set: <K extends keyof Config>(key: K, value: Config[K]) => Promise<boolean>
+            clear: () => Promise<boolean>
+            deleteKey: (key: keyof Config) => Promise<boolean>
         };
         electronAPI: {
             winMinimize: () => void;

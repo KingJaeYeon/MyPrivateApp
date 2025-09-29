@@ -1,7 +1,7 @@
 // src/pages/ActionsButtons.tsx
 import { FilterSchema, useFilterStore } from '@/store/search-video.ts';
 import { Button } from '@/components/ui/button.tsx';
-import useApiStore from '@/store/api.ts';
+import useSettingStore from '@/store/setting.ts';
 import { useLogStore } from '@/store/search-video-log.ts';
 import { useMutation } from '@tanstack/react-query';
 import { getVideoByKeywords } from '@/service/youtube.keywords.ts';
@@ -10,7 +10,7 @@ import { getPopularVideos } from '@/service/youtube.popular.ts';
 
 export function ActionsButtons() {
   const { data, setResult, clearResult, savedHistory, setErrors } = useFilterStore();
-  const { youtubeApiKey } = useApiStore();
+  const youtubeApiKey = useSettingStore(r=>r.data.youtube.apiKey);
   const Log = useLogStore();
 
   const { mutate, isPending } = useMutation({

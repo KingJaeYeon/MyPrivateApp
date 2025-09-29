@@ -3,7 +3,7 @@ import { isoAfterNDays, formatDuration, parseISODurationToSec } from '@/lib/date
 import { request_youtube } from '@/service/axios.ts';
 import { differenceInHours, parseISO } from 'date-fns';
 import { chunk } from '@/lib/utils.ts';
-import useApiStore from '@/store/api.ts';
+import useSettingStore from '@/store/setting.ts';
 import { useLogStore } from '@/store/search-video-log.ts';
 
 export type FetchPopularParams = {
@@ -34,7 +34,7 @@ export async function getPopularVideos(params: FetchPopularParams): Promise<Vide
   const publishedAfter = new Date(publishedAfterISO);
 
   const Log = useLogStore.getState();
-  const apiStore = useApiStore.getState();
+  const settingStore = useSettingStore.getState();
 
   const collected: any[] = [];
   let pageToken: string | undefined = undefined;
@@ -56,7 +56,12 @@ export async function getPopularVideos(params: FetchPopularParams): Promise<Vide
 
     const url = `${request_youtube.defaults.baseURL}videos?${new URLSearchParams(paramsObj).toString()}`;
     Log.note(`[API 요청] ${url}`);
-    apiStore.updateQuota(1); // videos.list 1회 카운트
+    await settingStore.updateIn(
+        'youtube',{
+          apiKey: settingStore.data.youtube.apiKey,
+          usedQuota: settingStore.data.youtube.usedQuota + 1
+        }
+    ); // videos.list 1회 카운트
 
     const resp = await request_youtube.get('videos', { params: paramsObj });
     const items: any[] = resp.data?.items ?? [];
@@ -115,7 +120,12 @@ export async function getPopularVideos(params: FetchPopularParams): Promise<Vide
     const cParams = { key: apiKey, part: 'statistics', id: batch.join(',') };
     const curl = `${request_youtube.defaults.baseURL}channels?${new URLSearchParams(cParams).toString()}`;
     Log.note(`[API 요청] ${curl}`);
-    apiStore.updateQuota(1); // channels.list 1회 카운트
+    await settingStore.updateIn(
+        'youtube',{
+          apiKey: settingStore.data.youtube.apiKey,
+          usedQuota: settingStore.data.youtube.usedQuota + 1
+        }
+    ); // vid
 
     const cResp = await request_youtube.get('channels', { params: cParams });
     for (const ch of cResp.data?.items ?? []) {

@@ -3,7 +3,7 @@ import { request_youtube } from '@/service/axios.ts';
 import { chunk } from '@/lib/utils.ts';
 import { differenceInHours, parseISO } from 'date-fns';
 import { useLogStore } from '@/store/search-video-log.ts';
-import useApiStore from '@/store/api.ts';
+import useSettingStore from '@/store/setting.ts';
 import type { VideoRow } from '@/service/youtube.ts';
 
 export type FetchByKeywordParams = {
@@ -46,7 +46,7 @@ type fetchVideosParams = {
 const fetchVideoByKeywords = async (params: fetchVideosParams) => {
   const { apiKey, keyword, publishedAfter, regionCode, relevanceLanguage, pageToken, videoDuration } = params;
   const Log = useLogStore.getState(); // 훅 호출 아님 (정적 접근)
-  const apiStore = useApiStore.getState(); // 훅 호출 아님 (정적 접근)
+  const settingStore = useSettingStore.getState(); // 훅 호출 아님 (정적 접근)
   const sIds: string[] = [];
 
   const searchParams: Record<string, any> = {
@@ -66,7 +66,12 @@ const fetchVideoByKeywords = async (params: fetchVideosParams) => {
   const sResp = await request_youtube.get('search', { params: searchParams });
 
   const url = `${request_youtube.defaults.baseURL}search?${new URLSearchParams(searchParams).toString()}`;
-  apiStore.updateQuota(100); // search.list 호출 비용 100
+  await settingStore.updateIn(
+      'youtube',{
+        apiKey: settingStore.data.youtube.apiKey,
+        usedQuota: settingStore.data.youtube.usedQuota + 100
+      }
+  ); // videos.list 100회 카운트
   Log.note(`[API 요청] ${url}`);
 
   const sItems = sResp.data?.items ?? [];
@@ -82,7 +87,7 @@ const fetchVideoByKeywords = async (params: fetchVideosParams) => {
 
 const fetchVideoByIds = async (apiKey: string, ids: string[]) => {
   const vItems: any[] = [];
-  const apiStore = useApiStore.getState(); // 훅 호출 아님 (정적 접근)
+  const settingStore = useSettingStore.getState(); // 훅 호출 아님 (정적 접근)
   const vResp = await request_youtube.get('videos', {
     params: {
       key: apiKey,
@@ -90,7 +95,12 @@ const fetchVideoByIds = async (apiKey: string, ids: string[]) => {
       id: ids.join(','),
     },
   });
-  apiStore.updateQuota(1);
+  await settingStore.updateIn(
+      'youtube',{
+        apiKey: settingStore.data.youtube.apiKey,
+        usedQuota: settingStore.data.youtube.usedQuota + 100
+      }
+  ); // videos.list 1회 카운트
 
   vItems.push(...(vResp.data?.items ?? []));
   return { vItems };
@@ -241,7 +251,7 @@ function quickVphPass(list: any[], minVph: number, want: number): any[] {
  * - 통과분의 channelId만 조회 → 쿼터 절약
  */
 async function toRowsWithSubscribers(items: any[], apiKey: string): Promise<VideoRow[]> {
-  const apiStore = useApiStore.getState(); // 훅 호출 아님 (정적 접근)
+  const settingStore = useSettingStore.getState(); // 훅 호출 아님 (정적 접근)
   // 1) 채널 통계 수집
   const channelIdSet = new Set<string>();
   for (const v of items) {
@@ -254,7 +264,12 @@ async function toRowsWithSubscribers(items: any[], apiKey: string): Promise<Vide
     const cResp = await request_youtube.get('channels', {
       params: { key: apiKey, part: 'statistics', id: batch.join(',') },
     });
-    apiStore.updateQuota(1); // channels.list 호출 비용 1
+    await settingStore.updateIn(
+        'youtube',{
+          apiKey: settingStore.data.youtube.apiKey,
+          usedQuota: settingStore.data.youtube.usedQuota + 1
+        }
+    ); // videos.list 1회 카운트
     for (const ch of cResp.data?.items ?? []) {
       const cid = ch?.id;
       const hidden = ch?.statistics?.hiddenSubscriberCount;

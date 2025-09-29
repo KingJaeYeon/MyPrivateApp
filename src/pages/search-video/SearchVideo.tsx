@@ -3,10 +3,10 @@ import { ActionsButtons } from '@/pages/search-video/components/ActionsButtons.t
 import { FilterOptions } from '@/pages/search-video/components/FilterOptions.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { Link } from 'react-router-dom';
-import useApiStore from '@/store/api.ts';
+import useSettingStore from '@/store/setting.ts';
 
 export default function SearchVideo() {
-  const { usedQuota } = useApiStore();
+  const usedQuota = useSettingStore(r=>r.data.youtube.usedQuota);
   return (
     <div className={'flex-1 flex flex-col w-full p-4'}>
       <div className={'flex flex-1 flex-col gap-4'}>
