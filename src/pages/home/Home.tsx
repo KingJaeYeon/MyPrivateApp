@@ -1,10 +1,11 @@
 import useSettingStore from '@/store/setting.ts';
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {Label} from '@/components/ui/label.tsx';
 import {Input} from '@/components/ui/input.tsx';
 import {CancelButton, ConnectButton, DeleteButton, EditButton,} from '@/pages/home/components/buttons.tsx';
 import {ExcelFilesLocation} from "@/pages/home/components/ExcelFilesLocation.tsx";
 import {FileNameRule} from "@/pages/home/components/FileNameRule.tsx";
+import {SavedResult} from "@/pages/home/components/SavedResult.tsx";
 
 export type ApiType = 'youtubeApiKey';
 
@@ -12,7 +13,6 @@ export function Home() {
     const youtubeApiKey = useSettingStore(r => r.data.youtube.apiKey);
     const [editValues, setEditValues] = useState({youtubeApiKey: ''});
     const [isEditing, setIsEditing] = useState({youtubeApiKey: false});
-
     const hasYoutubeApiKey = Boolean(youtubeApiKey);
 
     const getValue = (type: ApiType) => {
@@ -55,7 +55,7 @@ export function Home() {
     };
 
     return (
-        <div className={'flex flex-1 w-full p-4 flex-col gap-10'}>
+        <div className={'flex flex-1 w-full p-4 flex-col gap-8'}>
             <div className={'flex flex-col gap-3 max-w-[800px] w-full'}>
                 <div className="flex w-full items-center gap-4">
                     <Label htmlFor="mode" className="min-w-[100px]">
@@ -76,6 +76,7 @@ export function Home() {
                 </div>
             </div>
             <FileNameRule/>
+            <SavedResult/>
         </div>
     );
 }
