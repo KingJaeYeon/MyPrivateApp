@@ -1,6 +1,7 @@
 import {clsx, type ClassValue} from "clsx"
 import {twMerge} from "tailwind-merge"
 import {z, ZodError, ZodType} from "zod";
+import {ExcelColumn, ExcelConfig} from "@/store/setting.ts";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
@@ -37,3 +38,52 @@ export function zodParseSafe<T extends ZodType<any, any, any>>(
         };
     }
 }
+
+
+/**
+ * order 순서에 맞춰 essential + optional 컬럼을 정렬한 배열 반환
+ * @param excel 전체 ExcelConfig
+ * @param key   시트 key (예: "tag")
+ * @param mode  "label" | "column" | "full" (full은 ExcelColumn[])
+ */
+// 오버로드 선언부
+function getOrderedColumns(
+    excel: ExcelConfig,
+    key: keyof ExcelConfig,
+    mode: "label"
+): string[]
+function getOrderedColumns(
+    excel: ExcelConfig,
+    key: keyof ExcelConfig,
+    mode: "column"
+): string[]
+function getOrderedColumns(
+    excel: ExcelConfig,
+    key: keyof ExcelConfig,
+    mode: "full"
+): ExcelColumn[]
+
+// 실제 구현
+function getOrderedColumns(
+    excel: ExcelConfig,
+    key: keyof ExcelConfig,
+    mode: "label" | "column" | "full" = "label"
+): string[] | ExcelColumn[] {
+    const sheet = excel[key]
+    if (!sheet) return []
+
+    // essential + optional 합치기
+    const allDefs = [...sheet.essentialDefs, ...sheet.optional]
+    // id -> ExcelColumn 매핑
+    const idToDef = new Map(allDefs.map(def => [def.id, def]))
+    console.log(sheet)
+    // order 기준 정렬
+    const orderedDefs = sheet.order
+        .map(id => idToDef.get(id))
+        .filter((def): def is ExcelColumn => !!def)
+
+    if (mode === "label") return orderedDefs.map(d => d.label)
+    if (mode === "column") return orderedDefs.map(d => d.column)
+    return orderedDefs
+}
+export {getOrderedColumns}
