@@ -165,7 +165,7 @@ export async function getPopularVideos(params: FetchPopularParams): Promise<Vide
       viewsPerHour: vph,
       viewsPerSubscriber: vps,
       duration: formatDuration(durSec),
-      videoUrl: `https://www.youtube.com/watch?v=${id}`,
+      link: `https://www.youtube.com/watch?v=${id}`,
       thumbnailUrl: sn?.thumbnails?.medium?.url || sn?.thumbnails?.default?.url || '',
       subscriberCount: subs,
     });

@@ -28,6 +28,11 @@ export default defineConfig({
         : {},
     }),
   ],
+  build: {
+    rollupOptions: {
+      external: ['xlsx']
+    }
+  },
   resolve: {
     alias: [{ find: '@', replacement: path.resolve(__dirname, 'src') }],
   },

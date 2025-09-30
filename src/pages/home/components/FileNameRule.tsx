@@ -41,9 +41,13 @@ export function FileNameRule() {
         const { result, ...others } = editValues
         const files = Object.values(others)
         const allXlsx = files.every(f => /\.xlsx?$/.test(f.toLowerCase()))
-
+        const resultCheck = /^\//.test(result) || /\./.test(result)
         if (!allXlsx) {
             alert("result를 제외한 모든 파일명이 .xlsx, .xls 확장자를 가져야 합니다.")
+            return
+        }
+        if (resultCheck) {
+            alert("result는 맨앞에 /와 . 제외해야합니다.")
             return
         }
 

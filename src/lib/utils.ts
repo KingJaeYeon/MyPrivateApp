@@ -76,7 +76,7 @@ function getOrderedColumns(
     const allDefs = [...sheet.essentialDefs, ...sheet.optional]
     // id -> ExcelColumn 매핑
     const idToDef = new Map(allDefs.map(def => [def.id, def]))
-    console.log(sheet)
+    console.log(sheet.order)
     // order 기준 정렬
     const orderedDefs = sheet.order
         .map(id => idToDef.get(id))

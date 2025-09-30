@@ -125,14 +125,14 @@ export const columns: ColumnDef<VideoRow>[] = [
     cell: ({ row }) => row.original.duration,
   },
   {
-    accessorKey: 'videoUrl',
+    accessorKey: 'link',
     header: '링크',
     size: 120,
     cell: ({ row }) => (
       <Button
         size="sm"
         variant="secondary"
-        onClick={() => window.electronAPI.openExternal(row.original.videoUrl)}
+        onClick={() => window.electronAPI.openExternal(row.original.link)}
       >
         열기
       </Button>

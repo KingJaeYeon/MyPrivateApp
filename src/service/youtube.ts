@@ -7,7 +7,7 @@ export type VideoRow = {
   viewsPerHour: number;
   viewsPerSubscriber: number | null;
   duration: string; // 표시용 "mm:ss" or "hh:mm:ss"
-  videoUrl: string;
+  link: string;
   thumbnailUrl: string;
   subscriberCount: number | null; // ✅ 구독자 수
 };
