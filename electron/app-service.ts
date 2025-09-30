@@ -1,5 +1,5 @@
 // main/main.ts
-import {app, dialog, ipcMain} from 'electron'
+import {app, dialog, ipcMain, shell} from 'electron'
 import OpenDialogOptions = Electron.OpenDialogOptions;
 
 
@@ -41,5 +41,11 @@ export function setupAppHandlers() {
             throw new Error('app:getPath: key not allowed')
         }
         return app.getPath(key)
+    })
+
+    ipcMain.handle("app:openFolder", async (_event, folderPath: string) => {
+        if (!folderPath) return false
+        await shell.openPath(folderPath) // mac은 Finder, win은 Explorer에서 열림
+        return true
     })
 }

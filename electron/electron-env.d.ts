@@ -41,6 +41,7 @@ interface Window {
         openExternal: (url: string) => void
         pickFolder: (opts?: { defaultPath?: string }) => Promise<string | null>
         getAppPath: (key: AppPathKey) => Promise<string>
+        openFolder: (path: string) => Promise<boolean>
     }
     fsApi: {
         // existence & directory
