@@ -1,16 +1,38 @@
 import {ipcMain} from "electron"
 import * as XLSX from "xlsx"
+import fs from "node:fs";
 
 /**
  * Excel 관련 IPC 핸들러 등록
+ * // 새 파일 만들기
+ * await window.excelApi.create("C:/temp/test.xlsx", [
+ *   ["Name", "Age"],
+ *   ["Alice", 30],
+ *   ["Bob", 25],
+ * ])
+ *
+ * // 읽기
+ * const rows = await window.excelApi.read("C:/temp/test.xlsx")
+ * console.log(rows)
+ *
+ * // 덮어쓰기
+ * await window.excelApi.overwrite("C:/temp/test.xlsx", [
+ *   ["Name", "Age"],
+ *   ["Charlie", 22],
+ * ])
+ *
+ * // 행 추가
+ * await window.excelApi.append("C:/temp/test.xlsx", [{ Name: "David", Age: 40 }])
  */
 export function setupExcelHandlers() {
     // 새 워크북 + 시트 생성 → 저장
     ipcMain.handle("excel:create", async (_e, filePath: string, data: any[][]) => {
+        console.log('filePath::', filePath, 'data::', data)
         const wb = XLSX.utils.book_new()
         const ws = XLSX.utils.aoa_to_sheet(data)
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1")
-        XLSX.writeFile(wb, filePath)
+        const wbout = XLSX.write(wb, {bookType: 'xlsx', type: 'buffer'})
+        fs.writeFileSync(filePath, wbout)
         return true
     })
 
@@ -28,7 +50,9 @@ export function setupExcelHandlers() {
             const wb = XLSX.readFile(filePath)
             const newSheet = XLSX.utils.aoa_to_sheet(data)
             wb.Sheets[sheetName] = newSheet
-            XLSX.writeFile(wb, filePath)
+
+            const wbout = XLSX.write(wb, { bookType: "xlsx", type: "buffer" })
+            fs.writeFileSync(filePath, wbout)
             return true
         }
     )
@@ -41,9 +65,12 @@ export function setupExcelHandlers() {
             const sheet = wb.Sheets[sheetName]
             const json = XLSX.utils.sheet_to_json(sheet, {defval: ""})
             const updated = [...json, ...rows]
+
             const newSheet = XLSX.utils.json_to_sheet(updated)
             wb.Sheets[sheetName] = newSheet
-            XLSX.writeFile(wb, filePath)
+
+            const wbout = XLSX.write(wb, { bookType: "xlsx", type: "buffer" })
+            fs.writeFileSync(filePath, wbout)
             return true
         }
     )
