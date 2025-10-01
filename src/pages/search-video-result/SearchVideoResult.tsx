@@ -10,7 +10,9 @@ export default function SearchVideoResult() {
   const dataInfo = `Total ${rows.length}/ ${searchOptions.maxResults}개 | 검색모드: ${searchOptions.mode} | 키워드: ${searchOptions.keyword} | 기간: ${searchOptions.days}일 | 국가: ${searchOptions.regionCode}`;
   return (
     <div className="flex flex-1 px-4 w-full">
-      <DataTable<VideoRow, unknown> columns={columns} data={rows} dataInfo={dataInfo} />
+      <DataTable<VideoRow, unknown> columns={columns} data={rows} tableControls={(_)=>{
+        return <div className="text-sm text-muted-foreground">{dataInfo}</div>
+      }} />
     </div>
   );
 }

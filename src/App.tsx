@@ -8,22 +8,27 @@ import SearchVideoResult from "@/pages/search-video-result/SearchVideoResult.tsx
 import {useEffect, useState} from "react";
 import useSettingStore from "@/store/setting.ts";
 import {ThemeProvider} from "@/providers/theme-provider.tsx";
+import TagPage from "@/pages/tag/TagPage.tsx";
 
 function App() {
-    const { init } = useSettingStore();
+    const {init} = useSettingStore();
     const [isLoading, setIsLoading] = useState(false);
 
     // 앱 시작 시 1) 저장된 키 자동 로드
     useEffect(() => {
-        init()
-            .then(() => {
+
+        async function start() {
+            try {
+                await init()
                 console.log('API Store initialized');
-            })
-            .catch(console.error)
-            .finally(() => {
+            } catch (e) {
+                console.error(e)
+            } finally {
                 setIsLoading(false);
                 console.log('Initialization complete, loading state set to false', isLoading);
-            });
+            }
+        }
+        start()
     }, []);
 
     if (isLoading) {
@@ -56,6 +61,7 @@ function App() {
                     {/*<Route path={'/about'} element={<About/>}/>*/}
                     <Route path={'/search-videos'} element={<SearchVideo/>}/>
                     <Route path={'/search-videos/result'} element={<SearchVideoResult/>}/>
+                    <Route path={'/tags'} element={<TagPage/>}/>
                     {/*<Route path={'/channels'} element={<ChannelsPage/>}/>*/}
                     <Route path="*" element={<div>Not Found</div>}/>
                 </Routes>
