@@ -38,7 +38,9 @@ export function setupExcelHandlers() {
 
     // 파일 읽기 (JSON 변환해서 반환)
     ipcMain.handle("excel:read", async (_e, filePath: string) => {
-        const wb = XLSX.readFile(filePath)
+        const fileBuffer = fs.readFileSync(filePath);
+        // XLSX.read 로 워크북 파싱
+        const wb = XLSX.read(fileBuffer, { type: "buffer" });
         const sheet = wb.Sheets[wb.SheetNames[0]]
         return XLSX.utils.sheet_to_json(sheet, {defval: ""})
     })
