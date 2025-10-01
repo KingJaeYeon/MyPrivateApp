@@ -17,7 +17,9 @@ export function SavedResult() {
     }
 
     useEffect(() => {
-        getFiles()
+        if (location) {
+            getFiles()
+        }
     }, [location]);
 
     return <div className={'flex flex-col gap-4 max-w-[1000px] w-full'}>

@@ -9,14 +9,16 @@ import {useEffect, useState} from "react";
 import useSettingStore from "@/store/setting.ts";
 import {ThemeProvider} from "@/providers/theme-provider.tsx";
 import TagPage from "@/pages/tag/TagPage.tsx";
+import useTagStore from "@/store/tag.ts";
 
 function App() {
     const {init} = useSettingStore();
+    const {location, name} = useSettingStore(r => r.data.folder)
+    const {init: tagInit} = useTagStore()
     const [isLoading, setIsLoading] = useState(false);
 
     // 앱 시작 시 1) 저장된 키 자동 로드
     useEffect(() => {
-
         async function start() {
             try {
                 await init()
@@ -28,8 +30,25 @@ function App() {
                 console.log('Initialization complete, loading state set to false', isLoading);
             }
         }
+
         start()
     }, []);
+
+    useEffect(() => {
+        async function start() {
+            if (location) {
+                try {
+                    await tagInit(`${location}/${name.tag}`)
+                    console.log('API Store initialized');
+                } catch (e) {
+                    console.error(e)
+                } finally {
+                    console.log('Initialization complete, loading state set to false', isLoading);
+                }
+            }
+        }
+        start()
+    }, [location]);
 
     if (isLoading) {
         // ✅ 로딩 중일 때 보여줄 화면

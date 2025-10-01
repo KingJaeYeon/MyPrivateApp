@@ -7,7 +7,7 @@ import {
     type SortingState,
     useReactTable,
     type ColumnDef,
-    type Table as typeTable
+    type Table as typeTable, getFilteredRowModel
 } from '@tanstack/react-table';
 import {
     Table,
@@ -48,6 +48,7 @@ export function DataTable<TData, TValue>(
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
         enableMultiSort: true, // ✅ 다중 정렬 허용
+        getFilteredRowModel: getFilteredRowModel()
     });
 
     // ── 무한 스크롤: 보이는 행 개수 관리 ──────────────────────────
@@ -91,6 +92,7 @@ export function DataTable<TData, TValue>(
         <div className="space-y-2 flex flex-1 flex-col">
             {/* 스크롤 컨테이너 */}
             <div id={'info bar'} className="flex items-center mb-1 sticky top-0 bg-background z-20 gap-3">
+                <div className={'flex flex-col gap-1 w-full'}>
                 {tableControls && tableControls(table)}
                 {/*    정렬 표시*/}
                 {sorting.length > 0 && (
@@ -108,7 +110,7 @@ export function DataTable<TData, TValue>(
                             );
                         })}
                     </div>
-                )}
+                )}</div>
             </div>
             <div ref={containerRef} className="overflow-auto relative flex flex-1 scrollWidth3">
                 <div className="rounded-md border w-full h-full absolute top-0 left-0 ">

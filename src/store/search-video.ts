@@ -2,8 +2,8 @@
 import {create} from 'zustand';
 import {devtools, persist, createJSONStorage} from 'zustand/middleware';
 import {z} from 'zod';
-import type {VideoRow} from '@/service/youtube';
-import useSettingStore from "@/store/setting.ts"; // 경로 확인 필요
+import useSettingStore from "@/store/setting.ts";
+import {VideoRow} from "@/components/data-table-columns/result-columns.tsx"; // 경로 확인 필요
 
 // ✅ 검증/정규화용 Zod 스키마(숫자/불리언 타입)
 export const FilterSchema = z

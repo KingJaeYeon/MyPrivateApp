@@ -4,7 +4,8 @@ import { chunk } from '@/lib/utils.ts';
 import { differenceInHours, parseISO } from 'date-fns';
 import { useLogStore } from '@/store/search-video-log.ts';
 import useSettingStore from '@/store/setting.ts';
-import type { VideoRow } from '@/service/youtube.ts';
+
+import {VideoRow} from "@/components/data-table-columns/result-columns.tsx";
 
 export type FetchByKeywordParams = {
   apiKey: string;

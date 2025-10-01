@@ -3,7 +3,8 @@ import { request_youtube } from '@/service/axios';
 import { isoAfterNDays, parseISODurationToSec, formatDuration } from '@/lib/date';
 import { differenceInHours, parseISO } from 'date-fns';
 import { chunk } from '@/lib/utils';
-import type { VideoRow } from '@/service/youtube';
+
+import {VideoRow} from "@/components/data-table-columns/result-columns.tsx";
 
 // ── 유틸: 채널 입력 정규화 (URL/핸들 → id)
 // - 지금은 이미 id 라고 가정. 나중에 필요하면 search.list(type=channel)로 보강.

@@ -1,7 +1,8 @@
 import {create} from 'zustand';
 import {immer} from 'zustand/middleware/immer'
 import {FilterData} from './search-video';
-import {VideoRow} from "@/service/youtube.ts";
+
+import {VideoRow} from "@/components/data-table-columns/result-columns.tsx";
 
 export type ExcelFiles =
     | 'tag'
@@ -19,7 +20,7 @@ export type ExcelColumn = {
     children?: any[]
 }
 
-type SheetConfig = {
+export type SheetConfig = {
     /** essential 컬럼의 ‘정의’. 앱 코드/설정에서만 바뀜. UI 수정 불가 */
     essentialDefs: ExcelColumn[];
     /** essential 컬럼의 ‘순서’. UI에서 드래그 등으로 바꾸는 대상 */
@@ -100,8 +101,8 @@ const seed: State['data'] = {
         tag: {
             essentialDefs: [
                 {id: 1, label: '태그명', column: 'name'},
-                {id: 2, label: '사용중인 채널', column: 'used(channels)'},
-                {id: 3, label: '사용중인 영상', column: 'used(videos)'},
+                {id: 2, label: '사용중인 채널', column: 'usedChannels'},
+                {id: 3, label: '사용중인 영상', column: 'usedVideos'},
                 {id: 4, label: '전체수', column: 'total'},
             ],
             order: [1, 2, 3, 4],

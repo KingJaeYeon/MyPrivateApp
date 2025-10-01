@@ -1,3 +1,4 @@
+// 로컬파일 읽거나 생성할려면 fs를 통해서 생성하고 읽고 처리해야한다.
 import {ipcMain} from "electron"
 import * as XLSX from "xlsx"
 import fs from "node:fs";
@@ -27,7 +28,6 @@ import fs from "node:fs";
 export function setupExcelHandlers() {
     // 새 워크북 + 시트 생성 → 저장
     ipcMain.handle("excel:create", async (_e, filePath: string, data: any[][]) => {
-        console.log('filePath::', filePath, 'data::', data)
         const wb = XLSX.utils.book_new()
         const ws = XLSX.utils.aoa_to_sheet(data)
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1")
@@ -40,7 +40,7 @@ export function setupExcelHandlers() {
     ipcMain.handle("excel:read", async (_e, filePath: string) => {
         const fileBuffer = fs.readFileSync(filePath);
         // XLSX.read 로 워크북 파싱
-        const wb = XLSX.read(fileBuffer, { type: "buffer" });
+        const wb = XLSX.read(fileBuffer, {type: "buffer"});
         const sheet = wb.Sheets[wb.SheetNames[0]]
         return XLSX.utils.sheet_to_json(sheet, {defval: ""})
     })
@@ -53,7 +53,7 @@ export function setupExcelHandlers() {
             const newSheet = XLSX.utils.aoa_to_sheet(data)
             wb.Sheets[sheetName] = newSheet
 
-            const wbout = XLSX.write(wb, { bookType: "xlsx", type: "buffer" })
+            const wbout = XLSX.write(wb, {bookType: "xlsx", type: "buffer"})
             fs.writeFileSync(filePath, wbout)
             return true
         }
@@ -71,7 +71,7 @@ export function setupExcelHandlers() {
             const newSheet = XLSX.utils.json_to_sheet(updated)
             wb.Sheets[sheetName] = newSheet
 
-            const wbout = XLSX.write(wb, { bookType: "xlsx", type: "buffer" })
+            const wbout = XLSX.write(wb, {bookType: "xlsx", type: "buffer"})
             fs.writeFileSync(filePath, wbout)
             return true
         }

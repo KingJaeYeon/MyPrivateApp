@@ -72,31 +72,29 @@ export function ExcelFilesLocation() {
             const hasReference = await window.fsApi.exists(path.reference)
 
             if (!hasTag) {
-                const arr = getOrderedColumns(excel, "tag", "label")
+                const arr = getOrderedColumns(excel, "tag", "column")
                 await window.excelApi.create(path.tag, [arr])
             }
             if (!hasChannel) {
-                const arr = getOrderedColumns(excel, "channel", "label")
+                const arr = getOrderedColumns(excel, "channel", "column")
                 await window.excelApi.create(path.channel, [arr])
             }
             if (!hasEnglish) {
-                const arr = getOrderedColumns(excel, "english", "label")
+                const arr = getOrderedColumns(excel, "english", "column")
                 await window.excelApi.create(path.english, [arr])
             }
             if (!hasPrompt) {
-                const arr = getOrderedColumns(excel, "prompt", "label")
+                const arr = getOrderedColumns(excel, "prompt", "column")
                 await window.excelApi.create(path.prompt, [arr])
             }
             if (!hasReference) {
-                const arr = getOrderedColumns(excel, "reference", "label")
+                const arr = getOrderedColumns(excel, "reference", "column")
                 await window.excelApi.create(path.reference, [arr])
             }
 
             const hasResultDic = await window.fsApi.exists(path.result.split('/')[1])
             if (!hasResultDic) {
-                const arr = path.result.split('/')
-                arr.pop()
-                await window.fsApi.ensureDir(arr.join('/'))
+                await window.fsApi.ensureDir(path.result)
             }
             // const hasProgress = await window.fsApi.exists(`${location}/${name.progress}`)
             alert('생성완료')

@@ -1,7 +1,7 @@
 import {clsx, type ClassValue} from "clsx"
 import {twMerge} from "tailwind-merge"
 import {z, ZodError, ZodType} from "zod";
-import {ExcelColumn, ExcelConfig} from "@/store/setting.ts";
+import {ExcelColumn, ExcelConfig, SheetConfig} from "@/store/setting.ts";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
@@ -86,4 +86,27 @@ function getOrderedColumns(
     if (mode === "column") return orderedDefs.map(d => d.column)
     return orderedDefs
 }
-export {getOrderedColumns}
+
+function buildAoaFromObjects(
+    rows: Record<string, any>[],          // 앱 내부 column기반 데이터 배열
+    sheet: SheetConfig                     // 해당 시트 설정
+): any[][] {
+    // id → def
+    const defsMap = new Map(
+        [...sheet.essentialDefs, ...sheet.optional].map(d => [d.id, d])
+    );
+    // order 순서대로 defs
+    const orderedDefs = sheet.order
+        .map(id => defsMap.get(id))
+        .filter((d): d is ExcelColumn => !!d);
+
+    // 헤더(label)
+    const header = orderedDefs.map(d => d.label);
+
+    // 바디(column 키로 값 추출)
+    const body = rows.map(obj => orderedDefs.map(d => obj[d.column]));
+
+    return [header, ...body];
+}
+
+export {getOrderedColumns,buildAoaFromObjects}

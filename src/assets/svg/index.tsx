@@ -3,3 +3,5 @@ export * from './IconTheme';
 export * from './IconMoreInfo';
 export * from './LoadingSVG'
 export * from './IconCheck'
+export * from './IconTrash'
+export * from './IconPlusMinus'

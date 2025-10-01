@@ -1,14 +1,26 @@
-import type { ColumnDef } from '@tanstack/react-table';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
-import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
-
-import type { VideoRow } from '@/service/youtube.ts';
+import type {ColumnDef} from '@tanstack/react-table';
+import {Button} from '@/components/ui/button.tsx';
+import {toast} from 'sonner';
+import {format} from 'date-fns';
+import {ko} from 'date-fns/locale';
 
 const nf = new Intl.NumberFormat();
 
-export const columns: ColumnDef<VideoRow>[] = [
+export type VideoRow = {
+  no: number;
+  channelTitle: string;
+  title: string;
+  publishedAt: string;
+  viewCount: number;
+  viewsPerHour: number;
+  viewsPerSubscriber: number | null;
+  duration: string; // 표시용 "mm:ss" or "hh:mm:ss"
+  link: string;
+  thumbnailUrl: string;
+  subscriberCount: number | null; // ✅ 구독자 수
+};
+
+export const RESULT_COLUMNS: ColumnDef<VideoRow>[] = [
   {
     accessorKey: 'no',
     header: '#',

@@ -1,5 +1,5 @@
 import useSettingStore from '@/store/setting.ts';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {Label} from '@/components/ui/label.tsx';
 import {Input} from '@/components/ui/input.tsx';
 import {CancelButton, ConnectButton, DeleteButton, EditButton,} from '@/pages/home/components/buttons.tsx';
