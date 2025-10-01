@@ -18,7 +18,7 @@ export function SavedResult() {
 
     useEffect(() => {
         getFiles()
-    }, []);
+    }, [location]);
 
     return <div className={'flex flex-col gap-4 max-w-[1000px] w-full'}>
         <div className={'flex min-w-fit justify-between'}>

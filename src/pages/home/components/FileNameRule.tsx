@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 import useSettingStore, {State} from "@/store/setting.ts";
 import {Button} from "@/components/ui/button.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
+import {cn} from "@/lib/utils.ts";
 
 export function FileNameRule() {
     const [editValues, setEditValues] = useState<State['data']['folder']['name']>()
@@ -96,25 +97,33 @@ export function FileNameRule() {
                 <Label htmlFor="mode" className={'text-xs text-green-500'}>
                     Tags
                 </Label>
-                <Input onChange={e => editHandler('tag', e.target.value)} value={editValues?.tag}/>
+                <Input className={cn(names.tag !== editValues?.tag && 'border-green-500')}
+                       onChange={e => editHandler('tag', e.target.value)}
+                       value={editValues?.tag}/>
             </div>
             <div className={'flex gap-1 flex-col'}>
                 <Label htmlFor="mode" className={'text-xs text-green-500'}>
                     Channel
                 </Label>
-                <Input onChange={e => editHandler('channel', e.target.value)} value={editValues?.channel}/>
+                <Input className={cn(names.channel !== editValues?.channel && 'border-green-500')}
+                       onChange={e => editHandler('channel', e.target.value)}
+                       value={editValues?.channel}/>
             </div>
             <div className={'flex gap-1 flex-col'}>
                 <Label htmlFor="mode" className={'text-xs text-green-500'}>
                     Prompt
                 </Label>
-                <Input onChange={e => editHandler('prompt', e.target.value)} value={editValues?.prompt}/>
+                <Input className={cn(names.prompt !== editValues?.prompt && 'border-green-500')}
+                       onChange={e => editHandler('prompt', e.target.value)}
+                       value={editValues?.prompt}/>
             </div>
             <div className={'flex gap-1 flex-col'}>
                 <Label htmlFor="mode" className={'text-xs text-destructive'}>
                     Result
                 </Label>
-                <Input onChange={e => editHandler('result', e.target.value)} value={editValues?.result}/>
+                <Input className={cn(names.result !== editValues?.result && 'border-destructive')}
+                       onChange={e => editHandler('result', e.target.value)}
+                       value={editValues?.result}/>
             </div>
         </div>
         <div className="flex w-full items-center gap-4">
@@ -122,19 +131,25 @@ export function FileNameRule() {
                 <Label htmlFor="mode" className={'text-xs text-green-500'}>
                     Reference
                 </Label>
-                <Input onChange={e => editHandler('reference', e.target.value)} value={editValues?.reference}/>
+                <Input className={cn(names.reference !== editValues?.reference && 'border-green-500')}
+                       onChange={e => editHandler('reference', e.target.value)}
+                       value={editValues?.reference}/>
             </div>
             <div className={'flex gap-1 flex-col'}>
                 <Label htmlFor="mode" className={'text-xs text-green-500'}>
                     English
                 </Label>
-                <Input onChange={e => editHandler('english', e.target.value)} value={editValues?.english}/>
+                <Input className={cn(names.english !== editValues?.english && 'border-green-500')}
+                       onChange={e => editHandler('english', e.target.value)}
+                       value={editValues?.english}/>
             </div>
             <div className={'flex gap-1 flex-col'}>
                 <Label htmlFor="mode" className={'text-xs text-green-500'}>
                     Progress
                 </Label>
-                <Input onChange={e => editHandler('progress', e.target.value)} value={editValues?.progress}/>
+                <Input className={cn(names.progress !== editValues?.progress && 'border-green-500')}
+                       onChange={e => editHandler('progress', e.target.value)}
+                       value={editValues?.progress}/>
             </div>
         </div>
 
