@@ -70,6 +70,9 @@ export type State = {
         folder: {
             location: string;
             name: Record<ExcelFiles, string>;
+            exportFile: {
+                fileStampMode: 'date' | 'datetime'
+            }
         };
         youtube: {
             apiKey: string;
@@ -172,8 +175,11 @@ const seed: State['data'] = {
     folder: {
         location: '',
         name: {
-            tag: 'tags.xlsx', channel: 'channel.xlsx', result: '[result-yyyy:MM:dd]', prompt: 'prompt.xlsx',
+            tag: 'tags.xlsx', channel: 'channel.xlsx', result: 'result', prompt: 'prompt.xlsx',
             reference: 'reference.xlsx', english: 'english.xlsx', progress: 'progress.xlsx'
+        },
+        exportFile: {
+            fileStampMode: 'date'
         }
     },
     youtube: {apiKey: '', usedQuota: 0},

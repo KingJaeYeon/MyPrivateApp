@@ -2,17 +2,18 @@ import {Label} from "@/components/ui/label.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {useEffect, useState} from "react";
 import useSettingStore, {State} from "@/store/setting.ts";
-import Tip from "@/components/Tip.tsx";
-import IconMoreInfo from "@/assets/svg/IconMoreInfo.tsx";
 import {Button} from "@/components/ui/button.tsx";
+import {Checkbox} from "@/components/ui/checkbox.tsx";
 
 export function FileNameRule() {
     const [editValues, setEditValues] = useState<State['data']['folder']['name']>()
-    const {location, name: names} = useSettingStore(r => r.data.folder)
+    const [editFileDate, setEditFileDate] = useState<'date' | 'datetime'>()
+    const {location, name: names, exportFile} = useSettingStore(r => r.data.folder)
     const {updateIn} = useSettingStore()
 
     useEffect(() => {
         setEditValues(names)
+        setEditFileDate(exportFile.fileStampMode)
     }, [names]);
 
     function editHandler(key: keyof State['data']['folder']['name'], value: string) {
@@ -26,19 +27,21 @@ export function FileNameRule() {
     }
 
     async function UpdateHandler() {
-        const isAllFill= !!editValues?.channel &&
+        const isAllFill = !!editValues?.channel &&
             !!editValues?.tag &&
             !!editValues?.progress &&
             !!editValues?.english &&
             !!editValues?.prompt &&
             !!editValues?.reference &&
-            !!editValues?.result
+            !!editValues?.result &&
+            !!editFileDate
+
         if (!isAllFill) {
             alert('FileName Rule 먼저 체워 주세요.')
             return
         }
 
-        const { result, ...others } = editValues
+        const {result, ...others} = editValues
         const files = Object.values(others)
         const allXlsx = files.every(f => /\.xlsx?$/.test(f.toLowerCase()))
         const resultCheck = /^\//.test(result) || /\./.test(result)
@@ -51,7 +54,11 @@ export function FileNameRule() {
             return
         }
 
-        await updateIn('folder', {name: editValues, location})
+        await updateIn('folder', {
+            name: editValues, location, exportFile: {
+                fileStampMode: editFileDate
+            }
+        })
         alert('저장되었습니다.')
     }
 
@@ -59,6 +66,26 @@ export function FileNameRule() {
         <div className={'flex justify-between items-center'}>
             <Label htmlFor="mode" className="min-w-[100px]">
                 FileName Rule
+                <div className={'flex items-center gap-1 text-green-500 text-xs'}>
+                    <div className={'rounded-full bg-green-500 w-2.5 h-2.5'}/>
+                    파일
+                </div>
+                |
+                <div className={'flex items-center gap-2 text-destructive text-xs'}>
+                    <div className={'flex items-center gap-1'}>
+                        <div className={'rounded-full bg-destructive w-2.5 h-2.5'}/>
+                        <span>폴더</span>
+                    </div>
+                    <div className={'flex gap-1'}>
+                        <Checkbox checked={editFileDate === 'date'} onCheckedChange={_ => setEditFileDate('date')}/>
+                        <span>날짜 [yyyy-MM-dd]</span>
+                    </div>
+                    <div className={'flex gap-1'}>
+                        <Checkbox checked={editFileDate === 'datetime'}
+                                  onCheckedChange={_ => setEditFileDate('datetime')}/>
+                        <span>시간 [yyyy-MM-dd HH:mm]</span>
+                    </div>
+                </div>
             </Label>
             <div className={'flex items-end'}>
                 <Button variant={'secondary'} onClick={UpdateHandler}>저장</Button>
@@ -66,46 +93,45 @@ export function FileNameRule() {
         </div>
         <div className="flex w-full items-center gap-4 mb-4">
             <div className={'flex gap-1 flex-col'}>
-                <Label htmlFor="mode" className={'text-xs'}>
+                <Label htmlFor="mode" className={'text-xs text-green-500'}>
                     Tags
                 </Label>
                 <Input onChange={e => editHandler('tag', e.target.value)} value={editValues?.tag}/>
             </div>
             <div className={'flex gap-1 flex-col'}>
-                <Label htmlFor="mode" className={'text-xs'}>
+                <Label htmlFor="mode" className={'text-xs text-green-500'}>
                     Channel
                 </Label>
                 <Input onChange={e => editHandler('channel', e.target.value)} value={editValues?.channel}/>
             </div>
             <div className={'flex gap-1 flex-col'}>
-                <Label htmlFor="mode" className={'text-xs'}>
-                    Result
-                    <Tip txt={'날짜 포함할려면 맨 앞에 [yyyy-MM-dd]로 넣어주세요'}> <IconMoreInfo/></Tip>
-                </Label>
-                <Input onChange={e => editHandler('result', e.target.value)} value={editValues?.result}/>
-            </div>
-            <div className={'flex gap-1 flex-col'}>
-                <Label htmlFor="mode" className={'text-xs'}>
+                <Label htmlFor="mode" className={'text-xs text-green-500'}>
                     Prompt
                 </Label>
                 <Input onChange={e => editHandler('prompt', e.target.value)} value={editValues?.prompt}/>
             </div>
+            <div className={'flex gap-1 flex-col'}>
+                <Label htmlFor="mode" className={'text-xs text-destructive'}>
+                    Result
+                </Label>
+                <Input onChange={e => editHandler('result', e.target.value)} value={editValues?.result}/>
+            </div>
         </div>
         <div className="flex w-full items-center gap-4">
             <div className={'flex gap-1 flex-col'}>
-                <Label htmlFor="mode" className={'text-xs'}>
+                <Label htmlFor="mode" className={'text-xs text-green-500'}>
                     Reference
                 </Label>
                 <Input onChange={e => editHandler('reference', e.target.value)} value={editValues?.reference}/>
             </div>
             <div className={'flex gap-1 flex-col'}>
-                <Label htmlFor="mode" className={'text-xs'}>
+                <Label htmlFor="mode" className={'text-xs text-green-500'}>
                     English
                 </Label>
                 <Input onChange={e => editHandler('english', e.target.value)} value={editValues?.english}/>
             </div>
             <div className={'flex gap-1 flex-col'}>
-                <Label htmlFor="mode" className={'text-xs'}>
+                <Label htmlFor="mode" className={'text-xs text-green-500'}>
                     Progress
                 </Label>
                 <Input onChange={e => editHandler('progress', e.target.value)} value={editValues?.progress}/>
