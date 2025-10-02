@@ -49,6 +49,8 @@ export function setupExcelHandlers() {
     ipcMain.handle(
         "excel:overwrite",
         async (_e, filePath: string, data: any[][], sheetName = "Sheet1") => {
+            // 기존 파일 백업용 복사파일 생성
+            //
             const wb = XLSX.readFile(filePath)
             const newSheet = XLSX.utils.aoa_to_sheet(data)
             wb.Sheets[sheetName] = newSheet

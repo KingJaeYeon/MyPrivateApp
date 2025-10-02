@@ -3,6 +3,7 @@ import {immer} from 'zustand/middleware/immer'
 import {TagColumns} from "@/components/data-table-columns/tag-columns.tsx";
 import {buildAoaFromObjects} from "@/lib/utils.ts";
 import useSettingStore from "@/store/setting.ts";
+import {toast} from "sonner";
 
 /** 전체 앱 설정 */
 export type State = {
@@ -11,7 +12,7 @@ export type State = {
 
 type Action = {
     init: (filePath: string) => Promise<void>
-    push: (arr: TagColumns[]) => void
+    push: (arr: TagColumns[]) => boolean
     removeTags: (removeArr: TagColumns[]) => void
     saved: () => Promise<void>
 };
@@ -25,10 +26,24 @@ const useTagStore = create(immer<State & Action>((set, get) => ({
     },
     push: (arr) => {
         const temp = get().data;
-        const hasTags = get().data.map(d => d.name)
-        const filterArr = arr.filter(data => !hasTags.includes(data.name))
-        const newArr = [...temp, ...filterArr]
+        const newArr = [...temp, ...arr]
+
+        const nameArr = newArr.map(r=>r.name)
+        const hasDuplicateName = new Set(nameArr).size !== nameArr.length;
+        if (hasDuplicateName) {
+            toast.error('태그명 중복값이 있습니다.')
+            return false; // 중복이 있으면 false
+        }
+
+        const idxArr = newArr.map(r=>r.idx)
+        const hasDuplicateIdx = new Set(idxArr).size !== idxArr.length;
+        if (hasDuplicateIdx) {
+            toast.error('idx중복값이 있습니다.')
+            return false; // 중복이 있으면 false
+        }
+
         set({data: newArr})
+        return true
     },
     removeTags: (removeArr) => {
         const hasTags = get().data;

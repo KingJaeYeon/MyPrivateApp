@@ -61,6 +61,16 @@ export default function TagPage() {
                                 </DropdownMenuContent>
                             </DropdownMenu>
                             <Input
+                                placeholder="Search Idx..."
+                                value={(table.getColumn("idx")?.getFilterValue() as string) ?? ""}
+                                onChange={(event) => {
+                                    console.log(table.getColumn("idx"))
+                                    return table.getColumn("idx")?.setFilterValue(event.target.value)
+                                }
+                                }
+                                className="w-[130px] h-8"
+                            />
+                            <Input
                                 placeholder="Search Tag..."
                                 value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
                                 onChange={(event) => {
@@ -96,20 +106,24 @@ export default function TagPage() {
     </div>
 }
 
+const init = [{
+    idx: '',
+    name: '',
+    usedChannels: 0,
+    usedVideos: 0,
+    total: 0
+}]
 
 function AddTag() {
-    const init = [{
-        name: '',
-        usedChannels: 0,
-        usedVideos: 0,
-        total: 0
-    }]
-    const [inputs, setInputs] = useState<TagColumns[]>(init)
     const {push} = useTagStore()
-
+    const [inputs, setInputs] = useState<TagColumns[]>(init)
     const pushInput = () => {
         if (confirm('추가하시겠습니까?\n(엑셀 갱신버튼은 따로 눌러야합니다.)')) {
-            push(inputs)
+            const result = push(inputs)
+            if (!result) {
+                return
+            }
+
             setInputs(init)
         }
     }
@@ -118,6 +132,7 @@ function AddTag() {
         setInputs([
             ...inputs,
             {
+                idx: '',
                 name: '',
                 usedChannels: 0,
                 usedVideos: 0,
@@ -132,18 +147,18 @@ function AddTag() {
         }
     };
 
-    const setValues = (index: number, value: string) => {
+    const setValues = (index: number, key: string, value: string) => {
         setInputs(
             inputs.map((input, i) => {
                 if (i === index) {
-                    return {...input, name: value};
+                    return {...input, [key]: value};
                 }
                 return input;
             })
         );
     };
 
-    const isEmpty = inputs.every(e => e.name !== '')
+    const isEmpty = inputs.every(e => e.name !== '' && e.idx !== '')
 
     return <div className={'flex flex-3 flex-col'}>
         <div className={'flex justify-end mb-2'}>
@@ -152,9 +167,17 @@ function AddTag() {
         <div className={'flex flex-col'}>
             {inputs.map((input, i) => {
                 return <div className={'flex gap-2 mb-3'} key={i}>
-                    <Input value={input.name}
+                    <Input value={input.idx}
+                           type={'number'}
+                           placeholder={'idx'}
+                           className={'w-[150px]'}
                            onChange={(e) =>
-                               setValues(i, e.target.value.trim())
+                               setValues(i, 'idx', e.target.value.trim())
+                           }/>
+                    <Input value={input.name}
+                           placeholder={'태그명'}
+                           onChange={(e) =>
+                               setValues(i, 'name', e.target.value.trim())
                            }/>
                     <Button size={'icon'} disabled={inputs.length === 1}
                             onClick={() => removeInput(i)}

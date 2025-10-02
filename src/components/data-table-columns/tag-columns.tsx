@@ -6,6 +6,7 @@ const nf = new Intl.NumberFormat();
 
 
 export type TagColumns = {
+    idx: string;
     name: string;
     usedChannels: number;
     usedVideos: number;
@@ -42,6 +43,12 @@ export const TAG_COLUMNS = (isEdit?: boolean): ColumnDef<TagColumns>[] => {
         })
     }
     cols.push({
+            accessorKey: 'idx',
+            header: 'idx',
+            cell: ({row}) => (
+                <span className="tabular-nums text-xs pl-2">{row.original.idx}</span>
+            ),
+        },{
             accessorKey: 'name',
             header: '태그명',
             cell: ({row}) => (

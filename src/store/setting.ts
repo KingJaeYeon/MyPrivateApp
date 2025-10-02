@@ -100,12 +100,13 @@ const seed: State['data'] = {
     excel: {
         tag: {
             essentialDefs: [
-                {id: 1, label: '태그명', column: 'name'},
-                {id: 2, label: '사용중인 채널', column: 'usedChannels'},
-                {id: 3, label: '사용중인 영상', column: 'usedVideos'},
-                {id: 4, label: '전체수', column: 'total'},
+                {id: 1, label: 'idx', column: 'idx'},
+                {id: 2, label: '태그명', column: 'name'},
+                {id: 3, label: '사용중인 채널', column: 'usedChannels'},
+                {id: 4, label: '사용중인 영상', column: 'usedVideos'},
+                {id: 5, label: '전체수', column: 'total'},
             ],
-            order: [1, 2, 3, 4],
+            order: [1, 2, 3, 4, 5],
             optional: [],
         },
         channel: {
@@ -195,6 +196,7 @@ const useSettingStore = create(immer<State & Action>((set, get) => ({
     init: async () => {
         try {
             const stored = await window.pref.get('settings')
+            stored.excel = seed.excel
             if (stored) {
                 set({data: stored}) // 저장된 값으로 state 덮어쓰기
             } else {
