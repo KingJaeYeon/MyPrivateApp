@@ -2,6 +2,8 @@
 import {ipcMain} from "electron"
 import * as XLSX from "xlsx"
 import fs from "node:fs";
+import {format} from "date-fns";
+import path from "node:path";
 
 /**
  * Excel 관련 IPC 핸들러 등록
@@ -49,15 +51,51 @@ export function setupExcelHandlers() {
     ipcMain.handle(
         "excel:overwrite",
         async (_e, filePath: string, data: any[][], sheetName = "Sheet1") => {
-            // 기존 파일 백업용 복사파일 생성
+            // // 기존 파일 백업용 복사파일 생성
+            // const fileBuffer = fs.readFileSync(filePath);
+            // // 파일이름: [yyyy-MM-dd]추가해서 저장
             //
-            const wb = XLSX.readFile(filePath)
-            const newSheet = XLSX.utils.aoa_to_sheet(data)
-            wb.Sheets[sheetName] = newSheet
+            // const wb = XLSX.utils.book_new()
+            // const ws = XLSX.utils.aoa_to_sheet(data)
+            // XLSX.utils.book_append_sheet(wb, ws, "Sheet1")
+            // const wbout = XLSX.write(wb, {bookType: 'xlsx', type: 'buffer'})
+            // fs.writeFileSync(filePath, wbout)
+            // return true
+            try {
+                const parsed = path.parse(filePath);
 
-            const wbout = XLSX.write(wb, {bookType: "xlsx", type: "buffer"})
-            fs.writeFileSync(filePath, wbout)
-            return true
+                // 0) 상위 폴더 보장
+                if (!fs.existsSync(parsed.dir)) {
+                    fs.mkdirSync(parsed.dir, { recursive: true });
+                }
+
+                let backupPath: string | null = null;
+
+                // 1) 기존 파일이 있으면 → [yyyy-MM-dd] 백업본 생성
+                if (fs.existsSync(filePath)) {
+                    const stamp = format(new Date(), "yyyy-MM-dd"); // 파일명에 들어갈 날짜
+                    // 예: tags[2025-10-03].bak.xlsx
+                    backupPath = path.join(parsed.dir, `${parsed.name}[${stamp}].bak${parsed.ext}`);
+                    fs.copyFileSync(filePath, backupPath);
+                }
+
+                // 2) 새 워크북 생성 + 시트 붙이고 → 버퍼로 작성
+                const wb = XLSX.utils.book_new();
+                const ws = XLSX.utils.aoa_to_sheet(data);
+                XLSX.utils.book_append_sheet(wb, ws, sheetName);
+
+                const wbout = XLSX.write(wb, { bookType: "xlsx", type: "buffer" });
+
+                // 3) 원자적 저장 (tmp → rename)
+                const tmp = path.join(parsed.dir, `${parsed.name}.tmp${parsed.ext}`);
+                fs.writeFileSync(tmp, wbout);
+                fs.renameSync(tmp, filePath);
+
+                return { ok: true, backupPath };
+            } catch (err) {
+                console.error("excel:overwrite error", { filePath, err });
+                throw err;
+            }
         }
     )
 

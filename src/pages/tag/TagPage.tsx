@@ -22,8 +22,10 @@ export default function TagPage() {
     const columns = TAG_COLUMNS(isEdit)
 
     const onSavedHandler = async () => {
-        await saved()
-        alert('저장되었습니다.')
+        if (confirm('저장하시겠습니까?')) {
+            await saved()
+            alert('저장되었습니다.')
+        }
     }
 
     return <div className="flex flex-1 px-4 gap-5 w-full">
