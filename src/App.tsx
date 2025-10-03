@@ -10,6 +10,7 @@ import useSettingStore from "@/store/setting.ts";
 import {ThemeProvider} from "@/providers/theme-provider.tsx";
 import TagPage from "@/pages/tag/TagPage.tsx";
 import useTagStore from "@/store/tag.ts";
+import ChannelsPage from "@/pages/channels/ChannelsPage.tsx";
 
 function App() {
     const {init} = useSettingStore();
@@ -81,7 +82,7 @@ function App() {
                     <Route path={'/search-videos'} element={<SearchVideo/>}/>
                     <Route path={'/search-videos/result'} element={<SearchVideoResult/>}/>
                     <Route path={'/tags'} element={<TagPage/>}/>
-                    {/*<Route path={'/channels'} element={<ChannelsPage/>}/>*/}
+                    <Route path={'/channels'} element={<ChannelsPage/>}/>
                     <Route path="*" element={<div>Not Found</div>}/>
                 </Routes>
             </div>
