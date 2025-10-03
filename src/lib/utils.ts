@@ -100,7 +100,7 @@ function buildAoaFromObjects(
         .filter((d): d is ExcelColumn => !!d);
 
     // 헤더(label)
-    const header = orderedDefs.map(d => d.label);
+    const header = orderedDefs.map(d => d.column);
 
     // 바디(column 키로 값 추출)
     const body = rows.map(obj => orderedDefs.map(d => obj[d.column]));

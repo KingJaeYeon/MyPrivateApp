@@ -51,16 +51,6 @@ export function setupExcelHandlers() {
     ipcMain.handle(
         "excel:overwrite",
         async (_e, filePath: string, data: any[][], sheetName = "Sheet1") => {
-            // // 기존 파일 백업용 복사파일 생성
-            // const fileBuffer = fs.readFileSync(filePath);
-            // // 파일이름: [yyyy-MM-dd]추가해서 저장
-            //
-            // const wb = XLSX.utils.book_new()
-            // const ws = XLSX.utils.aoa_to_sheet(data)
-            // XLSX.utils.book_append_sheet(wb, ws, "Sheet1")
-            // const wbout = XLSX.write(wb, {bookType: 'xlsx', type: 'buffer'})
-            // fs.writeFileSync(filePath, wbout)
-            // return true
             try {
                 const parsed = path.parse(filePath);
 
