@@ -48,7 +48,12 @@ export function DataTable<TData, TValue>(
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
         enableMultiSort: true, // ✅ 다중 정렬 허용
-        getFilteredRowModel: getFilteredRowModel()
+        getFilteredRowModel: getFilteredRowModel(),
+        defaultColumn:{
+            size: 80,      // 기본 폭
+            minSize: 40,   // 최소 폭
+            maxSize: 600,  // 필요시
+        }
     });
 
     // ── 무한 스크롤: 보이는 행 개수 관리 ──────────────────────────

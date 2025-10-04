@@ -11,11 +11,13 @@ import {ThemeProvider} from "@/providers/theme-provider.tsx";
 import TagPage from "@/pages/tag/TagPage.tsx";
 import useTagStore from "@/store/tag.ts";
 import ChannelsPage from "@/pages/channels/ChannelsPage.tsx";
+import useChannelStore from "@/store/channels.ts";
 
 function App() {
     const {init} = useSettingStore();
     const {location, name} = useSettingStore(r => r.data.folder)
     const {init: tagInit} = useTagStore()
+    const {init:channelInit} = useChannelStore()
     const [isLoading, setIsLoading] = useState(false);
 
     // 앱 시작 시 1) 저장된 키 자동 로드
@@ -40,6 +42,7 @@ function App() {
             if (location) {
                 try {
                     await tagInit(`${location}/${name.tag}`)
+                    await channelInit(`${location}/${name.channel}`)
                     console.log('API Store initialized');
                 } catch (e) {
                     console.error(e)

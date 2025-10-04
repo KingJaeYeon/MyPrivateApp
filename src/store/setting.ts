@@ -117,12 +117,14 @@ const seed: State['data'] = {
                 {id: 4, label: '국가', column: 'regionCode'},
                 {id: 5, label: '구독자 수', column: 'subscriberCount'},
                 {id: 6, label: '총 조회수', column: 'viewCount'},
-                {id: 7, label: '메모', column: 'meno'},
+                {id: 7, label: '메모', column: 'memo'},
                 {id: 8, label: '키워드', column: 'keyword'},
                 {id: 9, label: '생성일', column: 'publishedAt'},
                 {id: 10, label: '링크', column: 'link'},
+                {id: 12, label: '갱신날짜', column: 'fetchedAt'},
+                {id: 13, label: 'avatar', column: 'icon'}
             ],
-            order: [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 10],
+            order: [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 10, 12, 13],
             optional: [
                 {id: 11, label: '플렛폼', column: 'platform'},
             ]
@@ -147,7 +149,7 @@ const seed: State['data'] = {
             essentialDefs: [
                 {id: 1, label: '태그', column: 'tag'},
                 {id: 2, label: 'Prompt', column: 'prompt'},
-                {id: 3, label: '메모', column: 'meno'},
+                {id: 3, label: '메모', column: 'memo'},
             ],
             order: [1, 2, 3],
             optional: []
@@ -157,7 +159,7 @@ const seed: State['data'] = {
                 {id: 1, label: '이름', column: 'name'},
                 {id: 2, label: '태그', column: 'tag'},
                 {id: 3, label: '링크', column: 'link'},
-                {id: 4, label: '메모', column: 'meno'},
+                {id: 4, label: '메모', column: 'memo'},
             ],
             order: [1, 2, 3, 4],
             optional: []

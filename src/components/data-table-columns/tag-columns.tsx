@@ -19,6 +19,8 @@ export const TAG_COLUMNS = (isEdit?: boolean): ColumnDef<TagColumns>[] => {
     if (isEdit) {
         cols.push({
             id: "select",
+            size: 40,
+            maxSize: 40,
             header: ({table}) => (
                 <Checkbox
                     checked={
