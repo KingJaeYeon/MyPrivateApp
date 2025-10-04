@@ -1,4 +1,4 @@
-import {ipcRenderer, contextBridge, shell} from 'electron'
+import {ipcRenderer, contextBridge} from 'electron'
 
 // --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld('ipcRenderer', {
@@ -32,7 +32,7 @@ contextBridge.exposeInMainWorld('pref', {
 })
 
 contextBridge.exposeInMainWorld('electronAPI', {
-    openExternal: (url: string) => shell.openExternal(url),
+    openExternal: (url:string) => ipcRenderer.invoke('app:openExternal', url),
     // 폴더 선택 다이얼로그를 띄우고 절대경로(string|null) 반환
     pickFolder: async (opts?: { defaultPath?: string }) => {
         const path = await ipcRenderer.invoke('dialog:openDirectory', {defaultPath: opts?.defaultPath})

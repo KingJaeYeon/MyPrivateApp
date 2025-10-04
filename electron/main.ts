@@ -1,4 +1,4 @@
-import {app, BrowserWindow} from 'electron'
+import {app, BrowserWindow, ipcMain, shell} from 'electron'
 import {fileURLToPath} from 'node:url'
 import path from 'node:path'
 
@@ -62,6 +62,7 @@ function createWindow() {
         win?.show()
     });
 
+
     // 전체화면 상태 브로드캐스트
     win.on("enter-full-screen", () => win?.webContents.send("fullscreen-changed", true));
     win.on("leave-full-screen", () => win?.webContents.send("fullscreen-changed", false));
@@ -84,6 +85,14 @@ app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
         createWindow()
     }
+})
+
+ipcMain.handle('app:openExternal', async (_e, url: string) => {
+    if (!/^https?:\/\//i.test(url) && !/^mailto:|^file:\/\//i.test(url)) {
+        throw new Error('Invalid URL scheme')
+    }
+    await shell.openExternal(url)
+    return true
 })
 
 app.whenReady().then(() => {
