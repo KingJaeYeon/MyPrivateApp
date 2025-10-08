@@ -22,7 +22,7 @@ export type ChannelColumns = {
     subscriberCount: number; // ✅ 구독자 수
     memo: string;
     fetchedAt: string;
-    platform:string;
+    platform: string;
 }
 export const text_columns = [{
     accessorKey: 'name',
@@ -67,7 +67,7 @@ export const text_columns = [{
     {
         accessorKey: 'regionCode',
         header: '국가',
-        size:50,
+        size: 50,
         cell: ({row}) => (
             <p className={'cursor-pointer text-xs break-words whitespace-normal pl-2'}>
                 {row.original.regionCode}
@@ -96,7 +96,8 @@ export const text_columns = [{
         size: 120,
         cell: ({row}) => (
             <Tip txt={row.original.memo} className={'max-w-[400px] w-full'}>
-                <span className={'ellipsisLine2 flex cursor-pointer min-w-[250px] w-full text-xs break-words whitespace-normal'}>{row.original.memo}</span>
+                <span
+                    className={'ellipsisLine2 flex cursor-pointer min-w-[250px] w-full text-xs break-words whitespace-normal'}>{row.original.memo}</span>
             </Tip>
 
         ),
@@ -116,25 +117,25 @@ export const text_columns = [{
         cell: ({row}) => (
             <span className="tabular-nums text-xs pl-2">{row.original.publishedAt}</span>
         ),
-    },{
+    }, {
         accessorKey: 'platform',
         header: '플랫폼',
         size: 120,
-        cell: ({row}) => (
-            <span className="tabular-nums text-xs pl-2">{row.original.platform}</span>
+        cell: ({row}) => (<Badge variant="destructive">
+                {row.original.platform}</Badge>
         ),
-    },{
+    }, {
         accessorKey: 'fetchedAt',
         header: '갱신날짜',
         size: 120,
         cell: ({row}) => (
             <span className="tabular-nums text-xs pl-2">{row.original.fetchedAt}</span>
         ),
-    },{
+    }, {
         accessorKey: 'link',
         header: '링크',
         size: 120,
-        cell: ({ row }) => (
+        cell: ({row}) => (
             <Button
                 size="sm"
                 variant="secondary"
@@ -213,7 +214,7 @@ export const CHANNEL_COLUMNS = (isEdit?: boolean): ColumnDef<ChannelColumns>[] =
         {
             accessorKey: 'regionCode',
             header: '국가',
-            size:30,
+            size: 30,
             cell: ({row}) => (
                 <p className={'cursor-pointer text-xs break-words whitespace-normal pl-2'}>
                     {row.original.regionCode}
@@ -242,7 +243,8 @@ export const CHANNEL_COLUMNS = (isEdit?: boolean): ColumnDef<ChannelColumns>[] =
             size: 120,
             cell: ({row}) => (
                 <Tip txt={row.original.memo} className={'max-w-[400px] w-full'}>
-                    <span className={'ellipsisLine2 flex cursor-pointer min-w-[250px] w-full text-xs break-words whitespace-normal'}>{row.original.memo}</span>
+                    <span
+                        className={'ellipsisLine2 flex cursor-pointer min-w-[250px] w-full text-xs break-words whitespace-normal'}>{row.original.memo}</span>
                 </Tip>
 
             ),
@@ -262,11 +264,11 @@ export const CHANNEL_COLUMNS = (isEdit?: boolean): ColumnDef<ChannelColumns>[] =
             cell: ({row}) => (
                 <span className="tabular-nums text-xs pl-2">{row.original.publishedAt}</span>
             ),
-        },{
+        }, {
             accessorKey: 'link',
             header: '링크',
             size: 120,
-            cell: ({ row }) => (
+            cell: ({row}) => (
                 <Button
                     size="sm"
                     variant="secondary"
@@ -276,14 +278,14 @@ export const CHANNEL_COLUMNS = (isEdit?: boolean): ColumnDef<ChannelColumns>[] =
                 </Button>
             ),
             enableSorting: false,
-        },{
+        }, {
             accessorKey: 'platform',
             header: '플랫폼',
             size: 120,
             cell: ({row}) => (
                 <span className="tabular-nums text-xs pl-2">{row.original.platform}</span>
             ),
-        },{
+        }, {
             accessorKey: 'fetchedAt',
             header: '갱신날짜',
             size: 120,
