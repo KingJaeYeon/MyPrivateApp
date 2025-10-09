@@ -21,7 +21,6 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -33,6 +32,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
 import { Textarea } from '@/components/ui/textarea.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
 import useTagStore from '@/store/tag.ts';
+import { IconArrowDown, IconArrowUp } from '@/assets/svg';
+import { cn } from '@/lib/utils.ts';
 
 export default function ChannelsPage() {
   const { data, removeTags, saved } = useChannelStore();
@@ -135,10 +136,11 @@ function AddChannelModal() {
   const usedQuota = useSettingStore((r) => r.data.youtube.usedQuota);
   const { data, removeTags } = useChannelStore();
   const [select, setSelect] = useState<ChannelColumns | null>(null);
-  const tags = useTagStore.getState().JSONData;
+  const { JSONData, data: tags } = useTagStore.getState();
   const onCancel = () => {
     setSelect(null);
   };
+  const [isOpen, setIsOpen] = useState(false);
 
   const onChangeHandler = (key: keyof ChannelColumns, value: string) => {
     const temp = { ...select };
@@ -184,7 +186,7 @@ function AddChannelModal() {
                 <div className="w-[400px] border bg-background shadow-xl p-6 rounded-sm flex flex-col">
                   <div className={'flex flex-1 flex-col gap-3'}>
                     <div className={'flex justify-between'}>
-                      <span className="tabular-nums text-xs pl-2 flex gap-1 items-center">
+                      <span className="tabular-nums text-xs flex gap-1 items-center">
                         <Avatar className={'w-6 h-6'}>
                           <AvatarImage src={select.icon} />
                           <AvatarFallback>CN</AvatarFallback>
@@ -231,7 +233,9 @@ function AddChannelModal() {
                       <Label>링크:</Label>
                       <span className="tabular-nums text-sm font-bold">{select.link}</span>
                     </div>
-                    <div className={'flex flex-1 relative overflow-auto scrollWidth3'}>
+                    <div
+                      className={'flex flex-1 relative overflow-auto scrollWidth3 border-t pt-4'}
+                    >
                       <div className={'flex-col gap-4 absolute flex'}>
                         <div className={'flex flex-col gap-2'}>
                           <Label>플랫폼</Label>
@@ -242,13 +246,71 @@ function AddChannelModal() {
                           />
                         </div>
                         <div className={'flex flex-col gap-2'}>
-                          <Label>태그</Label>
-                          <div className={'flex gap-0.5'}>
-                            {select?.tag.split(',').map((tag, i) => (
-                              <Badge variant="secondary" key={i}>
-                                {tags[tag]}
-                              </Badge>
-                            ))}
+                          <div className={'flex gap-2 justify-between'}>
+                            <Label>태그</Label>
+                            <Button
+                              size={'icon-sm'}
+                              className={'w-5 h-5'}
+                              variant={'ghost'}
+                              onClick={() => setIsOpen(!isOpen)}
+                            >
+                              {isOpen ? <IconArrowDown /> : <IconArrowUp />}
+                            </Button>
+                          </div>
+                          <div className={'flex gap-0.5 flex-wrap'}>
+                            {select.tag === '' ? (
+                              <Label className={'text-xs'}>선택안함</Label>
+                            ) : (
+                              select.tag.split(',').map((tag, i) => (
+                                <Badge
+                                  variant="secondary"
+                                  key={i}
+                                  onClick={() => {
+                                    const currentTags = select?.tag ? select.tag.split(',') : [];
+                                    if (currentTags.includes(tag)) {
+                                      // 이미 있으면 제거
+                                      const newTags = currentTags.filter((t) => t !== tag);
+                                      onChangeHandler('tag', newTags.join(','));
+                                    }
+                                  }}
+                                >
+                                  {JSONData[tag]}
+                                </Badge>
+                              ))
+                            )}
+                          </div>
+                          <div
+                            data-isopen={isOpen}
+                            className={cn('gap-1 flex flex-wrap mt-2', isOpen ? '' : 'hidden')}
+                          >
+                            {tags.map((tag, i) => {
+                              const isSelected = select?.tag
+                                .split(',')
+                                .includes(tag.idx.toString());
+                              return (
+                                <Badge
+                                  key={i}
+                                  variant={isSelected ? 'secondary' : 'outline'}
+                                  className={'cursor-pointer'}
+                                  onClick={() => {
+                                    const currentTags = select?.tag ? select.tag.split(',') : [];
+                                    if (currentTags.includes(tag.idx.toString())) {
+                                      // 이미 있으면 제거
+                                      const newTags = currentTags.filter(
+                                        (t) => t !== tag.idx.toString()
+                                      );
+                                      onChangeHandler('tag', newTags.join(','));
+                                    } else {
+                                      // 없으면 추가
+                                      currentTags.push(tag.idx.toString());
+                                      onChangeHandler('tag', currentTags.join(','));
+                                    }
+                                  }}
+                                >
+                                  {tag.name}
+                                </Badge>
+                              );
+                            })}
                           </div>
                         </div>
                         <div className={'flex flex-col gap-2'}>
