@@ -1,10 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
+import useTagStore from '@/store/tag.ts';
 
 export default function Navigator() {
   const { pathname } = useLocation();
+  const isChanged = useTagStore((state) => state.isChanged);
   const routes = [
     { path: '/', label: 'Home' },
-    {path: '/tags', label: 'Tags'},
+    { path: '/tags', label: 'Tags' },
     { path: '/channels', label: 'Channels' },
     { path: '/search-videos', label: 'Search Videos' },
     { path: '/search-videos/result', label: 'Result' },
@@ -18,6 +20,12 @@ export default function Navigator() {
           key={route.path}
           to={route.path}
           className={pathname === route.path ? 'text-blue-500' : ''}
+          onClick={(e) => {
+            if (isChanged) {
+              alert('태그 저장 후 이동하세요.');
+              e.preventDefault();
+            }
+          }}
         >
           {route.label}
         </Link>

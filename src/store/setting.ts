@@ -1,35 +1,34 @@
-import {create} from 'zustand';
-import {immer} from 'zustand/middleware/immer'
-import {FilterData} from './search-video';
+import { create } from 'zustand';
+import { immer } from 'zustand/middleware/immer';
+import { FilterData } from './search-video';
 
-import {VideoRow} from "@/components/data-table-columns/result-columns.tsx";
+import { VideoRow } from '@/components/data-table-columns/result-columns.tsx';
 
 export type ExcelFiles =
-    | 'tag'
-    | 'channel'
-    | 'result'
-    | 'prompt'
-    | 'reference'
-    | 'english'
-    | 'progress'
+  | 'tag'
+  | 'channel'
+  | 'result'
+  | 'prompt'
+  | 'reference'
+  | 'english'
+  | 'progress';
 
 export type ExcelColumn = {
-    id: number
-    label: string
-    column: string
-    children?: any[]
-}
-
-export type SheetConfig = {
-    /** essential 컬럼의 ‘정의’. 앱 코드/설정에서만 바뀜. UI 수정 불가 */
-    essentialDefs: ExcelColumn[];
-    /** essential 컬럼의 ‘순서’. UI에서 드래그 등으로 바꾸는 대상 */
-    order: number[]; // = essentialDefs의 id 배열
-
-    /** optional 컬럼은 자유롭게 추가/삭제/편집 */
-    optional: ExcelColumn[];
+  id: number;
+  label: string;
+  column: string;
+  children?: any[];
 };
 
+export type SheetConfig = {
+  /** essential 컬럼의 ‘정의’. 앱 코드/설정에서만 바뀜. UI 수정 불가 */
+  essentialDefs: ExcelColumn[];
+  /** essential 컬럼의 ‘순서’. UI에서 드래그 등으로 바꾸는 대상 */
+  order: number[]; // = essentialDefs의 id 배열
+
+  /** optional 컬럼은 자유롭게 추가/삭제/편집 */
+  optional: ExcelColumn[];
+};
 
 // const orderedEssential = order
 //     .map(id => essentialDefs.find(c => c.id === id)!)
@@ -50,7 +49,6 @@ export type SheetConfig = {
 // // 순서 초기화(정의 순서로 되돌리기)
 // function resetorder(sheet: ExcelFiles) { /* order = essentialDefs.map(x=>x.id) */ }
 
-
 // type State = {
 //     youtube: { apiKey: string; usedQuota: number; },
 //     folder: {
@@ -66,157 +64,160 @@ export type SheetConfig = {
 
 /** 전체 앱 설정 */
 export type State = {
-    data: {
-        excel: Record<ExcelFiles, SheetConfig>;
-        folder: {
-            location: string;
-            name: Record<ExcelFiles, string>;
-            exportFile: {
-                fileStampMode: 'date' | 'datetime'
-            }
-        };
-        youtube: {
-            apiKey: string;
-            usedQuota: number;
-        };
-        youtubeHistory: { data: FilterData; result: VideoRow[]; searchedAt: number }[];
-    }
-}
+  data: {
+    excel: Record<ExcelFiles, SheetConfig>;
+    folder: {
+      location: string;
+      name: Record<ExcelFiles, string>;
+      exportFile: {
+        fileStampMode: 'date' | 'datetime';
+      };
+    };
+    youtube: {
+      apiKey: string;
+      usedQuota: number;
+    };
+    youtubeHistory: { data: FilterData; result: VideoRow[]; searchedAt: number }[];
+  };
+};
 
 type Action = {
-    // updateApiKey: (type: 'youtubeApiKey', apiKey: string) => Promise<void>;
-    // init: () => Promise<void>;
-    // deleteApiKey: (type: 'youtubeApiKey') => Promise<void>;
-    // updateQuota: (used: number) => void;
+  // updateApiKey: (type: 'youtubeApiKey', apiKey: string) => Promise<void>;
+  // init: () => Promise<void>;
+  // deleteApiKey: (type: 'youtubeApiKey') => Promise<void>;
+  // updateQuota: (used: number) => void;
 
-    init: () => Promise<void>
-    updateIn: <K extends keyof State['data']>(key: K, value: State['data'][K]) => Promise<void>
+  init: () => Promise<void>;
+  updateIn: <K extends keyof State['data']>(key: K, value: State['data'][K]) => Promise<void>;
 };
 
-export type ExcelConfig = Record<string, SheetConfig>
-
+export type ExcelConfig = Record<string, SheetConfig>;
 
 const seed: State['data'] = {
-    excel: {
-        tag: {
-            essentialDefs: [
-                {id: 1, label: 'idx', column: 'idx'},
-                {id: 2, label: '태그명', column: 'name'},
-                {id: 3, label: '사용중인 채널', column: 'usedChannels'},
-                {id: 4, label: '사용중인 영상', column: 'usedVideos'},
-                {id: 5, label: '전체수', column: 'total'},
-            ],
-            order: [1, 2, 3, 4, 5],
-            optional: [],
-        },
-        channel: {
-            essentialDefs: [
-                {id: 1, label: '채널명', column: 'name'},
-                {id: 2, label: '채널ID', column: 'channelId'},
-                {id: 3, label: '태그', column: 'tag'},
-                {id: 4, label: '국가', column: 'regionCode'},
-                {id: 5, label: '구독자 수', column: 'subscriberCount'},
-                {id: 6, label: '총 조회수', column: 'viewCount'},
-                {id: 7, label: '메모', column: 'memo'},
-                {id: 8, label: '키워드', column: 'keyword'},
-                {id: 9, label: '생성일', column: 'publishedAt'},
-                {id: 10, label: '링크', column: 'link'},
-                {id: 12, label: '갱신날짜', column: 'fetchedAt'},
-                {id: 13, label: 'avatar', column: 'icon'}
-            ],
-            order: [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 10, 12, 13],
-            optional: [
-                {id: 11, label: '플렛폼', column: 'platform'},
-            ]
-        },
-        result: {
-            essentialDefs: [
-                {id: 1, label: '썸네일', column: 'thumbnailUrl'},
-                {id: 2, label: '채널명', column: 'channelTitle'},
-                {id: 3, label: '제목', column: 'title'},
-                {id: 4, label: '업로드일', column: 'publishedAt'},
-                {id: 5, label: '조회수', column: 'viewCount'},
-                {id: 6, label: '시간당 조회수', column: 'viewsPerHour'},
-                {id: 7, label: '구독자수', column: 'subscriberCount'},
-                {id: 8, label: '조회수/구독자수', column: 'viewsPerSubscriber'},
-                {id: 9, label: '영상길이', column: 'duration'},
-                {id: 10, label: '링크', column: 'link'},
-            ],
-            order: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-            optional: []
-        },
-        prompt: {
-            essentialDefs: [
-                {id: 1, label: '태그', column: 'tag'},
-                {id: 2, label: 'Prompt', column: 'prompt'},
-                {id: 3, label: '메모', column: 'memo'},
-            ],
-            order: [1, 2, 3],
-            optional: []
-        },
-        reference: {
-            essentialDefs: [
-                {id: 1, label: '이름', column: 'name'},
-                {id: 2, label: '태그', column: 'tag'},
-                {id: 3, label: '링크', column: 'link'},
-                {id: 4, label: '메모', column: 'memo'},
-            ],
-            order: [1, 2, 3, 4],
-            optional: []
-        },
-        english: {
-            essentialDefs: [
-                {id: 1, label: '패턴', column: 'patten'},
-                {id: 2, label: '예문', column: 'example'},
-                {id: 3, label: '메모(해석)', column: 'memo'},
-                {id: 4, label: '중요도', column: 'isImportant'},
-            ],
-            order: [1, 2, 3, 4],
-            optional: []
-        },
-        progress: {essentialDefs: [], order: [], optional: []},
+  excel: {
+    tag: {
+      essentialDefs: [
+        { id: 1, label: 'idx', column: 'idx' },
+        { id: 2, label: '태그명', column: 'name' },
+        { id: 3, label: '사용중인 채널', column: 'usedChannels' },
+        { id: 4, label: '사용중인 영상', column: 'usedVideos' },
+        { id: 5, label: '전체수', column: 'total' },
+      ],
+      order: [1, 2, 3, 4, 5],
+      optional: [],
     },
-    folder: {
-        location: '',
-        name: {
-            tag: 'tags.xlsx', channel: 'channel.xlsx', result: 'result', prompt: 'prompt.xlsx',
-            reference: 'reference.xlsx', english: 'english.xlsx', progress: 'progress.xlsx'
-        },
-        exportFile: {
-            fileStampMode: 'date'
-        }
+    channel: {
+      essentialDefs: [
+        { id: 1, label: '채널명', column: 'name' },
+        { id: 2, label: '채널ID', column: 'channelId' },
+        { id: 3, label: '핸들', column: 'handle' },
+        { id: 4, label: '태그', column: 'tag' },
+        { id: 5, label: '국가', column: 'regionCode' },
+        { id: 6, label: '구독자 수', column: 'subscriberCount' },
+        { id: 7, label: '총 조회수', column: 'viewCount' },
+        { id: 8, label: '동영상 수', column: 'videoCount' },
+        { id: 9, label: '메모', column: 'memo' },
+        { id: 10, label: '생성일', column: 'publishedAt' },
+        { id: 12, label: '링크', column: 'link' },
+        { id: 13, label: '갱신날짜', column: 'fetchedAt' },
+        { id: 14, label: 'avatar', column: 'icon' },
+      ],
+      order: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+      optional: [{ id: 11, label: '플렛폼', column: 'platform' }],
     },
-    youtube: {apiKey: '', usedQuota: 0},
-    youtubeHistory: []
+    result: {
+      essentialDefs: [
+        { id: 1, label: '썸네일', column: 'thumbnailUrl' },
+        { id: 2, label: '채널명', column: 'channelTitle' },
+        { id: 3, label: '제목', column: 'title' },
+        { id: 4, label: '업로드일', column: 'publishedAt' },
+        { id: 5, label: '조회수', column: 'viewCount' },
+        { id: 6, label: '시간당 조회수', column: 'viewsPerHour' },
+        { id: 7, label: '구독자수', column: 'subscriberCount' },
+        { id: 8, label: '조회수/구독자수', column: 'viewsPerSubscriber' },
+        { id: 9, label: '영상길이', column: 'duration' },
+        { id: 10, label: '링크', column: 'link' },
+      ],
+      order: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      optional: [],
+    },
+    prompt: {
+      essentialDefs: [
+        { id: 1, label: '태그', column: 'tag' },
+        { id: 2, label: 'Prompt', column: 'prompt' },
+        { id: 3, label: '메모', column: 'memo' },
+      ],
+      order: [1, 2, 3],
+      optional: [],
+    },
+    reference: {
+      essentialDefs: [
+        { id: 1, label: '이름', column: 'name' },
+        { id: 2, label: '태그', column: 'tag' },
+        { id: 3, label: '링크', column: 'link' },
+        { id: 4, label: '메모', column: 'memo' },
+      ],
+      order: [1, 2, 3, 4],
+      optional: [],
+    },
+    english: {
+      essentialDefs: [
+        { id: 1, label: '패턴', column: 'patten' },
+        { id: 2, label: '예문', column: 'example' },
+        { id: 3, label: '메모(해석)', column: 'memo' },
+        { id: 4, label: '중요도', column: 'isImportant' },
+      ],
+      order: [1, 2, 3, 4],
+      optional: [],
+    },
+    progress: { essentialDefs: [], order: [], optional: [] },
+  },
+  folder: {
+    location: '',
+    name: {
+      tag: 'tags.xlsx',
+      channel: 'channel.xlsx',
+      result: 'result',
+      prompt: 'prompt.xlsx',
+      reference: 'reference.xlsx',
+      english: 'english.xlsx',
+      progress: 'progress.xlsx',
+    },
+    exportFile: {
+      fileStampMode: 'date',
+    },
+  },
+  youtube: { apiKey: '', usedQuota: 0 },
+  youtubeHistory: [],
 };
 
-
-const useSettingStore = create(immer<State & Action>((set, get) => ({
+const useSettingStore = create(
+  immer<State & Action>((set, get) => ({
     data: seed,
 
     /** 앱 시작 시 호출: electron-store에서 값 불러와 zustand state 세팅 */
     init: async () => {
-        try {
-            const stored = await window.pref.get('settings')
-            stored.excel = seed.excel
-            if (stored) {
-                set({data: stored}) // 저장된 값으로 state 덮어쓰기
-            } else {
-                // 저장된 값이 없다면 seed를 electron-store에 기록
-                await window.pref.set('settings', seed)
-            }
-        } catch (err) {
-            console.error('init error', err)
+      try {
+        const stored = await window.pref.get('settings');
+        stored.excel = seed.excel;
+        if (stored) {
+          set({ data: stored }); // 저장된 값으로 state 덮어쓰기
+        } else {
+          // 저장된 값이 없다면 seed를 electron-store에 기록
+          await window.pref.set('settings', seed);
         }
+      } catch (err) {
+        console.error('init error', err);
+      }
     },
     /** 특정 key만 부분 업데이트 + electron-store 반영 */
     updateIn: async (key, value) => {
-        set(draft => {
-            draft.data[key] = value as State['data'][typeof key]
-        })
-        await window.pref.set('settings', get().data)
+      set((draft) => {
+        draft.data[key] = value as State['data'][typeof key];
+      });
+      await window.pref.set('settings', get().data);
     },
-
-})));
+  }))
+);
 
 export default useSettingStore;
