@@ -6,21 +6,17 @@ import { useLogStore } from '@/store/search-video-log.ts';
 import { useMutation } from '@tanstack/react-query';
 import { getVideoByKeywords } from '@/service/youtube.keywords.ts';
 import { zodParseSafe } from '@/lib/utils.ts';
-import { getPopularVideos } from '@/service/youtube.popular.ts';
 
 export function ActionsButtons() {
   const { data, setResult, clearResult, savedHistory, setErrors } = useFilterStore();
-  const youtubeApiKey = useSettingStore(r=>r.data.youtube.apiKey);
+  const youtubeApiKey = useSettingStore((r) => r.data.youtube.apiKey);
   const Log = useLogStore();
 
   const { mutate, isPending } = useMutation({
     mutationKey: ['search-youtube', data], // (선택) 디버그 가독성
     mutationFn: async (d: any) => {
       if (d.mode === 'channels') {
-        // 나중에 채널 API 연결
         return await getVideoByKeywords({ ...d, apiKey: youtubeApiKey });
-      } else if (d.mode === 'popular') {
-        return await getPopularVideos({ ...d, apiKey: youtubeApiKey });
       } else {
         return await getVideoByKeywords({ ...d, apiKey: youtubeApiKey });
       }

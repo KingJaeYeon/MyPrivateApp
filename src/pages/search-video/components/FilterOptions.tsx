@@ -30,7 +30,6 @@ export function FilterOptions() {
             <SelectContent>
               <SelectGroup>
                 <SelectItem value="channels">채널</SelectItem>
-                <SelectItem value="popular">인기순</SelectItem>
                 <SelectItem value="keywords">키워드</SelectItem>
               </SelectGroup>
             </SelectContent>
@@ -154,7 +153,7 @@ export function FilterOptions() {
             </SelectContent>
           </Select>
         </div>
-        {(data.mode === 'keywords' || data.mode === 'popular') && (
+        {data.mode === 'keywords' && (
           <div className="flex w-full max-w-sm items-center gap-2 justify-between">
             <Label htmlFor="maxResults" className="min-w-fit">
               최대 검색 개수

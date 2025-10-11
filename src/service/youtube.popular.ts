@@ -4,7 +4,7 @@ import { differenceInHours, parseISO } from 'date-fns';
 import { chunk } from '@/lib/utils.ts';
 import useSettingStore from '@/store/setting.ts';
 import { useLogStore } from '@/store/search-video-log.ts';
-import {VideoRow} from "@/components/data-table-columns/result-columns.tsx";
+import { VideoRow } from '@/components/data-table-columns/result-columns.tsx';
 
 export type FetchPopularParams = {
   apiKey: string;
@@ -17,6 +17,11 @@ export type FetchPopularParams = {
   minViewsPerHour?: number; // 시간당 조회수(2차 필터)
 };
 
+/*** 인기 동영상 검색 (YouTube Data API v3)
+ * @deprecated 뉴스, 뮤직 등 특정 카테고리 필터링 불가
+ * @param params
+ * @return {Promise<VideoRow[]>} VideoRow[]
+ *   ***/
 export async function getPopularVideos(params: FetchPopularParams): Promise<VideoRow[]> {
   const {
     apiKey,
@@ -56,12 +61,10 @@ export async function getPopularVideos(params: FetchPopularParams): Promise<Vide
 
     const url = `${request_youtube.defaults.baseURL}videos?${new URLSearchParams(paramsObj).toString()}`;
     Log.note(`[API 요청] ${url}`);
-    await settingStore.updateIn(
-        'youtube',{
-          apiKey: settingStore.data.youtube.apiKey,
-          usedQuota: settingStore.data.youtube.usedQuota + 1
-        }
-    ); // videos.list 1회 카운트
+    await settingStore.updateIn('youtube', {
+      apiKey: settingStore.data.youtube.apiKey,
+      usedQuota: settingStore.data.youtube.usedQuota + 1,
+    }); // videos.list 1회 카운트
 
     const resp = await request_youtube.get('videos', { params: paramsObj });
     const items: any[] = resp.data?.items ?? [];
@@ -120,12 +123,10 @@ export async function getPopularVideos(params: FetchPopularParams): Promise<Vide
     const cParams = { key: apiKey, part: 'statistics', id: batch.join(',') };
     const curl = `${request_youtube.defaults.baseURL}channels?${new URLSearchParams(cParams).toString()}`;
     Log.note(`[API 요청] ${curl}`);
-    await settingStore.updateIn(
-        'youtube',{
-          apiKey: settingStore.data.youtube.apiKey,
-          usedQuota: settingStore.data.youtube.usedQuota + 1
-        }
-    ); // vid
+    await settingStore.updateIn('youtube', {
+      apiKey: settingStore.data.youtube.apiKey,
+      usedQuota: settingStore.data.youtube.usedQuota + 1,
+    }); // vid
 
     const cResp = await request_youtube.get('channels', { params: cParams });
     for (const ch of cResp.data?.items ?? []) {
