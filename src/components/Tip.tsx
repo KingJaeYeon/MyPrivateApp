@@ -16,7 +16,9 @@ export default function Tip({
 }) {
   return (
     <Tooltip>
-      <TooltipTrigger asChild={asChild}>{children}</TooltipTrigger>
+      <TooltipTrigger asChild={asChild} className={'text-start'}>
+        {children}
+      </TooltipTrigger>
       <TooltipContent className={className}>
         <p className={'whitespace-break-spaces'}>{txt}</p>
       </TooltipContent>
