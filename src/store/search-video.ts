@@ -73,9 +73,9 @@ type FieldErrorKey = keyof FilterData;
 
 export type FilterState = {
   data: FilterData;
+  isChanged: boolean;
   result: VideoRow[];
   set: <K extends keyof FilterData>(k: K, v: FilterData[K]) => void;
-  setMany: (patch: Partial<FilterData>) => void;
   reset: () => void;
   isValidDays: () => boolean;
   savedHistory: () => Promise<void>;
@@ -106,21 +106,25 @@ export const useFilterStore = create<FilterState>()(
     persist(
       (set, get) => ({
         data: { ...defaultData },
+        isChanged: true,
         result: [],
 
-        set: (k, v) =>
-          set((s) => ({ data: { ...s.data, [k]: v } }), false, `filter:set:${String(k)}`),
-
-        setMany: (patch) =>
-          set((s) => ({ data: { ...s.data, ...patch } }), false, 'filter:setMany'),
-
+        set: (k, v) => {
+          set(
+            (s) => ({ data: { ...s.data, [k]: v }, isChanged: true }),
+            false,
+            `filter:set:${String(k)}`
+          );
+        },
         reset: () => set({ data: { ...defaultData } }, false, 'filter:reset'),
 
         isValidDays: () => {
           const n = Number(get().data.days);
           return !Number.isNaN(n) && n > 0;
         },
-        setResult: (rows) => set({ result: rows }, false, 'result:set'),
+        setResult: (rows) => {
+          set({ result: rows, isChanged: false }, false, 'result:set');
+        },
         clearResult: () => set({ result: [] }, false, 'result:clear'),
 
         savedHistory: async () => {

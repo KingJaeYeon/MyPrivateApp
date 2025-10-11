@@ -8,7 +8,7 @@ import { getVideoByKeywords } from '@/service/youtube.keywords.ts';
 import { zodParseSafe } from '@/lib/utils.ts';
 
 export function ActionsButtons() {
-  const { data, setResult, clearResult, savedHistory, setErrors } = useFilterStore();
+  const { data, setResult, clearResult, savedHistory, setErrors, isChanged } = useFilterStore();
   const youtubeApiKey = useSettingStore((r) => r.data.youtube.apiKey);
   const Log = useLogStore();
 
@@ -43,6 +43,11 @@ export function ActionsButtons() {
     if (!result.success) {
       setErrors?.(result.issues.map((e) => e.path[0]) as any);
       window.alert(result.data);
+      return;
+    }
+
+    if (!isChanged) {
+      alert('검색 조건이 이전과 동일합니다. 조건을 변경한 후 다시 시도해주세요.');
       return;
     }
 
