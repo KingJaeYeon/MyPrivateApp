@@ -121,7 +121,7 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
       <div ref={containerRef} className="overflow-auto relative flex flex-1 scrollWidth3">
-        <div className="rounded-md border w-full h-full absolute top-0 left-0 ">
+        <div className="rounded-md border w-full h-full absolute top-0 left-0">
           <Table className="relative ">
             <TableHeader className="sticky top-0 bg-background z-10">
               {table.getHeaderGroups().map((hg) => (

@@ -6,3 +6,4 @@ export * from './IconCheck';
 export * from './IconTrash';
 export * from './IconPlusMinus';
 export * from './IconArrow';
+export * from './IconProvider.tsx';
