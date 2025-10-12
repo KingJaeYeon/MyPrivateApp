@@ -14,6 +14,7 @@ import IconMoreInfo from '@/assets/svg/IconMoreInfo.tsx';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
 import React from 'react';
 import { TagFilterRow } from '@/pages/search-video/components/TagFilterRow.tsx';
+import { cn } from '@/lib/utils.ts';
 
 export function FilterOptions() {
   const { data, set, isValidDays, fieldErrorsKeys } = useFilterStore();
@@ -98,9 +99,9 @@ export function FilterOptions() {
                   aria-invalid={fieldErrorsKeys.includes('maxChannels')}
                 />
               </div>
-              <div className="flex w-full max-w-sm items-center gap-2 justify-between">
+              <div className="flex w-full max-w-sm items-center gap-2 justify-between h-8">
                 <Label htmlFor="language" className="min-w-fit">
-                  채널별 인기영상 보기
+                  채널별 누적 인기영상 보기
                 </Label>
                 <Checkbox
                   checked={data.isPopularVideosOnly}
@@ -138,31 +139,51 @@ export function FilterOptions() {
             </Select>
           </div>
           <div className="flex w-full max-w-sm items-center gap-2 justify-between">
-            <Label htmlFor="minViews" className="min-w-fit">
+            <Label
+              htmlFor="minViews"
+              className={cn(
+                'min-w-fit',
+                data.isPopularVideosOnly && data.mode === 'channels' && 'opacity-50'
+              )}
+            >
               최소 조회수
             </Label>
             <Input
               id="minViews"
               value={data.minViews}
+              disabled={data.isPopularVideosOnly && data.mode === 'channels'}
               onChange={(e) => set('minViews', e.target.value)}
               className="w-[70px] h-8"
               aria-invalid={fieldErrorsKeys.includes('minViews')}
             />
           </div>
           <div className="flex w-full max-w-sm items-center gap-2 justify-between">
-            <Label htmlFor="MinimumViewsPerHour" className="min-w-fit">
+            <Label
+              htmlFor="MinimumViewsPerHour"
+              className={cn(
+                'min-w-fit',
+                data.isPopularVideosOnly && data.mode === 'channels' && 'opacity-50'
+              )}
+            >
               최소 시간당 조회수(vph)
             </Label>
             <Input
               id="MinimumViewsPerHour"
               value={data.minViewsPerHour}
+              disabled={data.isPopularVideosOnly && data.mode === 'channels'}
               onChange={(e) => set('minViewsPerHour', e.target.value)}
               className="w-[70px] h-8"
               aria-invalid={fieldErrorsKeys.includes('minViewsPerHour')}
             />
           </div>
           <div className="flex w-full max-w-sm items-center gap-2 justify-between">
-            <Label htmlFor="day" className="min-w-fit">
+            <Label
+              htmlFor="day"
+              className={cn(
+                'min-w-fit',
+                data.isPopularVideosOnly && data.mode === 'channels' && 'opacity-50'
+              )}
+            >
               최근 {isValidDays() ? data.days : 'N'}일 이내 업로드된 영상 분석
               <Tip txt="최대: 50">
                 <IconMoreInfo />
@@ -171,6 +192,7 @@ export function FilterOptions() {
             <Input
               id="day"
               value={data.days}
+              disabled={data.isPopularVideosOnly && data.mode === 'channels'}
               onChange={(e) => set('days', e.target.value)}
               className="w-[70px] h-8"
               aria-invalid={fieldErrorsKeys.includes('days')}
