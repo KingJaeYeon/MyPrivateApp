@@ -20,7 +20,7 @@ export function ChannelEditPanel({
 }) {
   if (!select) return null;
   const nf = new Intl.NumberFormat();
-  const { JSONData, data: tags } = useTagStore.getState();
+  const { jsonData, data: tags } = useTagStore.getState();
   const { data, update } = useChannelStore();
   const [isOpen, setIsOpen] = useState(false);
   const onCancel = () => setSelect(null);
@@ -143,7 +143,7 @@ export function ChannelEditPanel({
                         }
                       }}
                     >
-                      {JSONData[tag]}
+                      {jsonData[tag]}
                     </Badge>
                   ))
                 )}

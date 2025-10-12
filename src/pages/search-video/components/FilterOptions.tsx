@@ -20,7 +20,7 @@ export function FilterOptions() {
 
   return (
     <>
-      <TagFilterRow />
+      <TagFilterRow mode={data.mode} />
       <div className={'grid-cols-3 grid w-full gap-x-6'}>
         <div className="flex flex-col gap-2">
           <div className="flex w-full max-w-sm items-center gap-2 justify-between">

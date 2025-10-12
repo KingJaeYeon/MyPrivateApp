@@ -87,7 +87,7 @@ export type FilterState = {
 
 // ✅ 스토어 초기값 (UI용 문자열)
 const defaultData: FilterData = {
-  mode: 'channels',
+  mode: 'keywords',
   keyword: '',
   days: '7',
   maxChannels: '10',

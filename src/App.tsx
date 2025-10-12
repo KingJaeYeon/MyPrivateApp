@@ -1,5 +1,5 @@
 import { SystemProvider } from '@/providers/system-provider.tsx';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Outlet } from 'react-router-dom';
 import ThemeToggle from '@/components/ThemeToggle.tsx';
 import Navigator from '@/components/Navigator.tsx';
 import { Home } from '@/pages/home/Home.tsx';
@@ -79,6 +79,7 @@ function App() {
           <ThemeToggle />
         </div>
         <Navigator />
+        <Outlet />
         <Routes>
           <Route path={'/'} element={<Home />} />
           {/*<Route path={'/about'} element={<About/>}/>*/}

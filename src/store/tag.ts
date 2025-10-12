@@ -9,7 +9,7 @@ import useChannelStore from '@/store/channels.ts';
 /** 전체 앱 설정 */
 export type State = {
   data: TagColumns[];
-  JSONData: Record<string, any>;
+  jsonData: Record<string, any>;
   isChanged?: boolean;
 };
 
@@ -24,12 +24,12 @@ type Action = {
 const useTagStore = create(
   immer<State & Action>((set, get) => ({
     data: [],
-    JSONData: {},
+    jsonData: {},
     isChanged: false,
     /** 앱 시작 시 호출: electron-store에서 값 불러와 zustand state 세팅 */
     init: async (filePath) => {
       const result = await window.excelApi.read(filePath);
-      const JSONData = result.reduce(
+      const jsonData = result.reduce(
         (acc, cur) => {
           acc[cur.idx] = cur.name;
           return acc;
@@ -37,7 +37,7 @@ const useTagStore = create(
         {} as Record<string, any>
       );
 
-      set({ data: result, JSONData });
+      set({ data: result, jsonData });
       get().updateCounter('channel');
     },
     updateCounter: (type: string) => {
@@ -113,7 +113,7 @@ const useTagStore = create(
       const { name, location } = useSettingStore.getState().data.folder;
       const aoa = buildAoaFromObjects(get().data, tagSheet);
 
-      const JSONData = get().data.reduce(
+      const jsonData = get().data.reduce(
         (acc, cur) => {
           acc[cur.idx] = cur.name;
           return acc;
@@ -122,7 +122,7 @@ const useTagStore = create(
       );
 
       await window.excelApi.overwrite(`${location}/${name.tag}`, aoa, 'Sheet1');
-      set({ JSONData, isChanged: false });
+      set({ jsonData, isChanged: false });
     },
   }))
 );

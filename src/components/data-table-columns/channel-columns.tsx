@@ -61,7 +61,7 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     maxSize: 1000,
     minSize: 200,
     cell: ({ row }) => {
-      const tags = useTagStore.getState().JSONData;
+      const tags = useTagStore.getState().jsonData;
       return (
         <div className={'flex-wrap gap-0.5 flex'}>
           {row.original.tag.split(',').map((tag, i) => (

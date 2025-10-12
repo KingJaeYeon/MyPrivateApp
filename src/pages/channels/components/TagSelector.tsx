@@ -45,8 +45,9 @@ export default function TagSelector({
             <CommandEmpty>No Tag found.</CommandEmpty>
             <CommandGroup>
               <CommandItem
-                key={'none'}
-                value={''}
+                key="__clear__"
+                value=""
+                className={cn(value === '' && 'bg-accent')}
                 onSelect={(currentValue) => {
                   setValue(currentValue === value ? '' : currentValue);
                   setOpen(false);
@@ -62,10 +63,11 @@ export default function TagSelector({
                     setValue(currentValue === value ? '' : currentValue);
                     setOpen(false);
                   }}
+                  className={cn(value === tag.idx && 'bg-accent')}
                 >
                   {tag.name}
                   <Check
-                    className={cn('ml-auto', value === tag.name ? 'opacity-100' : 'opacity-0')}
+                    className={cn('ml-auto', value === tag.idx ? 'opacity-100' : 'opacity-0')}
                   />
                 </CommandItem>
               ))}
