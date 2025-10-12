@@ -67,6 +67,7 @@ export type FilterData = {
   shortsDuration: string;
   relevanceLanguage: string;
   minViews: string;
+  channelIds: string;
 };
 
 type FieldErrorKey = keyof FilterData;
@@ -99,6 +100,7 @@ const defaultData: FilterData = {
   shortsDuration: '60',
   relevanceLanguage: 'ko',
   minViews: '1000',
+  channelIds: '',
 };
 
 export const useFilterStore = create<FilterState>()(

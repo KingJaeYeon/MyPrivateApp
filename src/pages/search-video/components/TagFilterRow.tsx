@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import useTagStore from '@/store/tag';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Label } from '@/components/ui/label.tsx';
 import ButtonSwitcher from '@/components/ButtonSwitcher.tsx';
 import { Alert, AlertTitle } from '@/components/ui/alert.tsx';
@@ -20,31 +20,13 @@ import { toast } from 'sonner';
 import { Muted } from '@/components/typography.tsx';
 import useChannelStore from '@/store/channels.ts';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
+import { ChannelColumns } from '@/components/data-table-columns/channel-columns.tsx';
+import { useFilterStore } from '@/store/search-video.ts';
 
 export function TagFilterRow({ mode }: { mode: 'channels' | 'keywords' }) {
-  // const { data: filter, set } = useFilterStore((s) => ({ data: s.data, set: s.set }));
-  const tags = useTagStore((s) => s.data);
-  const [open, setOpen] = useState(false);
-
   const [tagLogic, setTagLogic] = useState<string>('AND');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-
-  // idx → name 매핑
-  // const selectedTags = useMemo(
-  //   () =>
-  //     filter.selectedTagIds.map((id) => tags.find((t) => t.idx === id)).filter(Boolean) as {
-  //       idx: number;
-  //       name: string;
-  //       color?: string;
-  //     }[],
-  //   [filter.selectedTagIds, tags]
-  // );
-  //
-  // const toggleTag = (idx: number) => {
-  //   const cur = new Set(filter.selectedTagIds);
-  //   cur.has(idx) ? cur.delete(idx) : cur.add(idx);
-  //   set('selectedTagIds', Array.from(cur));
-  // };
+  const [selectedChannels, setSelectedChannels] = useState<ChannelColumns[]>([]);
 
   return (
     <div
@@ -67,9 +49,15 @@ export function TagFilterRow({ mode }: { mode: 'channels' | 'keywords' }) {
           />
         </div>
         <div className={'flex gap-2 items-center'}>
-          <TagSelector selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
+          <TagSelector
+            selectedTags={selectedTags}
+            setSelectedTags={setSelectedTags}
+            selectedChannels={selectedChannels}
+            setSelectedChannels={setSelectedChannels}
+            logic={tagLogic}
+          />
           <Alert size={'sm'} className={'w-[300px]'}>
-            <AlertTitle>{`채널 ${selectedTags.length}개 검색(${tagLogic})`}</AlertTitle>
+            <AlertTitle>{`채널 ${selectedChannels.length}개 검색(${tagLogic})`}</AlertTitle>
           </Alert>
         </div>
       </div>
@@ -80,14 +68,43 @@ export function TagFilterRow({ mode }: { mode: 'channels' | 'keywords' }) {
 function TagSelector({
   selectedTags,
   setSelectedTags,
+  selectedChannels,
+  setSelectedChannels,
+  logic,
 }: {
   selectedTags: string[];
   setSelectedTags: (tags: string[]) => void;
+  selectedChannels: ChannelColumns[];
+  setSelectedChannels: (channels: ChannelColumns[]) => void;
+  logic: string;
 }) {
   const { data: tags, jsonData } = useTagStore();
   const channels = useChannelStore((s) => s.data);
+  const { set } = useFilterStore();
   const [tempTags, setTempTags] = useState<string[]>(selectedTags);
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    let filteredChannels: ChannelColumns[] = [];
+    if (selectedTags.length === 0) {
+      filteredChannels = channels;
+    } else {
+      if (logic === 'OR') {
+        filteredChannels = channels.filter((channel) => {
+          const channelTags = channel.tag.split(',').map((t) => jsonData[t.trim()]);
+          return selectedTags.some((tag) => channelTags.includes(tag));
+        });
+      } else if (logic === 'AND') {
+        filteredChannels = channels.filter((channel) => {
+          const channelTags = channel.tag.split(',').map((t) => jsonData[t.trim()]);
+          return selectedTags.every((tag) => channelTags.includes(tag));
+        });
+      }
+    }
+    setSelectedChannels(filteredChannels);
+    set('channelIds', filteredChannels.map((c) => c.channelId).join(','));
+  }, [selectedTags, logic, channels, jsonData, setSelectedChannels]);
+
   return (
     <Sheet
       open={open}
@@ -102,9 +119,15 @@ function TagSelector({
         <Button
           size={'sm'}
           variant={'outline'}
-          className={'w-[260px] justify-start px-3 cursor-pointer'}
+          className={'min-w-[260px] justify-start px-2 cursor-pointer'}
         >
-          태그 검색 ( Max:5 )...
+          {selectedTags.length === 0
+            ? '태그 검색 ( Max:5 )...'
+            : selectedTags.map((tag) => (
+                <Badge key={tag} variant="green">
+                  {tag}
+                </Badge>
+              ))}
         </Button>
       </SheetTrigger>
       <SheetContent side={'left'} className={'min-w-[400px] flex flex-1 flex-col'}>
@@ -114,7 +137,7 @@ function TagSelector({
         </SheetHeader>
         <div className="flex flex-col flex-1 auto-rows-min gap-6">
           <div className={'flex flex-col gap-3'}>
-            <Muted>태그를 선택해주세요:</Muted>
+            <Muted>태그를 선택해주세요: {selectedTags.length}</Muted>
             <div className={'flex flex-wrap gap-1 max-h-[250px] overflow-auto scrollWidth3'}>
               {tags.map((tag) => {
                 const selected = tempTags.includes(tag.name);
@@ -145,11 +168,11 @@ function TagSelector({
             </div>
           </div>
           <div className={'flex flex-col gap-3 flex-1'}>
-            <Muted>해당되는 채널리스트: 2</Muted>
+            <Muted>해당되는 채널리스트: {selectedChannels.length}</Muted>
             <div className={'relative flex flex-1 overflow-auto scrollWidth3 h-full'}>
               <div className={'absolute w-full h-full'}>
                 <div className="w-full rounded-md border flex-1 h-full px-4 flex flex-col">
-                  {channels.map((channel) => (
+                  {selectedChannels.map((channel) => (
                     <div className={'flex w-full border-b justify-between items-center py-2'}>
                       <span
                         className="tabular-nums text-xs py-2 flex flex-1 gap-1 items-center"
@@ -181,6 +204,7 @@ function TagSelector({
               setSelectedTags(tempTags);
               toast.success(`태그 필터가 적용되었습니다.`);
             }}
+            variant={selectedTags.length !== tempTags.length ? 'destructive' : 'default'}
           >
             Save
           </Button>
