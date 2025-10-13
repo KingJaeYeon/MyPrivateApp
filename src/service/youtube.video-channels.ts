@@ -5,34 +5,7 @@ import { differenceInHours, parseISO } from 'date-fns';
 import { chunk } from '@/lib/utils';
 
 import { VideoRow } from '@/components/data-table-columns/result-columns.tsx';
-
-// ── 유틸: 채널 입력 정규화 (URL/핸들 → id)
-// - 지금은 이미 id 라고 가정. 나중에 필요하면 search.list(type=channel)로 보강.
-export function normalizeChannelInputs(inputs: string[]): string[] {
-  return inputs
-    .map((s) => s.trim())
-    .filter(Boolean)
-    .map((s) => {
-      // https://www.youtube.com/channel/UCxxx → UCxxx
-      const m1 = s.match(/youtube\.com\/channel\/([A-Za-z0-9_-]+)/i);
-      if (m1) return m1[1];
-      // @handle → 그대로 search.list 로 ID resolve 가능 (여기선 생략)
-      return s;
-    });
-}
-
-type Params = {
-  apiKey: string;
-  channelIds: string[]; // ← UI에서 붙여줄 예정
-  days: number;
-  perChannelMax: number; // 채널당 최대로 가져올 영상 수 (<= 50 권장)
-  order: 'date' | 'viewCount'; // "채널별 인기영상 보기" 체크 → viewCount, 아니면 date
-  videoDuration: 'any' | 'short' | 'medium' | 'long';
-  minViews: number; // 최소 조회수 (1차 필터)
-  minViewsPerHour: number; // 시간당 조회수 (2차 필터)
-  regionCode?: string;
-  relevanceLanguage?: string;
-};
+import { ChannelPayload } from '@/schemas/filter.schema.ts';
 
 // ── 채널 하나: search.list 로 videoId 수집 (페이징 최소화)
 async function fetchChannelVideoIds(opts: {
@@ -164,47 +137,48 @@ async function toRowsWithSubscribers(items: any[], apiKey: string): Promise<Vide
 }
 
 // ── 메인: 채널 모드
-export async function getVideosByChannels(p: Params): Promise<VideoRow[]> {
-  const {
-    apiKey,
-    channelIds,
-    days,
-    perChannelMax,
-    order,
-    videoDuration,
-    minViews,
-    minViewsPerHour,
-    regionCode,
-    relevanceLanguage,
-  } = p;
+export async function getVideosByChannels({
+  apiKey,
+  isPopularVideosOnly,
+  ...payload
+}: ChannelPayload & { apiKey: string }): Promise<VideoRow[]> {
+  const { channelIds, maxChannels, videoDuration, regionCode, relevanceLanguage, ...rest } =
+    payload;
 
-  const normalized = normalizeChannelInputs(channelIds);
-  const allVideoIds: string[] = [];
-
-  // 1) 채널별 videoId 모으기 (order=“viewCount” 체크박스면 인기영상)
-  for (const cid of normalized) {
-    const ids = await fetchChannelVideoIds({
-      apiKey,
-      channelId: cid,
-      days,
-      perChannelMax,
-      order,
-      videoDuration,
-      regionCode,
-      relevanceLanguage,
-    });
-    allVideoIds.push(...ids);
+  // rest 사용 안함
+  if (isPopularVideosOnly) {
   }
 
-  if (!allVideoIds.length) return [];
+  // rest 사용
+  if (!isPopularVideosOnly) {
+  }
 
-  // 2) videos.list 상세 조회(저쿼터)
-  const videos = await fetchVideosByIds(apiKey, allVideoIds);
-
-  // 3) 최소 조회수 → 시간당 조회수 순으로 필터
-  const minViewsPassed = videos.filter((v) => Number(v?.statistics?.viewCount ?? 0) >= minViews);
-  const vphPassed = filterByVph(minViewsPassed, minViewsPerHour);
-
-  // 4) 구독자 + VideoRow 매핑
-  return await toRowsWithSubscribers(vphPassed, apiKey);
+  // const allVideoIds: string[] = [];
+  //
+  // // 1) 채널별 videoId 모으기 (order=“viewCount” 체크박스면 인기영상)
+  // for (const cid of normalized) {
+  //   const ids = await fetchChannelVideoIds({
+  //     apiKey,
+  //     channelId: cid,
+  //     days,
+  //     perChannelMax,
+  //     order,
+  //     videoDuration,
+  //     regionCode,
+  //     relevanceLanguage,
+  //   });
+  //   allVideoIds.push(...ids);
+  // }
+  //
+  // if (!allVideoIds.length) return [];
+  //
+  // // 2) videos.list 상세 조회(저쿼터)
+  // const videos = await fetchVideosByIds(apiKey, allVideoIds);
+  //
+  // // 3) 최소 조회수 → 시간당 조회수 순으로 필터
+  // const minViewsPassed = videos.filter((v) => Number(v?.statistics?.viewCount ?? 0) >= minViews);
+  // const vphPassed = filterByVph(minViewsPassed, minViewsPerHour);
+  //
+  // // 4) 구독자 + VideoRow 매핑
+  // return await toRowsWithSubscribers(vphPassed, apiKey);
 }

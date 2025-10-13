@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import { FilterData } from './search-video';
+import { FilterData } from './videoFilter.ts';
 
 import { VideoRow } from '@/components/data-table-columns/result-columns.tsx';
 

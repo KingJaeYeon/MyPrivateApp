@@ -5,19 +5,8 @@ import { differenceInHours, parseISO } from 'date-fns';
 import { useLogStore } from '@/store/search-video-log.ts';
 import useSettingStore from '@/store/setting.ts';
 
-import {VideoRow} from "@/components/data-table-columns/result-columns.tsx";
-
-export type FetchByKeywordParams = {
-  apiKey: string;
-  keyword: string;
-  days: number;
-  maxResults?: number; // 기본 50, 최대 50
-  regionCode?: string;
-  relevanceLanguage?: string;
-  videoDuration: 'any' | 'short' | 'medium' | 'long';
-  minViews?: number;
-  minViewsPerHour?: number;
-};
+import { VideoRow } from '@/components/data-table-columns/result-columns.tsx';
+import { KeywordPayload } from '@/schemas/filter.schema.ts';
 
 /**
  * /search
@@ -45,7 +34,15 @@ type fetchVideosParams = {
 };
 
 const fetchVideoByKeywords = async (params: fetchVideosParams) => {
-  const { apiKey, keyword, publishedAfter, regionCode, relevanceLanguage, pageToken, videoDuration } = params;
+  const {
+    apiKey,
+    keyword,
+    publishedAfter,
+    regionCode,
+    relevanceLanguage,
+    pageToken,
+    videoDuration,
+  } = params;
   const Log = useLogStore.getState(); // 훅 호출 아님 (정적 접근)
   const settingStore = useSettingStore.getState(); // 훅 호출 아님 (정적 접근)
   const sIds: string[] = [];
@@ -67,12 +64,10 @@ const fetchVideoByKeywords = async (params: fetchVideosParams) => {
   const sResp = await request_youtube.get('search', { params: searchParams });
 
   const url = `${request_youtube.defaults.baseURL}search?${new URLSearchParams(searchParams).toString()}`;
-  await settingStore.updateIn(
-      'youtube',{
-        apiKey: settingStore.data.youtube.apiKey,
-        usedQuota: settingStore.data.youtube.usedQuota + 100
-      }
-  ); // videos.list 100회 카운트
+  await settingStore.updateIn('youtube', {
+    apiKey: settingStore.data.youtube.apiKey,
+    usedQuota: settingStore.data.youtube.usedQuota + 100,
+  }); // videos.list 100회 카운트
   Log.note(`[API 요청] ${url}`);
 
   const sItems = sResp.data?.items ?? [];
@@ -96,20 +91,113 @@ const fetchVideoByIds = async (apiKey: string, ids: string[]) => {
       id: ids.join(','),
     },
   });
-  await settingStore.updateIn(
-      'youtube',{
-        apiKey: settingStore.data.youtube.apiKey,
-        usedQuota: settingStore.data.youtube.usedQuota + 100
-      }
-  ); // videos.list 1회 카운트
+  await settingStore.updateIn('youtube', {
+    apiKey: settingStore.data.youtube.apiKey,
+    usedQuota: settingStore.data.youtube.usedQuota + 100,
+  }); // videos.list 1회 카운트
 
   vItems.push(...(vResp.data?.items ?? []));
   return { vItems };
 };
 
-export async function getVideoByKeywords(params: FetchByKeywordParams): Promise<VideoRow[]> {
+/**
+ * 현재 후보에서 “시간당 조회수(vph)” 하한을 통과하는 영상만 빠르게 추려서 반환.
+ * - want 개를 채우면 조기 종료 → 불필요 계산 최소화
+ */
+function quickVphPass(list: any[], minVph: number, want: number): any[] {
+  if (minVph <= 0) return list;
+  const now = new Date();
+  const out: any[] = [];
+  for (const v of list) {
+    const sn = v?.snippet,
+      st = v?.statistics,
+      cd = v?.contentDetails;
+    if (!sn || !st || !cd) continue;
+    const ageH = Math.max(differenceInHours(now, parseISO(sn.publishedAt ?? '')), 1);
+    const viewCount = Number(st.viewCount ?? 0);
+    const vph = viewCount / ageH;
+    if (vph >= minVph) {
+      out.push(v);
+      if (out.length >= want) break; // ✅ 조기 종료
+    }
+  }
+  return out;
+}
+
+/**
+ * 최종 통과 리스트에 대해 channels.list(구독자 수) 조회 후 VideoRow로 변환
+ * - 통과분의 channelId만 조회 → 쿼터 절약
+ */
+async function toRowsWithSubscribers(items: any[], apiKey: string): Promise<VideoRow[]> {
+  const settingStore = useSettingStore.getState(); // 훅 호출 아님 (정적 접근)
+  // 1) 채널 통계 수집
+  const channelIdSet = new Set<string>();
+  for (const v of items) {
+    const cid = v?.snippet?.channelId;
+    if (cid) channelIdSet.add(cid);
+  }
+
+  const channelStats: Record<string, number | null> = {};
+  for (const batch of chunk(Array.from(channelIdSet), 50)) {
+    const cResp = await request_youtube.get('channels', {
+      params: { key: apiKey, part: 'statistics', id: batch.join(',') },
+    });
+    await settingStore.updateIn('youtube', {
+      apiKey: settingStore.data.youtube.apiKey,
+      usedQuota: settingStore.data.youtube.usedQuota + 1,
+    }); // videos.list 1회 카운트
+    for (const ch of cResp.data?.items ?? []) {
+      const cid = ch?.id;
+      const hidden = ch?.statistics?.hiddenSubscriberCount;
+      const subs = hidden ? null : Number(ch?.statistics?.subscriberCount ?? 0);
+      if (cid) channelStats[cid] = Number.isFinite(subs as number) ? subs : null;
+    }
+  }
+
+  // 2) VideoRow로 가공
+  const now = new Date();
+  let no = 1;
+  const rows: VideoRow[] = [];
+
+  for (const v of items) {
+    const id = v?.id;
+    const sn = v?.snippet,
+      st = v?.statistics,
+      cd = v?.contentDetails;
+    if (!id || !sn || !st || !cd) continue;
+
+    const publishedAt = sn.publishedAt ?? '';
+    const ageH = Math.max(differenceInHours(now, parseISO(publishedAt)), 1);
+    const viewCount = Number(st.viewCount ?? 0);
+    const vph = viewCount / ageH;
+
+    const durSec = parseISODurationToSec(cd.duration ?? 'PT0S');
+    const subs = channelStats[sn.channelId ?? ''] ?? null;
+    const vps = subs && subs > 0 ? viewCount / subs : null;
+
+    rows.push({
+      no: no++,
+      channelTitle: sn.channelTitle ?? '',
+      title: sn.title ?? '',
+      publishedAt,
+      viewCount,
+      viewsPerHour: vph,
+      viewsPerSubscriber: vps,
+      duration: formatDuration(durSec),
+      link: `https://www.youtube.com/watch?v=${id}`,
+      thumbnailUrl: sn?.thumbnails?.medium?.url || sn?.thumbnails?.default?.url || '',
+      subscriberCount: subs,
+    });
+  }
+
+  return rows;
+}
+
+export async function getVideoByKeywords({
+  apiKey,
+  ...payload
+}: KeywordPayload & { apiKey: string }): Promise<VideoRow[]> {
   const {
-    apiKey,
     keyword,
     days,
     maxResults = 50,
@@ -118,7 +206,7 @@ export async function getVideoByKeywords(params: FetchByKeywordParams): Promise<
     videoDuration,
     minViews = 0,
     minViewsPerHour = 0,
-  } = params;
+  } = payload;
   const want = Math.max(1, maxResults); // 사용자가 입력한 동영상 수
   const publishedAfter = isoAfterNDays(days); // N일 전 ISO 문자열
   const collected: any[] = []; // 1차 후보(최소 조회수 통과)
@@ -221,99 +309,4 @@ export async function getVideoByKeywords(params: FetchByKeywordParams): Promise<
 
   const finalRows = await toRowsWithSubscribers(pass.slice(0, want), apiKey);
   return finalRows;
-}
-
-/**
- * 현재 후보에서 “시간당 조회수(vph)” 하한을 통과하는 영상만 빠르게 추려서 반환.
- * - want 개를 채우면 조기 종료 → 불필요 계산 최소화
- */
-function quickVphPass(list: any[], minVph: number, want: number): any[] {
-  if (minVph <= 0) return list;
-  const now = new Date();
-  const out: any[] = [];
-  for (const v of list) {
-    const sn = v?.snippet,
-      st = v?.statistics,
-      cd = v?.contentDetails;
-    if (!sn || !st || !cd) continue;
-    const ageH = Math.max(differenceInHours(now, parseISO(sn.publishedAt ?? '')), 1);
-    const viewCount = Number(st.viewCount ?? 0);
-    const vph = viewCount / ageH;
-    if (vph >= minVph) {
-      out.push(v);
-      if (out.length >= want) break; // ✅ 조기 종료
-    }
-  }
-  return out;
-}
-
-/**
- * 최종 통과 리스트에 대해 channels.list(구독자 수) 조회 후 VideoRow로 변환
- * - 통과분의 channelId만 조회 → 쿼터 절약
- */
-async function toRowsWithSubscribers(items: any[], apiKey: string): Promise<VideoRow[]> {
-  const settingStore = useSettingStore.getState(); // 훅 호출 아님 (정적 접근)
-  // 1) 채널 통계 수집
-  const channelIdSet = new Set<string>();
-  for (const v of items) {
-    const cid = v?.snippet?.channelId;
-    if (cid) channelIdSet.add(cid);
-  }
-
-  const channelStats: Record<string, number | null> = {};
-  for (const batch of chunk(Array.from(channelIdSet), 50)) {
-    const cResp = await request_youtube.get('channels', {
-      params: { key: apiKey, part: 'statistics', id: batch.join(',') },
-    });
-    await settingStore.updateIn(
-        'youtube',{
-          apiKey: settingStore.data.youtube.apiKey,
-          usedQuota: settingStore.data.youtube.usedQuota + 1
-        }
-    ); // videos.list 1회 카운트
-    for (const ch of cResp.data?.items ?? []) {
-      const cid = ch?.id;
-      const hidden = ch?.statistics?.hiddenSubscriberCount;
-      const subs = hidden ? null : Number(ch?.statistics?.subscriberCount ?? 0);
-      if (cid) channelStats[cid] = Number.isFinite(subs as number) ? subs : null;
-    }
-  }
-
-  // 2) VideoRow로 가공
-  const now = new Date();
-  let no = 1;
-  const rows: VideoRow[] = [];
-
-  for (const v of items) {
-    const id = v?.id;
-    const sn = v?.snippet,
-      st = v?.statistics,
-      cd = v?.contentDetails;
-    if (!id || !sn || !st || !cd) continue;
-
-    const publishedAt = sn.publishedAt ?? '';
-    const ageH = Math.max(differenceInHours(now, parseISO(publishedAt)), 1);
-    const viewCount = Number(st.viewCount ?? 0);
-    const vph = viewCount / ageH;
-
-    const durSec = parseISODurationToSec(cd.duration ?? 'PT0S');
-    const subs = channelStats[sn.channelId ?? ''] ?? null;
-    const vps = subs && subs > 0 ? viewCount / subs : null;
-
-    rows.push({
-      no: no++,
-      channelTitle: sn.channelTitle ?? '',
-      title: sn.title ?? '',
-      publishedAt,
-      viewCount,
-      viewsPerHour: vph,
-      viewsPerSubscriber: vps,
-      duration: formatDuration(durSec),
-      link: `https://www.youtube.com/watch?v=${id}`,
-      thumbnailUrl: sn?.thumbnails?.medium?.url || sn?.thumbnails?.default?.url || '',
-      subscriberCount: subs,
-    });
-  }
-
-  return rows;
 }

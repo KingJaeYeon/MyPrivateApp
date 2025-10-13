@@ -21,13 +21,14 @@ import { Muted } from '@/components/typography.tsx';
 import useChannelStore from '@/store/channels.ts';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
 import { ChannelColumns } from '@/components/data-table-columns/channel-columns.tsx';
-import { useFilterStore } from '@/store/search-video.ts';
+import { useVideoSearchStore } from '@/store/videoFilterV2.ts';
+import { useChannelPair } from '@/hook/useVideoSearchSelectors.tsx';
 
 export function TagFilterRow({ mode }: { mode: 'channels' | 'keywords' }) {
   const [tagLogic, setTagLogic] = useState<string>('AND');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedChannels, setSelectedChannels] = useState<ChannelColumns[]>([]);
-
+  const { channelIds } = useChannelPair();
   return (
     <div
       className={cn(
@@ -57,7 +58,7 @@ export function TagFilterRow({ mode }: { mode: 'channels' | 'keywords' }) {
             logic={tagLogic}
           />
           <Alert size={'sm'} className={'w-[300px]'}>
-            <AlertTitle>{`채널 ${selectedChannels.length}개 검색(${tagLogic})`}</AlertTitle>
+            <AlertTitle>{`채널 ${channelIds.length}개 검색(${tagLogic})`}</AlertTitle>
           </Alert>
         </div>
       </div>
@@ -80,9 +81,9 @@ function TagSelector({
 }) {
   const { data: tags, jsonData } = useTagStore();
   const channels = useChannelStore((s) => s.data);
-  const { set } = useFilterStore();
   const [tempTags, setTempTags] = useState<string[]>(selectedTags);
   const [open, setOpen] = useState(false);
+  const { setChannel } = useVideoSearchStore();
 
   useEffect(() => {
     let filteredChannels: ChannelColumns[] = [];
@@ -102,7 +103,10 @@ function TagSelector({
       }
     }
     setSelectedChannels(filteredChannels);
-    set('channelIds', filteredChannels.map((c) => c.channelId).join(','));
+    setChannel(
+      'channelIds',
+      filteredChannels.map((c) => c.channelId)
+    );
   }, [selectedTags, logic, channels, jsonData, setSelectedChannels]);
 
   return (

@@ -1,4 +1,4 @@
-import { useFilterStore } from '@/store/search-video.ts';
+import { useVideoSearchStore } from '@/store/videoFilterV2.ts';
 import { Label } from '@/components/ui/label.tsx';
 import {
   Select,
@@ -15,20 +15,34 @@ import { Checkbox } from '@/components/ui/checkbox.tsx';
 import React from 'react';
 import { TagFilterRow } from '@/pages/search-video/components/TagFilterRow.tsx';
 import { cn } from '@/lib/utils.ts';
+import { Slider } from '@/components/ui/slider.tsx';
+import { useChannelPair, useCommonPair, useKeywordPair } from '@/hook/useVideoSearchSelectors.tsx';
 
 export function FilterOptions() {
-  const { data, set, isValidDays, fieldErrorsKeys } = useFilterStore();
+  const { fieldErrorsKeys, setMode, setChannel, setCommon, setKeyword } = useVideoSearchStore();
+  const {
+    mode,
+    minViews,
+    minViewsPerHour,
+    relevanceLanguage,
+    shortsDuration,
+    videoDuration,
+    days,
+    regionCode,
+  } = useCommonPair();
+  const { keyword, maxResults } = useKeywordPair();
+  const { isPopularVideosOnly, maxChannels } = useChannelPair();
 
   return (
     <>
-      <TagFilterRow mode={data.mode} />
+      <TagFilterRow mode={mode} />
       <div className={'grid-cols-3 grid w-full gap-x-6'}>
         <div className="flex flex-col gap-2">
           <div className="flex w-full max-w-sm items-center gap-2 justify-between">
             <Label htmlFor="mode" className="min-w-fit">
               실행모드
             </Label>
-            <Select value={data.mode} onValueChange={(v) => set('mode', v as any)}>
+            <Select value={mode} onValueChange={(v) => setMode(v as 'channels' | 'keywords')}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue />
               </SelectTrigger>
@@ -40,7 +54,7 @@ export function FilterOptions() {
               </SelectContent>
             </Select>
           </div>
-          {data.mode === 'keywords' && (
+          {mode === 'keywords' && (
             <React.Fragment>
               <div className="flex w-full max-w-sm items-center gap-2 justify-between">
                 <Label htmlFor="keyword" className="min-w-fit">
@@ -61,9 +75,9 @@ export function FilterOptions() {
                 </Label>
                 <Input
                   id="keyword"
-                  value={data.keyword}
+                  value={keyword}
                   placeholder="입력해주세요."
-                  onChange={(e) => set('keyword', e.target.value)}
+                  onChange={(e) => setKeyword('keyword', e.target.value)}
                   className="w-[250px] h-8"
                   aria-invalid={fieldErrorsKeys.includes('keyword')}
                 />
@@ -74,38 +88,41 @@ export function FilterOptions() {
                 </Label>
                 <Input
                   id="maxResults"
-                  value={data.maxResults}
-                  onChange={(e) => set('maxResults', e.target.value)}
-                  className="w-[70px] h-8"
+                  placeholder={'0'}
+                  value={maxResults}
+                  min={1}
+                  onChange={(e) => setKeyword('maxResults', e.target.value)}
+                  className="w-[60px] h-8"
                   aria-invalid={fieldErrorsKeys.includes('maxResults')}
                 />
               </div>
             </React.Fragment>
           )}
-          {data.mode === 'channels' && (
+          {mode === 'channels' && (
             <React.Fragment>
-              <div className="flex w-full max-w-sm items-center gap-2 justify-between">
-                <Label htmlFor="maxChannels" className="min-w-fit">
-                  채널당 최대 검색 수
-                  <Tip txt="Channels 리스트에서 채널별로 최대 몇개의 영상을 가져올지 설정합니다.">
-                    <IconMoreInfo />
-                  </Tip>
-                </Label>
-                <Input
-                  id="maxChannels"
-                  value={data.maxChannels}
-                  onChange={(e) => set('maxChannels', e.target.value)}
-                  className="w-[70px] h-8"
-                  aria-invalid={fieldErrorsKeys.includes('maxChannels')}
-                />
-              </div>
               <div className="flex w-full max-w-sm items-center gap-2 justify-between h-8">
                 <Label htmlFor="language" className="min-w-fit">
                   채널별 누적 인기영상 보기
                 </Label>
                 <Checkbox
-                  checked={data.isPopularVideosOnly}
-                  onCheckedChange={(c) => set('isPopularVideosOnly', !!c)}
+                  checked={isPopularVideosOnly}
+                  onCheckedChange={(c) => setChannel('isPopularVideosOnly', !!c)}
+                />
+              </div>
+              <div className="flex w-full max-w-sm items-center gap-12 justify-between">
+                <Label htmlFor="maxChannels" className="min-w-fit">
+                  채널당 최대 검색 수 ({maxChannels})
+                </Label>
+                <Slider
+                  max={50}
+                  step={5}
+                  value={[Number(maxChannels)]}
+                  onValueChange={(value) => {
+                    if (value[0] <= 10) {
+                      value = [10];
+                    }
+                    setChannel('maxChannels', value[0].toString());
+                  }}
                 />
               </div>
             </React.Fragment>
@@ -122,8 +139,8 @@ export function FilterOptions() {
               </Tip>
             </Label>
             <Select
-              value={data.videoDuration}
-              onValueChange={(v) => set('videoDuration', v as any)}
+              value={videoDuration}
+              onValueChange={(v) => setCommon('videoDuration', v as any)}
             >
               <SelectTrigger className="w-[130px]">
                 <SelectValue />
@@ -143,16 +160,16 @@ export function FilterOptions() {
               htmlFor="minViews"
               className={cn(
                 'min-w-fit',
-                data.isPopularVideosOnly && data.mode === 'channels' && 'opacity-50'
+                isPopularVideosOnly && mode === 'channels' && 'opacity-50'
               )}
             >
               최소 조회수
             </Label>
             <Input
               id="minViews"
-              value={data.minViews}
-              disabled={data.isPopularVideosOnly && data.mode === 'channels'}
-              onChange={(e) => set('minViews', e.target.value)}
+              value={minViews}
+              disabled={isPopularVideosOnly && mode === 'channels'}
+              onChange={(e) => setCommon('minViews', e.target.value)}
               className="w-[70px] h-8"
               aria-invalid={fieldErrorsKeys.includes('minViews')}
             />
@@ -162,16 +179,16 @@ export function FilterOptions() {
               htmlFor="MinimumViewsPerHour"
               className={cn(
                 'min-w-fit',
-                data.isPopularVideosOnly && data.mode === 'channels' && 'opacity-50'
+                isPopularVideosOnly && mode === 'channels' && 'opacity-50'
               )}
             >
               최소 시간당 조회수(vph)
             </Label>
             <Input
               id="MinimumViewsPerHour"
-              value={data.minViewsPerHour}
-              disabled={data.isPopularVideosOnly && data.mode === 'channels'}
-              onChange={(e) => set('minViewsPerHour', e.target.value)}
+              value={minViewsPerHour}
+              disabled={isPopularVideosOnly && mode === 'channels'}
+              onChange={(e) => setCommon('minViewsPerHour', e.target.value)}
               className="w-[70px] h-8"
               aria-invalid={fieldErrorsKeys.includes('minViewsPerHour')}
             />
@@ -181,19 +198,19 @@ export function FilterOptions() {
               htmlFor="day"
               className={cn(
                 'min-w-fit',
-                data.isPopularVideosOnly && data.mode === 'channels' && 'opacity-50'
+                isPopularVideosOnly && mode === 'channels' && 'opacity-50'
               )}
             >
-              최근 {isValidDays() ? data.days : 'N'}일 이내 업로드된 영상 분석
+              최근 {Number(days) > 0 ? days : 'N'}일 이내 업로드된 영상 분석
               <Tip txt="최대: 50">
                 <IconMoreInfo />
               </Tip>
             </Label>
             <Input
               id="day"
-              value={data.days}
-              disabled={data.isPopularVideosOnly && data.mode === 'channels'}
-              onChange={(e) => set('days', e.target.value)}
+              value={days}
+              disabled={isPopularVideosOnly && mode === 'channels'}
+              onChange={(e) => setCommon('days', e.target.value)}
               className="w-[70px] h-8"
               aria-invalid={fieldErrorsKeys.includes('days')}
             />
@@ -208,8 +225,8 @@ export function FilterOptions() {
             </Label>
             <Input
               id="shortsDuration"
-              value={data.shortsDuration}
-              onChange={(e) => set('shortsDuration', e.target.value)}
+              value={shortsDuration}
+              onChange={(e) => setCommon('shortsDuration', e.target.value)}
               className="w-[70px] h-8"
               aria-invalid={fieldErrorsKeys.includes('shortsDuration')}
             />
@@ -226,8 +243,8 @@ export function FilterOptions() {
             </Label>
             <Input
               id="relevanceLanguage"
-              value={data.relevanceLanguage}
-              onChange={(e) => set('relevanceLanguage', e.target.value)}
+              value={relevanceLanguage}
+              onChange={(e) => setCommon('relevanceLanguage', e.target.value)}
               className="w-[70px] h-8"
             />
           </div>
@@ -238,7 +255,7 @@ export function FilterOptions() {
                 <IconMoreInfo />
               </Tip>
             </Label>
-            <Select value={data.regionCode} onValueChange={(v) => set('regionCode', v as any)}>
+            <Select value={regionCode} onValueChange={(v) => setCommon('regionCode', v as any)}>
               <SelectTrigger className="w-[130px]">
                 <SelectValue />
               </SelectTrigger>
