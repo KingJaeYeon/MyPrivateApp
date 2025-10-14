@@ -1,13 +1,19 @@
-import type {ColumnDef} from '@tanstack/react-table';
-import {Button} from '@/components/ui/button.tsx';
-import {toast} from 'sonner';
-import {format} from 'date-fns';
-import {ko} from 'date-fns/locale';
+import type { ColumnDef } from '@tanstack/react-table';
+import { Button } from '@/components/ui/button.tsx';
+import { toast } from 'sonner';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
 
 const nf = new Intl.NumberFormat();
 
 export type VideoRow = {
   no: number;
+  channelId: string;
+  tags: string[];
+  defaultLanguage: string;
+  defaultAudioLanguage: string;
+  likeCount: string;
+  commentCount: string;
   channelTitle: string;
   title: string;
   publishedAt: string;
