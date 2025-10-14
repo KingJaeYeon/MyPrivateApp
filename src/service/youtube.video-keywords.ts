@@ -81,7 +81,7 @@ const fetchVideoByKeywords = async (params: fetchVideosParams) => {
   return { newPageToken: sResp.data?.nextPageToken, sIds };
 };
 
-const fetchVideoByIds = async (apiKey: string, ids: string[]) => {
+export const fetchVideoByIds = async (apiKey: string, ids: string[]) => {
   const vItems: any[] = [];
   const settingStore = useSettingStore.getState(); // 훅 호출 아님 (정적 접근)
   const vResp = await request_youtube.get('videos', {
@@ -140,8 +140,13 @@ async function toRowsWithSubscribers(items: any[], apiKey: string): Promise<Vide
   const channelStats: Record<string, number | null> = {};
   for (const batch of chunk(Array.from(channelIdSet), 50)) {
     const cResp = await request_youtube.get('channels', {
-      params: { key: apiKey, part: 'statistics', id: batch.join(',') },
+      params: {
+        key: apiKey,
+        part: 'statistics,contentDetails,brandingSettings',
+        id: batch.join(','),
+      },
     });
+
     await settingStore.updateIn('youtube', {
       apiKey: settingStore.data.youtube.apiKey,
       usedQuota: settingStore.data.youtube.usedQuota + 1,

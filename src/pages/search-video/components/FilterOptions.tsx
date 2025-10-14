@@ -27,11 +27,12 @@ export function FilterOptions() {
     relevanceLanguage,
     shortsDuration,
     videoDuration,
-    days,
     regionCode,
   } = useCommonPair();
-  const { keyword, maxResults } = useKeywordPair();
-  const { isPopularVideosOnly, maxChannels } = useChannelPair();
+  const { keyword, maxResults, days: publishedAfterK } = useKeywordPair();
+  const { isPopularVideosOnly, maxChannels, days: publishedAfterC } = useChannelPair();
+
+  const days = mode === 'channels' ? publishedAfterC : publishedAfterK;
 
   return (
     <>
@@ -100,16 +101,7 @@ export function FilterOptions() {
           )}
           {mode === 'channels' && (
             <React.Fragment>
-              <div className="flex w-full max-w-sm items-center gap-2 justify-between h-8">
-                <Label htmlFor="language" className="min-w-fit">
-                  채널별 누적 인기영상 보기
-                </Label>
-                <Checkbox
-                  checked={isPopularVideosOnly}
-                  onCheckedChange={(c) => setChannel('isPopularVideosOnly', !!c)}
-                />
-              </div>
-              <div className="flex w-full max-w-sm items-center gap-12 justify-between">
+              <div className="flex w-full max-w-sm items-center gap-12 justify-between h-8">
                 <Label htmlFor="maxChannels" className="min-w-fit">
                   채널당 최대 검색 수 ({maxChannels})
                 </Label>
@@ -118,11 +110,23 @@ export function FilterOptions() {
                   step={5}
                   value={[Number(maxChannels)]}
                   onValueChange={(value) => {
-                    if (value[0] <= 10) {
-                      value = [10];
+                    if (value[0] <= 15) {
+                      value = [15];
                     }
                     setChannel('maxChannels', value[0].toString());
                   }}
+                />
+              </div>
+              <div className="flex w-full max-w-sm items-center gap-2 justify-between h-8">
+                <Label htmlFor="language" className="min-w-fit">
+                  채널별 인기영상 보기
+                  <Tip txt={'off : 최신순 \non: 최근 N일 내에서의 인기순\n'}>
+                    <IconMoreInfo />
+                  </Tip>
+                </Label>
+                <Checkbox
+                  checked={isPopularVideosOnly}
+                  onCheckedChange={(c) => setChannel('isPopularVideosOnly', !!c)}
                 />
               </div>
             </React.Fragment>
@@ -156,19 +160,12 @@ export function FilterOptions() {
             </Select>
           </div>
           <div className="flex w-full max-w-sm items-center gap-2 justify-between">
-            <Label
-              htmlFor="minViews"
-              className={cn(
-                'min-w-fit',
-                isPopularVideosOnly && mode === 'channels' && 'opacity-50'
-              )}
-            >
+            <Label htmlFor="minViews" className={'min-w-fit'}>
               최소 조회수
             </Label>
             <Input
               id="minViews"
               value={minViews}
-              disabled={isPopularVideosOnly && mode === 'channels'}
               onChange={(e) => setCommon('minViews', e.target.value)}
               className="w-[70px] h-8"
               aria-invalid={fieldErrorsKeys.includes('minViews')}
@@ -179,7 +176,7 @@ export function FilterOptions() {
               htmlFor="MinimumViewsPerHour"
               className={cn(
                 'min-w-fit',
-                isPopularVideosOnly && mode === 'channels' && 'opacity-50'
+                !isPopularVideosOnly && mode === 'channels' && 'opacity-50'
               )}
             >
               최소 시간당 조회수(vph)
@@ -187,7 +184,7 @@ export function FilterOptions() {
             <Input
               id="MinimumViewsPerHour"
               value={minViewsPerHour}
-              disabled={isPopularVideosOnly && mode === 'channels'}
+              disabled={!isPopularVideosOnly && mode === 'channels'}
               onChange={(e) => setCommon('minViewsPerHour', e.target.value)}
               className="w-[70px] h-8"
               aria-invalid={fieldErrorsKeys.includes('minViewsPerHour')}
@@ -198,19 +195,30 @@ export function FilterOptions() {
               htmlFor="day"
               className={cn(
                 'min-w-fit',
-                isPopularVideosOnly && mode === 'channels' && 'opacity-50'
+                !isPopularVideosOnly && mode === 'channels' && 'opacity-50'
               )}
             >
               최근 {Number(days) > 0 ? days : 'N'}일 이내 업로드된 영상 분석
-              <Tip txt="최대: 50">
+              <Tip txt={'채널검색: 최대 360\n키워드검색: 최대 50'}>
                 <IconMoreInfo />
               </Tip>
             </Label>
             <Input
               id="day"
               value={days}
-              disabled={isPopularVideosOnly && mode === 'channels'}
-              onChange={(e) => setCommon('days', e.target.value)}
+              disabled={!isPopularVideosOnly && mode === 'channels'}
+              onChange={(e) => {
+                let value = e.target.value;
+                if (value.length >= 3) {
+                  value = value.substring(0, 3);
+                }
+
+                if (mode === 'channels') {
+                  setChannel('days', value);
+                } else {
+                  setKeyword('days', value);
+                }
+              }}
               className="w-[70px] h-8"
               aria-invalid={fieldErrorsKeys.includes('days')}
             />

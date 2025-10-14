@@ -103,8 +103,8 @@ export const useVideoSearchStore = create<VideoSearchState>()(
                 ...s.filter,
                 common: { ...s.filter.common, mode },
                 // 모드 전환 시 반대 모드 전용 필드 초기화(선택)
-                channel: mode === 'channels' ? s.filter.channel : { ...defaultState.channel },
-                keyword: mode === 'keywords' ? s.filter.keyword : { ...defaultState.keyword },
+                channel: { ...s.filter.channel },
+                keyword: { ...s.filter.keyword },
               },
               isChanged: true,
             }),
