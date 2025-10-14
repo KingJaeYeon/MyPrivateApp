@@ -14,7 +14,6 @@ import IconMoreInfo from '@/assets/svg/IconMoreInfo.tsx';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
 import React from 'react';
 import { TagFilterRow } from '@/pages/search-video/components/TagFilterRow.tsx';
-import { cn } from '@/lib/utils.ts';
 import { Slider } from '@/components/ui/slider.tsx';
 import { useChannelPair, useCommonPair, useKeywordPair } from '@/hook/useVideoSearchSelectors.tsx';
 
@@ -172,32 +171,19 @@ export function FilterOptions() {
             />
           </div>
           <div className="flex w-full max-w-sm items-center gap-2 justify-between">
-            <Label
-              htmlFor="MinimumViewsPerHour"
-              className={cn(
-                'min-w-fit',
-                !isPopularVideosOnly && mode === 'channels' && 'opacity-50'
-              )}
-            >
+            <Label htmlFor="MinimumViewsPerHour" className={'min-w-fit'}>
               최소 시간당 조회수(vph)
             </Label>
             <Input
               id="MinimumViewsPerHour"
               value={minViewsPerHour}
-              disabled={!isPopularVideosOnly && mode === 'channels'}
               onChange={(e) => setCommon('minViewsPerHour', e.target.value)}
               className="w-[70px] h-8"
               aria-invalid={fieldErrorsKeys.includes('minViewsPerHour')}
             />
           </div>
           <div className="flex w-full max-w-sm items-center gap-2 justify-between">
-            <Label
-              htmlFor="day"
-              className={cn(
-                'min-w-fit',
-                !isPopularVideosOnly && mode === 'channels' && 'opacity-50'
-              )}
-            >
+            <Label htmlFor="day" className={'min-w-fit'}>
               최근 {Number(days) > 0 ? days : 'N'}일 이내 업로드된 영상 분석
               <Tip txt={'채널검색: 최대 360\n키워드검색: 최대 50'}>
                 <IconMoreInfo />
@@ -206,7 +192,6 @@ export function FilterOptions() {
             <Input
               id="day"
               value={days}
-              disabled={!isPopularVideosOnly && mode === 'channels'}
               onChange={(e) => {
                 let value = e.target.value;
                 if (value.length >= 3) {

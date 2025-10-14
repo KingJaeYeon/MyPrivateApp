@@ -63,7 +63,7 @@ const fetchVideoByKeywords = async (params: fetchVideosParams) => {
 
   const sResp = await request_youtube.get('search', { params: searchParams });
 
-  const url = `${request_youtube.defaults.baseURL}search?${new URLSearchParams(searchParams).toString()}`;
+  const url = `${request_youtube.defaults.baseURL}/search?${new URLSearchParams(searchParams).toString()}`;
   await settingStore.updateIn('youtube', {
     apiKey: settingStore.data.youtube.apiKey,
     usedQuota: settingStore.data.youtube.usedQuota + 100,
@@ -81,7 +81,7 @@ const fetchVideoByKeywords = async (params: fetchVideosParams) => {
   return { newPageToken: sResp.data?.nextPageToken, sIds };
 };
 
-export const fetchVideoByIds = async (apiKey: string, ids: string[]) => {
+const fetchVideoByIds = async (apiKey: string, ids: string[]) => {
   const vItems: any[] = [];
   const settingStore = useSettingStore.getState(); // 훅 호출 아님 (정적 접근)
   const vResp = await request_youtube.get('videos', {
@@ -235,14 +235,12 @@ export async function getVideoByKeywords({
       const quick = quickVphPass(collected, minViewsPerHour, want);
       if (quick.length >= want) {
         // 바로 확정 가능 → channels.list 단계로 이동
-        const finalRows = await toRowsWithSubscribers(quick.slice(0, want), apiKey);
-        return finalRows;
+        return await toRowsWithSubscribers(quick.slice(0, want), apiKey);
       }
       // 부족하면 계속 수집
     } else if (collected.length >= want) {
       // VPH 조건이 없으면 후보만으로 충분 → 확정
-      const finalRows = await toRowsWithSubscribers(collected.slice(0, want), apiKey);
-      return finalRows;
+      return await toRowsWithSubscribers(collected.slice(0, want), apiKey);
     }
 
     // 수집을 더 해야 하는데, 더 볼 수 없는 상황이면 종료
@@ -301,8 +299,7 @@ export async function getVideoByKeywords({
         collected.push(v);
         // VPH 조건 없으면 want 채우자마자 확정 가능
         if (minViewsPerHour <= 0 && collected.length >= want) {
-          const finalRows = await toRowsWithSubscribers(collected.slice(0, want), apiKey);
-          return finalRows;
+          return await toRowsWithSubscribers(collected.slice(0, want), apiKey);
         }
       }
     }
@@ -318,6 +315,5 @@ export async function getVideoByKeywords({
   // ─────────────────────────────────────────────────────────────
   const pass = minViewsPerHour > 0 ? quickVphPass(collected, minViewsPerHour, want) : collected;
 
-  const finalRows = await toRowsWithSubscribers(pass.slice(0, want), apiKey);
-  return finalRows;
+  return await toRowsWithSubscribers(pass.slice(0, want), apiKey);
 }
