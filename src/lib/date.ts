@@ -1,6 +1,8 @@
+import { subDays } from 'date-fns';
+
 /** 최근 N일 → ISO8601 */
 export function isoAfterNDays(days: number): string {
-  return new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+  return subDays(new Date(), days).toISOString();
 }
 
 /** ISO8601 Duration → 초 */
