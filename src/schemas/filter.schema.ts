@@ -38,10 +38,16 @@ export const ChannelFilterSchema = z.object({
   isPopularVideosOnly: z.boolean(), // 누적 인기 모드 전용
 });
 
+export const TagSchema = z.object({
+  key: z.array(z.string()),
+  logic: z.enum(['AND', 'OR']),
+});
+
 /** UI 타입(파싱 전, 문자열 위주) / 제출 페이로드 타입(파싱 후, 숫자/불리언 정규화) */
 export type CommonFilterUI = ReplaceUnknownWithString<z.input<typeof CommonFilterSchema>>;
 export type KeywordFilterUI = ReplaceUnknownWithString<z.input<typeof KeywordFilterSchema>>;
 export type ChannelFilterUI = ReplaceUnknownWithString<z.input<typeof ChannelFilterSchema>>;
+export type TagsFilterUI = ReplaceUnknownWithString<z.input<typeof TagSchema>>;
 
 export type ChannelPayload = z.infer<typeof ChannelFilterSchema> &
   z.infer<typeof CommonFilterSchema>;
@@ -55,7 +61,6 @@ type ReplaceUnknownWithString<T> = {
 /** 기본값(UI용) */
 export const defaultCommonUI: CommonFilterUI = {
   mode: 'keywords',
-
   videoDuration: 'any',
   minViews: '1000',
   minViewsPerHour: '600',
@@ -77,4 +82,9 @@ export const defaultKeywordUI: KeywordFilterUI = {
   days: '7',
   keyword: '',
   maxResults: '50',
+};
+
+export const defaultTagsUI: TagsFilterUI = {
+  key: [],
+  logic: 'AND',
 };

@@ -22,13 +22,22 @@ import useChannelStore from '@/store/channels.ts';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
 import { ChannelColumns } from '@/components/data-table-columns/channel-columns.tsx';
 import { useVideoSearchStore } from '@/store/videoFilterV2.ts';
-import { useChannelPair } from '@/hook/useVideoSearchSelectors.tsx';
+import { useChannelPair, useTagsPair } from '@/hook/useVideoSearchSelectors.tsx';
 
 export function TagFilterRow({ mode }: { mode: 'channels' | 'keywords' }) {
-  const [tagLogic, setTagLogic] = useState<string>('AND');
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const { key: tags, logic } = useTagsPair();
+  const { setTags } = useVideoSearchStore();
   const [selectedChannels, setSelectedChannels] = useState<ChannelColumns[]>([]);
   const { channelIds } = useChannelPair();
+
+  const onChangeLogic = (v: string) => {
+    setTags('logic', v as 'AND' | 'OR');
+  };
+
+  const onChangeTags = (v: string[]) => {
+    setTags('key', v);
+  };
+
   return (
     <div
       className={cn(
@@ -40,8 +49,8 @@ export function TagFilterRow({ mode }: { mode: 'channels' | 'keywords' }) {
         <div className={'flex gap-4 justify-between'}>
           <Label className={'opacity-80'}>태그 필터</Label>
           <ButtonSwitcher
-            state={tagLogic}
-            setState={setTagLogic}
+            state={logic}
+            setState={onChangeLogic}
             size={'sm'}
             list={[
               { label: 'AND', value: 'AND' },
@@ -51,14 +60,14 @@ export function TagFilterRow({ mode }: { mode: 'channels' | 'keywords' }) {
         </div>
         <div className={'flex gap-2 items-center'}>
           <TagSelector
-            selectedTags={selectedTags}
-            setSelectedTags={setSelectedTags}
+            selectedTags={tags}
+            setSelectedTags={onChangeTags}
             selectedChannels={selectedChannels}
             setSelectedChannels={setSelectedChannels}
-            logic={tagLogic}
+            logic={logic}
           />
           <Alert size={'sm'} className={'w-[300px]'}>
-            <AlertTitle>{`채널 ${channelIds.length}개 검색(${tagLogic})`}</AlertTitle>
+            <AlertTitle>{`채널 ${channelIds.length}개 검색(${logic})`}</AlertTitle>
           </Alert>
         </div>
       </div>
@@ -161,6 +170,7 @@ function TagSelector({
                           toast.error('태그는 최대 5개까지 선택할 수 있습니다.');
                         }
                       }
+                      console.log(newSelectedTags);
                       setTempTags(newSelectedTags);
                     }}
                   >

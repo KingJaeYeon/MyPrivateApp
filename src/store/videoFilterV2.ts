@@ -8,7 +8,9 @@ import {
   defaultChannelUI,
   defaultCommonUI,
   defaultKeywordUI,
+  defaultTagsUI,
   KeywordFilterUI,
+  TagsFilterUI,
 } from '@/schemas/filter.schema';
 // V2 refactor
 /** 슬라이스별 UI 타입 */
@@ -20,10 +22,12 @@ type FilterSlice = {
     common: CommonFilterUI;
     channel: ChannelFilterUI;
     keyword: KeywordFilterUI;
+    tags: { key: string[]; logic: 'AND' | 'OR' };
   };
   setCommon: <K extends keyof CommonFilterUI>(k: K, v: CommonFilterUI[K]) => void;
   setChannel: <K extends keyof ChannelFilterUI>(k: K, v: ChannelFilterUI[K]) => void;
   setKeyword: <K extends keyof KeywordFilterUI>(k: K, v: KeywordFilterUI[K]) => void;
+  setTags: <K extends keyof TagsFilterUI>(k: K, v: TagsFilterUI[K]) => void;
   setMode: (mode: 'channels' | 'keywords') => void;
   resetFilter: () => void;
   /** 현재 모드에 맞는 UI 객체 반환 (제출 시 사용) */
@@ -53,6 +57,7 @@ const defaultState = {
   common: { ...defaultCommonUI },
   channel: { ...defaultChannelUI },
   keyword: { ...defaultKeywordUI },
+  tags: { ...defaultTagsUI },
 };
 
 export const useVideoSearchStore = create<VideoSearchState>()(
@@ -64,6 +69,7 @@ export const useVideoSearchStore = create<VideoSearchState>()(
           common: defaultState.common,
           channel: defaultState.channel,
           keyword: defaultState.keyword,
+          tags: defaultState.tags,
         },
 
         setCommon: (k, v) =>
@@ -96,6 +102,16 @@ export const useVideoSearchStore = create<VideoSearchState>()(
             `filter/keyword:${String(k)}`
           ),
 
+        setTags: (k, v) =>
+          set(
+            (s) => ({
+              filter: { ...s.filter, tags: { ...s.filter.tags, [k]: v } },
+              isChanged: true,
+            }),
+            false,
+            `filter/tags:${String(k)}`
+          ),
+
         setMode: (mode) =>
           set(
             (s) => ({
@@ -105,6 +121,7 @@ export const useVideoSearchStore = create<VideoSearchState>()(
                 // 모드 전환 시 반대 모드 전용 필드 초기화(선택)
                 channel: { ...s.filter.channel },
                 keyword: { ...s.filter.keyword },
+                tags: { ...s.filter.tags },
               },
               isChanged: true,
             }),
@@ -119,6 +136,7 @@ export const useVideoSearchStore = create<VideoSearchState>()(
                 common: { ...defaultState.common },
                 channel: { ...defaultState.channel },
                 keyword: { ...defaultState.keyword },
+                tags: { ...defaultState.tags },
               },
               isChanged: true,
             }),
@@ -154,10 +172,16 @@ export const useVideoSearchStore = create<VideoSearchState>()(
         // 재시작 시 결과는 초기화하고, 필터만 복원
         partialize: (s) => ({ filter: s.filter }),
         migrate: (persisted: any) => {
-          if (!persisted?.filter) {
-            return { filter: { ...defaultState } };
-          }
-          return persisted;
+          const f = persisted?.filter ?? {};
+          return {
+            filter: {
+              common: { ...defaultCommonUI, ...(f.common ?? {}) },
+              channel: { ...defaultChannelUI, ...(f.channel ?? {}) },
+              keyword: { ...defaultKeywordUI, ...(f.keyword ?? {}) },
+              tags: { ...defaultTagsUI, ...(f.tags ?? {}) },
+            },
+            // 필요하면 다른 slice 기본값도 여기서 채워줄 수 있음
+          } as VideoSearchState;
         },
       }
     )

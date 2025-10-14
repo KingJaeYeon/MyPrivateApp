@@ -32,3 +32,11 @@ export const useKeywordPair = () =>
       maxResults: s.filter.keyword.maxResults,
     }))
   );
+
+export const useTagsPair = () =>
+  useVideoSearchStore(
+    useShallow((s) => ({
+      key: s.filter.tags.key,
+      logic: s.filter.tags.logic,
+    }))
+  );
