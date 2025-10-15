@@ -25,6 +25,7 @@ export default function ChannelsPage() {
       <DataTable<ChannelColumns, unknown>
         columns={CHANNELS_COLUMNS}
         data={data}
+        isFixHeader={true}
         tableControls={(table) => {
           return (
             <div className={'flex justify-between w-full'}>

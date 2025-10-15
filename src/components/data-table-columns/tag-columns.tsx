@@ -34,7 +34,6 @@ export const TAG_COLUMNS = (isEdit?: boolean): ColumnDef<TagColumns>[] => {
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
-          className={'ml-2'}
         />
       ),
       enableSorting: false,
@@ -45,13 +44,13 @@ export const TAG_COLUMNS = (isEdit?: boolean): ColumnDef<TagColumns>[] => {
     {
       accessorKey: 'idx',
       header: 'idx',
-      cell: ({ row }) => <span className="tabular-nums text-xs pl-2">{row.original.idx}</span>,
+      cell: ({ row }) => <span className="tabular-nums text-xs">{row.original.idx}</span>,
     },
     {
       accessorKey: 'name',
       header: '태그명',
       cell: ({ row }) => (
-        <div className={'flex justify-between w-full pl-2'}>
+        <div className={'flex justify-between w-full'}>
           {isEdit ? (
             <input
               className={'cursor-pointer text-xs break-words whitespace-normal text-green-500'}
@@ -77,7 +76,7 @@ export const TAG_COLUMNS = (isEdit?: boolean): ColumnDef<TagColumns>[] => {
       accessorKey: 'usedChannels',
       header: '사용중인 채널',
       cell: ({ row }) => (
-        <p className={'cursor-pointer text-xs break-words whitespace-normal pl-2'}>
+        <p className={'cursor-pointer text-xs break-words whitespace-normal'}>
           {row.original.usedChannels}
         </p>
       ),
@@ -86,7 +85,7 @@ export const TAG_COLUMNS = (isEdit?: boolean): ColumnDef<TagColumns>[] => {
       accessorKey: 'usedVideos',
       header: '사용중인 영상',
       cell: ({ row }) => (
-        <p className={'cursor-pointer text-xs break-words whitespace-normal pl-2'}>
+        <p className={'cursor-pointer text-xs break-words whitespace-normal'}>
           {row.original.usedVideos}
         </p>
       ),
@@ -96,7 +95,7 @@ export const TAG_COLUMNS = (isEdit?: boolean): ColumnDef<TagColumns>[] => {
       header: '전체수',
       size: 120,
       cell: ({ row }) => (
-        <span className="tabular-nums text-xs pl-2">{nf.format(row.original.total)}</span>
+        <span className="tabular-nums text-xs">{nf.format(row.original.total)}</span>
       ),
     }
   );

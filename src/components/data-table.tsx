@@ -18,7 +18,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
+import useMeasure from 'react-use-measure';
+import useTableStore from '@/store/tableStore.ts';
+import { cn } from '@/lib/utils.ts';
+import { useSpring, animated } from '@react-spring/web';
+import useSyncScroll from '@/hook/useSyncScroll.ts';
 
 type Props<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
@@ -28,18 +33,30 @@ type Props<TData, TValue> = {
   rootMargin?: string; // 센티널 옵저버 여유 영역 (기본 "300px")
   tableControls?: (table: typeTable<TData>) => ReactNode;
   onClickRow?: (row: TData) => void;
+  // No column 간격 css 수정
+  hasNo?: boolean;
+  isFixHeader?: boolean;
+  name?: string;
 };
-
+/*** 테스트
+ **/
 export function DataTable<TData, TValue>({
   columns,
   data,
   initialChunk = 50,
   chunk = 50,
+  isFixHeader = false,
+  name = 'default',
   rootMargin = '300px',
   tableControls,
   onClickRow,
+  hasNo,
 }: Props<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [ref, { y, height }] = useMeasure();
+  const tableMeasure = useMeasure();
+  const headerRef = useRef<HTMLTableElement | null>(null);
+  const [headerTop, setHeaderTop] = useState(0);
 
   // ── 테이블 모델(페이지네이션 제거 = getPaginationRowModel 제거) ──
   const table = useReactTable({
@@ -57,6 +74,60 @@ export function DataTable<TData, TValue>({
       maxSize: 600, // 필요시
     },
   });
+
+  const { setTriggerHeight, getTriggerHeight, getHeaderWidth } = useTableStore();
+  const [isFixedHeader, setIsFixedHeader] = useState(false);
+  const props = useSpring({
+    opacity: isFixedHeader ? 1 : 0,
+    height: isFixedHeader ? height + 10 : 0,
+  });
+  const [ref1, ref2] = useSyncScroll(isFixedHeader);
+
+  useEffect(() => {
+    if (isFixHeader === false || !ref1.current) {
+      return;
+    }
+    const triggerHeight = getTriggerHeight(name);
+
+    if (triggerHeight === undefined || triggerHeight === 0) {
+      setTriggerHeight(ref1.current.offsetTop, name);
+    }
+  }, [getTriggerHeight, isFixHeader, name, ref1, setTriggerHeight, y]);
+
+  // TableHeader의 위치 측정
+  useEffect(() => {
+    if (!headerRef.current) return;
+
+    const top = headerRef.current.getBoundingClientRect().top + window.scrollY;
+    setHeaderTop(top);
+  }, []);
+
+  useEffect(() => {
+    const scrollContainer = ref1.current;
+    if (!scrollContainer) return;
+
+    function handleScroll() {
+      const currentScrollY = scrollContainer.scrollTop; // window.scrollY 대신 scrollTop 사용
+      const triggerHeight = getTriggerHeight(name);
+
+      if (triggerHeight > currentScrollY) {
+        setIsFixedHeader(false);
+      } else {
+        setIsFixedHeader(true);
+      }
+    }
+
+    scrollContainer.addEventListener('scroll', handleScroll);
+    return () => {
+      scrollContainer.removeEventListener('scroll', handleScroll);
+    };
+  }, [getTriggerHeight, name, ref1]);
+
+  useEffect(() => {
+    return () => {
+      setTriggerHeight(0, name);
+    };
+  }, [name, setTriggerHeight]);
 
   // ── 무한 스크롤: 보이는 행 개수 관리 ──────────────────────────
   const [visibleCount, setVisibleCount] = React.useState(initialChunk);
@@ -98,112 +169,180 @@ export function DataTable<TData, TValue>({
   return (
     <div className="space-y-2 flex flex-1 flex-col">
       {/* 스크롤 컨테이너 */}
-      <div id={'info bar'} className="flex items-center mb-1 sticky top-0 bg-background z-20 gap-3">
-        <div className={'flex flex-col gap-1 w-full'}>
-          {tableControls && tableControls(table)}
-          {/*    정렬 표시*/}
-          {sorting.length > 0 && (
-            <div className="text-sm text-muted-foreground">
-              정렬:{' '}
-              {sorting.map((s, i) => {
-                const col = table.getColumn(s.id);
-                if (!col) return null;
-                const dir = s.desc ? '▼' : '▲';
-                return (
-                  <span key={s.id}>
-                    {i > 0 && ', '}
-                    {col.columnDef.header?.toString()} {dir} ({i + 1})
-                  </span>
-                );
-              })}
-            </div>
-          )}
-        </div>
+      <div className={'flex flex-col gap-1 w-full text-sm text-muted-foreground'}>
+        {tableControls && tableControls(table)}
+        {/*    정렬 표시*/}
+        {sorting.length > 0 && (
+          <div className={'flex gap-2'}>
+            정렬:
+            {sorting.map((s, i) => {
+              const col = table.getColumn(s.id);
+              if (!col) return null;
+              const dir = s.desc ? '▼' : '▲';
+              return (
+                <span key={s.id}>
+                  {i > 0 && <span className={'mr-1'}>, </span>}
+                  {col.columnDef.header?.toString()} {dir} ({i + 1})
+                </span>
+              );
+            })}
+          </div>
+        )}
       </div>
-      <div ref={containerRef} className="overflow-auto relative flex flex-1 scrollWidth3">
-        <div className="rounded-md border w-full h-full absolute top-0 left-0">
-          <Table className="relative ">
-            <TableHeader className="sticky top-0 bg-background z-10">
-              {table.getHeaderGroups().map((hg) => (
-                <TableRow key={hg.id}>
-                  {hg.headers.map((h) => {
-                    const canSort = h.column.getCanSort?.() ?? false;
-                    const sortDir = h.column.getIsSorted?.(); // false | 'asc' | 'desc'
-                    const onClick = h.column.getToggleSortingHandler?.();
-                    return (
-                      <TableHead
-                        key={h.id}
-                        colSpan={h.colSpan}
-                        style={{ width: h.getSize() || undefined }}
-                        onClick={canSort ? onClick : undefined}
-                        className={`px-3 py-2 text-sm font-medium ${
-                          canSort ? 'cursor-pointer select-none' : ''
-                        }`}
-                        aria-sort={
-                          sortDir === false
-                            ? 'none'
-                            : sortDir === 'asc'
-                              ? 'ascending'
-                              : 'descending'
-                        }
-                      >
-                        <span className="inline-flex items-center gap-1">
-                          {h.isPlaceholder
-                            ? null
-                            : flexRender(h.column.columnDef.header, h.getContext())}
-                          {canSort && (
-                            <span className="text-muted-foreground flex items-center gap-1">
-                              {sortDir === 'asc' ? '▲' : sortDir === 'desc' ? '▼' : ''}
-                              {/* ✅ 다중 정렬 순위 표시 */}
-                              {h.column.getSortIndex() !== -1 && (
-                                <span className="text-xs text-gray-400">
-                                  {h.column.getSortIndex() + 1}
+      <div
+        className={'w-full overflow-x-auto flex flex-1 relative scrollWidth3 border rounded-md'}
+        ref={ref1}
+      >
+        <div className={'w-full'} ref={tableMeasure[0]}>
+          {isFixHeader && isFixedHeader && (
+            <animated.div
+              className={'fixed z-[200] flex flex-row border-b-2 bg-background'}
+              style={{
+                ...props,
+                top: `${headerTop - 2}px`,
+              }}
+            >
+              <div
+                className={'flex scrollNone overflow-auto hover:bg-muted/50'}
+                ref={ref2}
+                style={{
+                  width: tableMeasure[1].width,
+                }}
+              >
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <div className={'flex'} key={headerGroup.id}>
+                    {headerGroup.headers.map((h) => {
+                      const canSort = h.column.getCanSort?.() ?? false;
+                      const sortDir = h.column.getIsSorted?.(); // false | 'asc' | 'desc'
+                      const onClick = h.column.getToggleSortingHandler?.();
+                      return (
+                        <div
+                          key={name + h.id}
+                          className={cn(
+                            `flex text-left align-middle font-medium whitespace-nowrap`,
+                            canSort && 'cursor-pointer select-none',
+                            hasNo && h.id === 'no' && 'pr-0'
+                          )}
+                        >
+                          <div
+                            onClick={canSort ? onClick : undefined}
+                            className="flex items-center justify-start text-center  text-sm"
+                            style={{
+                              width: getHeaderWidth(`${name}-${h.id}`),
+                            }}
+                          >
+                            <span className="text-center px-3">
+                              {h.isPlaceholder
+                                ? null
+                                : flexRender(h.column.columnDef.header, h.getContext())}
+                              {canSort && (
+                                <span className="text-muted-foreground ml-1">
+                                  {sortDir === 'asc' ? '▲' : sortDir === 'desc' ? '▼' : ''}
+                                  {/* ✅ 다중 정렬 순위 표시 */}
+                                  {h.column.getSortIndex() !== -1 && (
+                                    <span className="text-xs ">{h.column.getSortIndex() + 1}</span>
+                                  )}
                                 </span>
                               )}
                             </span>
-                          )}
-                        </span>
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-
-            <TableBody>
-              {rowsToRender.length ? (
-                <>
-                  {rowsToRender.map((r) => (
-                    <TableRow
-                      key={r.id}
-                      data-state={r.getIsSelected() && 'selected'}
-                      onClick={onClickRow ? () => onClickRow(r.original) : undefined}
-                      className={onClickRow ? 'hover:cursor-pointer' : undefined}
-                    >
-                      {r.getVisibleCells().map((c) => (
-                        <TableCell key={c.id}>
-                          {flexRender(c.column.columnDef.cell, c.getContext())}
-                        </TableCell>
-                      ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            </animated.div>
+          )}
+          <div ref={containerRef} className="overflow-auto flex flex-1 ">
+            <div className="w-full h-full absolute top-0 left-0">
+              <Table className="relative" ref={headerRef}>
+                <TableHeader className="bg-background z-10" ref={ref}>
+                  {table.getHeaderGroups().map((hg) => (
+                    <TableRow key={hg.id}>
+                      {hg.headers.map((h) => {
+                        const canSort = h.column.getCanSort?.() ?? false;
+                        const sortDir = h.column.getIsSorted?.(); // false | 'asc' | 'desc'
+                        const onClick = h.column.getToggleSortingHandler?.();
+                        return (
+                          <TableHead
+                            key={h.id}
+                            headerKey={`${name}-${h.id}`}
+                            onClick={canSort ? onClick : undefined}
+                            className={cn(
+                              canSort ? 'cursor-pointer select-none' : '',
+                              hasNo && h.id === 'no' && 'pr-0'
+                            )}
+                            aria-sort={
+                              sortDir === false
+                                ? 'none'
+                                : sortDir === 'asc'
+                                  ? 'ascending'
+                                  : 'descending'
+                            }
+                          >
+                            <span className="text-center">
+                              {h.isPlaceholder
+                                ? null
+                                : flexRender(h.column.columnDef.header, h.getContext())}
+                              {canSort && (
+                                <span className="text-muted-foreground ml-1">
+                                  {sortDir === 'asc' ? '▲' : sortDir === 'desc' ? '▼' : ''}
+                                  {/* ✅ 다중 정렬 순위 표시 */}
+                                  {h.column.getSortIndex() !== -1 && (
+                                    <span className="text-xs text-gray-400">
+                                      {h.column.getSortIndex() + 1}
+                                    </span>
+                                  )}
+                                </span>
+                              )}
+                            </span>
+                          </TableHead>
+                        );
+                      })}
                     </TableRow>
                   ))}
+                </TableHeader>
 
-                  {/* 센티널: 끝에 도달하면 더 로드 */}
-                  <TableRow>
-                    <TableCell colSpan={columns.length}>
-                      <div ref={sentinelRef} className="h-8 w-full" />
-                    </TableCell>
-                  </TableRow>
-                </>
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="h-24 text-center">
-                    결과 없음
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                <TableBody>
+                  {rowsToRender.length ? (
+                    <>
+                      {rowsToRender.map((r) => (
+                        <TableRow
+                          key={r.id}
+                          data-state={r.getIsSelected() && 'selected'}
+                          onClick={onClickRow ? () => onClickRow(r.original) : undefined}
+                          className={cn(onClickRow ? 'hover:cursor-pointer' : undefined)}
+                        >
+                          {r.getVisibleCells().map((c) => (
+                            <TableCell
+                              key={c.id}
+                              className={cn(hasNo && c.column.columnDef.id === `no` && 'pr-0')}
+                            >
+                              {flexRender(c.column.columnDef.cell, c.getContext())}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      ))}
+
+                      {/* 센티널: 끝에 도달하면 더 로드 */}
+                      <TableRow>
+                        <TableCell colSpan={columns.length}>
+                          <div ref={sentinelRef} className="h-8 w-full" />
+                        </TableCell>
+                      </TableRow>
+                    </>
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={columns.length} className="h-24 text-center">
+                        결과 없음
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
         </div>
       </div>
     </div>

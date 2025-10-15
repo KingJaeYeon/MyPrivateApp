@@ -170,6 +170,11 @@
   scrollbar-color: #888888 transparent;
 }
 
+.scrollNone {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
 .ellipsisLine1 {
   text-overflow: ellipsis;
   overflow: hidden;

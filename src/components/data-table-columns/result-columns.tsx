@@ -28,10 +28,10 @@ export type VideoRow = {
 
 export const RESULT_COLUMNS: ColumnDef<VideoRow>[] = [
   {
+    id: 'no',
     accessorKey: 'no',
     header: '#',
-    size: 60,
-    cell: ({ row }) => <span className="tabular-nums flex justify-center">{row.original.no}</span>,
+    cell: ({ row }) => <span className="tabular-nums text-xs">{row.original.no}</span>,
     enableSorting: true,
   },
   {
@@ -109,8 +109,8 @@ export const RESULT_COLUMNS: ColumnDef<VideoRow>[] = [
     header: '시간당 조회수',
     size: 140,
     cell: ({ row }) => (
-      <span className="flex justify-center tabular-nums text-xs">
-        {Number(Math.round(row.original.viewsPerHour).toFixed(2))}
+      <span className="tabular-nums text-xs">
+        {nf.format(Math.round(row.original.viewsPerHour))}
       </span>
     ),
   },
@@ -129,18 +129,14 @@ export const RESULT_COLUMNS: ColumnDef<VideoRow>[] = [
     size: 150,
     cell: ({ row }) => {
       const v = row.original.viewsPerSubscriber;
-      return v == null ? (
-        '-'
-      ) : (
-        <span className="tabular-nums text-xs flex justify-center">{v.toFixed(4)}</span>
-      );
+      return v == null ? '-' : <span className="tabular-nums text-xs">{v.toFixed(4)}</span>;
     },
   },
   {
     accessorKey: 'duration',
     header: '영상길이',
     size: 110,
-    cell: ({ row }) => row.original.duration,
+    cell: ({ row }) => <span className="tabular-nums text-xs">{row.original.duration}</span>,
   },
   {
     accessorKey: 'link',

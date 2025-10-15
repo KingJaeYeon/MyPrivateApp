@@ -31,7 +31,7 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     accessorKey: 'name',
     header: '채널명',
     cell: ({ row }) => (
-      <span className="tabular-nums text-xs pl-2 flex gap-1 items-center">
+      <span className="tabular-nums text-xs flex gap-1 items-center">
         <Avatar className={'w-6 h-6'}>
           <AvatarImage src={row.original.icon} />
           <AvatarFallback>CN</AvatarFallback>
@@ -45,7 +45,7 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     header: '핸들',
     cell: ({ row }) => (
       <p
-        className={'cursor-pointer text-xs break-words whitespace-normal pl-2 font-bold'}
+        className={'cursor-pointer text-xs break-words font-bold'}
         onClick={() => {
           navigator.clipboard.writeText(row.original.handle);
           toast.success(`${row.original.handle} 복사완료`);
@@ -63,7 +63,7 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     cell: ({ row }) => {
       const tags = useTagStore.getState().jsonData;
       return (
-        <div className={'flex-wrap gap-0.5 flex'}>
+        <div className={'break-words whitespace-normal'}>
           {row.original.tag.split(',').map((tag, i) => (
             <Badge variant="secondary" key={i} size={'sm'}>
               {tags[tag]}
@@ -77,18 +77,14 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     accessorKey: 'regionCode',
     header: '국가',
     size: 50,
-    cell: ({ row }) => (
-      <p className={'cursor-pointer text-xs break-words whitespace-normal pl-2'}>
-        {row.original.regionCode}
-      </p>
-    ),
+    cell: ({ row }) => <p className={'text-xs'}>{row.original.regionCode}</p>,
   },
   {
     accessorKey: 'subscriberCount',
     header: '구독자 수',
     size: 50,
     cell: ({ row }) => (
-      <span className="tabular-nums text-xs pl-2">{nf.format(row.original.subscriberCount)}</span>
+      <span className="tabular-nums text-xs">{nf.format(row.original.subscriberCount)}</span>
     ),
   },
   {
@@ -96,26 +92,26 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     header: '총 조회수',
     size: 120,
     cell: ({ row }) => (
-      <span className="tabular-nums text-xs pl-2">{nf.format(row.original.viewCount)}</span>
+      <span className="tabular-nums text-xs">{nf.format(row.original.viewCount)}</span>
     ),
   },
   {
     accessorKey: 'videoCount',
     header: '동영상 수',
     cell: ({ row }) => (
-      <span className="tabular-nums text-xs pl-2">{nf.format(row.original.videoCount)}</span>
+      <span className="tabular-nums text-xs">{nf.format(row.original.videoCount)}</span>
     ),
   },
   {
     accessorKey: 'memo',
     header: '메모',
-    maxSize: 300,
+    maxSize: 400,
     minSize: 200,
     cell: ({ row }) => (
       <Tip txt={row.original.memo} className={'max-w-[400px] w-full'}>
         <span
           className={
-            'ellipsisLine2 cursor-pointer min-w-[50px] w-full text-xs break-words whitespace-normal'
+            'ellipsisLine2 cursor-pointer min-w-[100px] max-w-[300px] w-full text-xs break-words whitespace-normal'
           }
         >
           {row.original.memo}
@@ -127,9 +123,7 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     accessorKey: 'publishedAt',
     header: '생성일',
     size: 120,
-    cell: ({ row }) => (
-      <span className="tabular-nums text-xs pl-2">{row.original.publishedAt}</span>
-    ),
+    cell: ({ row }) => <span className="tabular-nums text-xs">{row.original.publishedAt}</span>,
   },
   {
     accessorKey: 'platform',
@@ -151,7 +145,7 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     accessorKey: 'fetchedAt',
     header: '갱신날짜',
     size: 120,
-    cell: ({ row }) => <span className="tabular-nums text-xs pl-2">{row.original.fetchedAt}</span>,
+    cell: ({ row }) => <span className="tabular-nums text-xs">{row.original.fetchedAt}</span>,
   },
   {
     accessorKey: 'link',

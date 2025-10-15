@@ -19,6 +19,8 @@ export default function SearchVideoResult() {
     <div className="flex flex-1 px-4 w-full">
       <DataTable<VideoRow, unknown>
         columns={RESULT_COLUMNS}
+        hasNo={true}
+        isFixHeader={true}
         data={data}
         tableControls={(_) => {
           return <div className="text-sm text-muted-foreground">{dataInfo}</div>;
