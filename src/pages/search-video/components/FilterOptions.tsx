@@ -47,7 +47,7 @@ export function FilterOptions() {
           )}
         >
           <div className="min-h-0 flex flex-wrap items-center gap-2">
-            <div className={'flex gap-4 justify-between'}>
+            <div className={'flex gap-4 justify-between h-9 items-center'}>
               <Label htmlFor="keyword" className="min-w-fit">
                 키워드
                 <Tip
@@ -137,7 +137,7 @@ export function FilterOptions() {
               <div className="flex w-full max-w-sm items-center gap-2 justify-between h-8">
                 <Label htmlFor="language" className="min-w-fit">
                   채널별 인기영상 보기
-                  <Tip txt={'off : 최신순 \non: 최근 N일 내에서의 인기순\n'}>
+                  <Tip txt={'off : 최신순으로 수집 \non: 최근 N일 내 모든 영상내에서 인기순\n'}>
                     <IconMoreInfo />
                   </Tip>
                 </Label>

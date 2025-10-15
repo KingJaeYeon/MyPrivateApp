@@ -22,15 +22,24 @@ export function ActionsButtons() {
   const youtubeApiKey = useSettingStore((r) => r.data.youtube.apiKey);
   const Log = useLogStore();
 
-  const { mutate, isPending } = useMutation({
-    mutationKey: ['search-youtube', filter], // (선택) 디버그 가독성
-    mutationFn: async (d: ChannelPayload | KeywordPayload) => {
-      if (d.mode === 'channels') {
-        return await getVideosByChannels({ ...d, apiKey: youtubeApiKey });
-      } else {
-        return await getVideoByKeywords({ ...d, apiKey: youtubeApiKey });
-      }
+  const { mutate: mutateC, isPending: isPendingC } = useMutation({
+    mutationKey: ['search-youtube-channel', filter], // (선택) 디버그 가독성
+    mutationFn: async (d: ChannelPayload) =>
+      await getVideosByChannels({ ...d, apiKey: youtubeApiKey }),
+    onSuccess: (data) => {
+      setResult(data); // ✅ VideoRow[] 저장
+      Log.completed();
     },
+    onError: (error: any) => {
+      Log.stopped();
+      alert(error?.message || '요청 중 오류가 발생했습니다.');
+    },
+  });
+
+  const { mutate: mutateK, isPending: isPendingK } = useMutation({
+    mutationKey: ['search-youtube-keyword', filter], // (선택) 디버그 가독성
+    mutationFn: async (d: KeywordPayload) =>
+      await getVideoByKeywords({ ...d, apiKey: youtubeApiKey }),
     onSuccess: (data) => {
       setResult(data); // ✅ VideoRow[] 저장
       Log.completed();
@@ -68,13 +77,20 @@ export function ActionsButtons() {
       alert('검색 조건이 이전과 동일합니다. 조건을 변경한 후 다시 시도해주세요.');
       return;
     }
-    // 왜 undefined가 될까? -> zodParseSafe 실패 시 data가 undefined
+
     const validatedData = {
       ...commonValidation.data,
       ...modeValidation.data,
     };
     Log.start();
-    mutate(validatedData as ChannelPayload | KeywordPayload);
+
+    if (validatedData.mode === 'channels') {
+      mutateC(validatedData as ChannelPayload);
+      return;
+    }
+
+    mutateK(validatedData as KeywordPayload);
+    return;
   };
 
   const onStop = () => {
@@ -85,10 +101,10 @@ export function ActionsButtons() {
 
   return (
     <div className="flex gap-3">
-      <Button size="sm" onClick={onStart} disabled={isPending}>
-        {isPending ? '실행 중…' : '시작하기'}
+      <Button size="sm" onClick={onStart} disabled={isPendingC || isPendingK}>
+        {isPendingC || isPendingK ? '실행 중…' : '시작하기'}
       </Button>
-      <Button size="sm" onClick={onStop} disabled={!isPending}>
+      <Button size="sm" onClick={onStop} disabled={!(isPendingC || isPendingK)}>
         중단하기
       </Button>
       <Button size="sm" onClick={clearResult}>

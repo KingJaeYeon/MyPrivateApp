@@ -153,7 +153,7 @@ export function DataTable<TData, TValue>({
                             : flexRender(h.column.columnDef.header, h.getContext())}
                           {canSort && (
                             <span className="text-muted-foreground flex items-center gap-1">
-                              {sortDir === 'asc' ? '▲' : sortDir === 'desc' ? '▼' : '↕'}
+                              {sortDir === 'asc' ? '▲' : sortDir === 'desc' ? '▼' : ''}
                               {/* ✅ 다중 정렬 순위 표시 */}
                               {h.column.getSortIndex() !== -1 && (
                                 <span className="text-xs text-gray-400">

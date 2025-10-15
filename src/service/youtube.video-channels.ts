@@ -23,7 +23,7 @@ function filterByVph(items: any[], minVph: number) {
   });
 }
 
-async function toRowsWithSubscribers(vItems: any[]): Promise<VideoRow[]> {
+function toRowsWithSubscribers(vItems: any[]): VideoRow[] {
   const subsMap: Record<string, number | null> = {};
 
   const { data } = useChannelStore.getState();
@@ -188,9 +188,48 @@ export async function getVideosByChannels({
   // -> videoDuration 필터  any 전체 long 20분이상 medium 4~20분 short 4분이하.
   // -> minViewsPerHour, minViews 필터
   // -> video length >= maxChannels 종료
-
   if (isPopularVideosOnly) {
-    return collected;
+    for (const upload of uploads) {
+      const temp = [];
+
+      do {
+        const { vIds, newPageToken } = await fetchVideoIds({
+          apiKey,
+          upload,
+          pageToken,
+          publishedAfter,
+        });
+        pageToken = newPageToken;
+
+        const result = await fetchVideos({ apiKey, vIds });
+        temp.push(...result);
+      } while (pageToken !== undefined);
+      const vItems = filterByVph(temp, minViewsPerHour);
+
+      const temp2 = [];
+      for (const v of vItems) {
+        const viewCount = Number(v?.statistics?.viewCount ?? 0);
+        const durSec = parseISODurationToSec(v.contentDetails.duration ?? 'PT0S');
+
+        if (viewCount < minViews) continue; // 최소 조회수 필터
+
+        // videoDuration 필터
+        if (videoDuration === 'long' && durSec < 20 * 60) continue; // long인데 20분 미만이면 제외
+        if (videoDuration === 'medium' && (durSec < 4 * 60 || durSec >= 20 * 60)) continue; // medium인데 4분 미만 또는 20분 이상이면 제외
+        if (videoDuration === 'short' && durSec >= 4 * 60) continue; // short인데 4분 이상이면 제외
+        temp2.push(v);
+      }
+
+      const temp3 = toRowsWithSubscribers(temp2);
+      const sortArr = temp3.sort((a, b) => b.viewsPerHour - a.viewsPerHour);
+      collected.push(...sortArr.slice(0, maxChannels));
+    }
+
+    return collected
+      .sort((a, b) => b.viewsPerHour - a.viewsPerHour)
+      .map((v, i) => {
+        return { ...v, no: i + 1 };
+      });
   }
   // isPopularVideosOnly false
   // videoId 50개씩 요청
