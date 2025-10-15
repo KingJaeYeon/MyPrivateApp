@@ -16,26 +16,66 @@ import React from 'react';
 import { TagFilterRow } from '@/pages/search-video/components/TagFilterRow.tsx';
 import { Slider } from '@/components/ui/slider.tsx';
 import { useChannelPair, useCommonPair, useKeywordPair } from '@/hook/useVideoSearchSelectors.tsx';
+import { cn } from '@/lib/utils.ts';
+import { ButtonGroup } from '@/components/ui/button-group.tsx';
+import flag from '../../../../public/flag.json';
 
 export function FilterOptions() {
+  const flags = Object.keys(flag) as (keyof typeof flag)[];
   const { fieldErrorsKeys, setMode, setChannel, setCommon, setKeyword } = useVideoSearchStore();
+  const { mode, minViews, minViewsPerHour, shortsDuration, videoDuration } = useCommonPair();
   const {
-    mode,
-    minViews,
-    minViewsPerHour,
     relevanceLanguage,
-    shortsDuration,
-    videoDuration,
     regionCode,
-  } = useCommonPair();
-  const { keyword, maxResults, days: publishedAfterK } = useKeywordPair();
+    keyword,
+    maxResults,
+    days: publishedAfterK,
+  } = useKeywordPair();
   const { isPopularVideosOnly, maxChannels, days: publishedAfterC } = useChannelPair();
 
   const days = mode === 'channels' ? publishedAfterC : publishedAfterK;
 
   return (
     <>
-      <TagFilterRow mode={mode} />
+      {mode === 'channels' ? (
+        <TagFilterRow />
+      ) : (
+        <div
+          className={cn(
+            'grid overflow-hidden transition-[grid-template-rows] duration-300',
+            'grid-rows-[1fr] pb-3 border-b'
+          )}
+        >
+          <div className="min-h-0 flex flex-wrap items-center gap-2">
+            <div className={'flex gap-4 justify-between'}>
+              <Label htmlFor="keyword" className="min-w-fit">
+                키워드
+                <Tip
+                  txt={
+                    '검색 범위: 제목(title), 설명(description), 태그(tags)\n' +
+                    '연산자: \n' +
+                    '  • OR → | (cat|dog)\n' +
+                    '  • AND → , (cat,dog)\n' +
+                    '  • NOT → - ( -fish )\n' +
+                    '예시: cat|dog -fish / cat,dog -fish'
+                  }
+                  className={'whitespace-pre-wrap'}
+                >
+                  <IconMoreInfo />
+                </Tip>
+              </Label>
+              <Input
+                id="keyword"
+                value={keyword}
+                placeholder="입력해주세요."
+                onChange={(e) => setKeyword('keyword', e.target.value)}
+                className="w-[250px] h-8"
+                aria-invalid={fieldErrorsKeys.includes('keyword')}
+              />
+            </div>
+          </div>
+        </div>
+      )}
       <div className={'grid-cols-3 grid w-full gap-x-6'}>
         <div className="flex flex-col gap-2">
           <div className="flex w-full max-w-sm items-center gap-2 justify-between">
@@ -56,57 +96,35 @@ export function FilterOptions() {
           </div>
           {mode === 'keywords' && (
             <React.Fragment>
-              <div className="flex w-full max-w-sm items-center gap-2 justify-between">
-                <Label htmlFor="keyword" className="min-w-fit">
-                  키워드
-                  <Tip
-                    txt={
-                      '검색 범위: 제목(title), 설명(description), 태그(tags)\n' +
-                      '연산자: \n' +
-                      '  • OR → | (cat|dog)\n' +
-                      '  • AND → , (cat,dog)\n' +
-                      '  • NOT → - ( -fish )\n' +
-                      '예시: cat|dog -fish / cat,dog -fish'
-                    }
-                    className={'whitespace-pre-wrap'}
-                  >
-                    <IconMoreInfo />
-                  </Tip>
-                </Label>
-                <Input
-                  id="keyword"
-                  value={keyword}
-                  placeholder="입력해주세요."
-                  onChange={(e) => setKeyword('keyword', e.target.value)}
-                  className="w-[250px] h-8"
-                  aria-invalid={fieldErrorsKeys.includes('keyword')}
-                />
-              </div>
-              <div className="flex w-full max-w-sm items-center gap-2 justify-between">
+              <div className="flex w-full max-w-sm items-center gap-4 h-8 justify-between">
                 <Label htmlFor="maxResults" className="min-w-fit">
-                  최대 검색 개수
+                  최대 검색 개수 ({maxResults})
                 </Label>
-                <Input
-                  id="maxResults"
-                  placeholder={'0'}
-                  value={maxResults}
-                  min={1}
-                  onChange={(e) => setKeyword('maxResults', e.target.value)}
-                  className="w-[60px] h-8"
-                  aria-invalid={fieldErrorsKeys.includes('maxResults')}
+                <Slider
+                  max={300}
+                  step={10}
+                  className={'max-w-[200px]'}
+                  value={[Number(maxResults)]}
+                  onValueChange={(value) => {
+                    if (value[0] <= 50) {
+                      value = [50];
+                    }
+                    setKeyword('maxResults', value[0].toString());
+                  }}
                 />
               </div>
             </React.Fragment>
           )}
           {mode === 'channels' && (
             <React.Fragment>
-              <div className="flex w-full max-w-sm items-center gap-12 justify-between h-8">
+              <div className="flex w-full max-w-sm items-center gap-4 justify-between h-8">
                 <Label htmlFor="maxChannels" className="min-w-fit">
                   채널당 최대 검색 수 ({maxChannels})
                 </Label>
                 <Slider
                   max={50}
                   step={5}
+                  className={'max-w-[200px]'}
                   value={[Number(maxChannels)]}
                   onValueChange={(value) => {
                     if (value[0] <= 15) {
@@ -134,30 +152,6 @@ export function FilterOptions() {
 
         {/* 컬럼 2 */}
         <div className="flex flex-col gap-2">
-          <div className="flex w-full max-w-sm items-center gap-2 justify-between">
-            <Label htmlFor="videoDuration" className="min-w-fit">
-              영상 유형
-              <Tip txt="롱폼(20분이상), 일반(4~20분), 쇼츠(4분미만)">
-                <IconMoreInfo />
-              </Tip>
-            </Label>
-            <Select
-              value={videoDuration}
-              onValueChange={(v) => setCommon('videoDuration', v as any)}
-            >
-              <SelectTrigger className="w-[130px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="any">전체</SelectItem>
-                  <SelectItem value="short">쇼츠</SelectItem>
-                  <SelectItem value="medium">일반</SelectItem>
-                  <SelectItem value="long">롱폼</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
           <div className="flex w-full max-w-sm items-center gap-2 justify-between">
             <Label htmlFor="minViews" className={'min-w-fit'}>
               최소 조회수
@@ -213,6 +207,30 @@ export function FilterOptions() {
         {/* 컬럼 3 */}
         <div className="flex flex-col gap-2">
           <div className="flex w-full max-w-sm items-center gap-2 justify-between">
+            <Label htmlFor="videoDuration" className="min-w-fit">
+              영상 유형
+              <Tip txt="롱폼(20분이상), 일반(4~20분), 쇼츠(4분미만)">
+                <IconMoreInfo />
+              </Tip>
+            </Label>
+            <Select
+              value={videoDuration}
+              onValueChange={(v) => setCommon('videoDuration', v as any)}
+            >
+              <SelectTrigger className="w-[100px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="min-w-[100px]">
+                <SelectGroup>
+                  <SelectItem value="any">전체</SelectItem>
+                  <SelectItem value="short">쇼츠</SelectItem>
+                  <SelectItem value="medium">일반</SelectItem>
+                  <SelectItem value="long">롱폼</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex w-full max-w-sm items-center gap-2 justify-between">
             <Label htmlFor="shortsDuration" className="min-w-fit">
               쇼츠 기준(s)(준비중)
             </Label>
@@ -220,49 +238,53 @@ export function FilterOptions() {
               id="shortsDuration"
               value={shortsDuration}
               onChange={(e) => setCommon('shortsDuration', e.target.value)}
-              className="w-[70px] h-8"
+              className="w-[100px] h-8"
               aria-invalid={fieldErrorsKeys.includes('shortsDuration')}
             />
           </div>
-
-          <div className="flex w-full max-w-sm items-center gap-2 justify-between">
-            <Label htmlFor="relevanceLanguage" className="min-w-fit">
-              언어
-              <Tip
-                txt={`이 언어로 된 콘텐츠를 우선적으로 보여 달라\n (예: ko → 한국어 제목/설명이 많은 영상이 우선 노출될 가능성이 높음)`}
-              >
-                <IconMoreInfo />
-              </Tip>
-            </Label>
-            <Input
-              id="relevanceLanguage"
-              value={relevanceLanguage}
-              onChange={(e) => setCommon('relevanceLanguage', e.target.value)}
-              className="w-[70px] h-8"
-            />
-          </div>
-          <div className="flex w-full max-w-sm items-center gap-2 justify-between">
-            <Label htmlFor="country" className="min-w-fit">
-              대상 국가
-              <Tip txt="지역별 인기 차트(소비 위치 기준)">
-                <IconMoreInfo />
-              </Tip>
-            </Label>
-            <Select value={regionCode} onValueChange={(v) => setCommon('regionCode', v as any)}>
-              <SelectTrigger className="w-[130px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="KR">한국</SelectItem>
-                  <SelectItem value="US">미국</SelectItem>
-                  <SelectItem value="JP">일본</SelectItem>
-                  <SelectItem value="SE">스웨덴</SelectItem>
-                  <SelectItem value="DE">독일</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
+          {mode === 'keywords' && (
+            <div className="flex w-full max-w-sm items-center gap-2 justify-between">
+              <Label htmlFor="country" className="min-w-fit">
+                대상 국가 / 언어
+                <Tip
+                  txt={
+                    '대상 국가: 지역별 인기 차트(소비 위치 기준)\n언어: 이 언어로 된 콘텐츠를 우선적으로 보여 달라\n(예: ko → 한국어 제목/설명이 많은 영상이 우선 노출될 가능성이 높음)'
+                  }
+                >
+                  <IconMoreInfo />
+                </Tip>
+              </Label>
+              <ButtonGroup>
+                <Select
+                  value={regionCode}
+                  onValueChange={(v) => setKeyword('regionCode', v as any)}
+                >
+                  <SelectTrigger className="w-14 px-2" size={'sm'}>
+                    <img src={`/flag/${regionCode}.svg`} alt={'test'} />
+                  </SelectTrigger>
+                  <SelectContent className="min-w-40" align={'center'}>
+                    <SelectGroup>
+                      {flags.map((v) => {
+                        const val = flag[v];
+                        return (
+                          <SelectItem key={val.slug} value={v}>
+                            <img src={`/flag/${v}.svg`} alt={val.language} className={'mr-1'} />{' '}
+                            <span className="text-muted-foreground">{val['translation-ko']}</span>
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <Input
+                  id="relevanceLanguage"
+                  value={relevanceLanguage}
+                  onChange={(e) => setKeyword('relevanceLanguage', e.target.value)}
+                  className="w-[90px] h-8"
+                />
+              </ButtonGroup>
+            </div>
+          )}
         </div>
       </div>
     </>

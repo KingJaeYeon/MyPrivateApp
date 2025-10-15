@@ -2,7 +2,6 @@
 import { request_youtube } from '@/service/axios';
 import { isoAfterNDays, parseISODurationToSec, formatDuration } from '@/lib/date';
 import { differenceInHours, parseISO } from 'date-fns';
-import { chunk } from '@/lib/utils';
 
 import { VideoRow } from '@/components/data-table-columns/result-columns.tsx';
 import { ChannelPayload } from '@/schemas/filter.schema.ts';
@@ -174,16 +173,7 @@ export async function getVideosByChannels({
   isPopularVideosOnly,
   ...payload
 }: ChannelPayload & { apiKey: string }): Promise<VideoRow[]> {
-  const {
-    channelIds,
-    minViews,
-    maxChannels,
-    videoDuration,
-    minViewsPerHour,
-    days,
-    regionCode,
-    relevanceLanguage,
-  } = payload;
+  const { channelIds, minViews, maxChannels, videoDuration, minViewsPerHour, days } = payload;
 
   const publishedAfter = isoAfterNDays(days);
   let pageToken: string | undefined = undefined;

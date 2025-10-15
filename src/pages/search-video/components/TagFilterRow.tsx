@@ -24,7 +24,7 @@ import { ChannelColumns } from '@/components/data-table-columns/channel-columns.
 import { useVideoSearchStore } from '@/store/videoFilterV2.ts';
 import { useChannelPair, useTagsPair } from '@/hook/useVideoSearchSelectors.tsx';
 
-export function TagFilterRow({ mode }: { mode: 'channels' | 'keywords' }) {
+export function TagFilterRow() {
   const { key: tags, logic } = useTagsPair();
   const { setTags } = useVideoSearchStore();
   const [selectedChannels, setSelectedChannels] = useState<ChannelColumns[]>([]);
@@ -42,7 +42,7 @@ export function TagFilterRow({ mode }: { mode: 'channels' | 'keywords' }) {
     <div
       className={cn(
         'grid overflow-hidden transition-[grid-template-rows] duration-300',
-        mode === 'channels' ? 'grid-rows-[1fr] pb-3 border-b' : 'grid-rows-[0fr]'
+        'grid-rows-[1fr] pb-3 border-b'
       )}
     >
       <div className="min-h-0 flex flex-wrap items-center gap-2">

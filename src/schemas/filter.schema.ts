@@ -8,8 +8,6 @@ export const CommonFilterSchema = z.object({
   minViews: z.coerce.number().min(0, '최소 조회수는 0 이상'),
   minViewsPerHour: z.coerce.number().min(0, '최소 시간당 조회수(vph)는 0 이상'),
   shortsDuration: z.coerce.number().int().min(1, '쇼츠 기준은 1초 이상'),
-  regionCode: z.string().min(2, '국가를 선택해주세요'),
-  relevanceLanguage: z.string().min(2, '언어 코드를 입력해주세요'),
 });
 
 /** 키워드 모드 전용 */
@@ -23,6 +21,8 @@ export const KeywordFilterSchema = z.object({
     .max(50, '최근 N일은 50 이하'),
   keyword: z.string().trim().min(1, '키워드를 입력해주세요'),
   maxResults: z.coerce.number().int().min(1, '검색어당 최대 검색 개수는 1 이상'),
+  regionCode: z.string().min(2, '국가를 선택해주세요'),
+  relevanceLanguage: z.string().min(2, '언어 코드를 입력해주세요'),
 });
 /** 채널 모드 전용 */
 export const ChannelFilterSchema = z.object({
@@ -65,8 +65,6 @@ export const defaultCommonUI: CommonFilterUI = {
   minViews: '1000',
   minViewsPerHour: '600',
   shortsDuration: '60',
-  regionCode: 'KR',
-  relevanceLanguage: 'ko',
 };
 
 export const defaultChannelUI: ChannelFilterUI = {
@@ -82,6 +80,8 @@ export const defaultKeywordUI: KeywordFilterUI = {
   days: '7',
   keyword: '',
   maxResults: '50',
+  regionCode: 'KR',
+  relevanceLanguage: 'ko',
 };
 
 export const defaultTagsUI: TagsFilterUI = {

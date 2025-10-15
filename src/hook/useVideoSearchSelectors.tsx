@@ -8,8 +8,6 @@ export const useCommonPair = () =>
       videoDuration: s.filter.common.videoDuration,
       minViews: s.filter.common.minViews,
       minViewsPerHour: s.filter.common.minViewsPerHour,
-      regionCode: s.filter.common.regionCode,
-      relevanceLanguage: s.filter.common.relevanceLanguage,
       shortsDuration: s.filter.common.shortsDuration,
     }))
   );
@@ -30,6 +28,8 @@ export const useKeywordPair = () =>
       days: s.filter.keyword.days,
       keyword: s.filter.keyword.keyword,
       maxResults: s.filter.keyword.maxResults,
+      regionCode: s.filter.keyword.regionCode,
+      relevanceLanguage: s.filter.keyword.relevanceLanguage,
     }))
   );
 

@@ -1,0 +1,42 @@
+{
+  "KR": {
+    "name": "South Korea",
+    "slug": "south-korea",
+    "translation-ko": "대한민국",
+    "currency": "KRW",
+    "phone": "82",
+    "language": "ko"
+  },
+  "US": {
+    "name": "United States",
+    "slug": "united-states",
+    "translation-ko": "미국",
+    "currency": "USD",
+    "phone": "1",
+    "language": "en"
+  },
+  "JP": {
+    "name": "Japan",
+    "slug": "japan",
+    "translation-ko": "일본",
+    "currency": "JPY",
+    "phone": "81",
+    "language": "ja"
+  },
+  "SE": {
+    "name": "Sweden",
+    "slug": "sweden",
+    "translation-ko": "스웨덴",
+    "currency": "SEK",
+    "phone": "46",
+    "language": "sv"
+  },
+  "DE": {
+    "name": "Germany",
+    "slug": "germany",
+    "translation-ko": "독일",
+    "currency": "EUR",
+    "phone": "49",
+    "language": "de"
+  }
+}

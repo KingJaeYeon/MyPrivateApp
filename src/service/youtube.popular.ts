@@ -159,6 +159,12 @@ export async function getPopularVideos(params: FetchPopularParams): Promise<Vide
 
     rows.push({
       no: no++,
+      channelId: sn.channelId,
+      tags: sn.tags,
+      defaultLanguage: sn.defaultLanguage,
+      defaultAudioLanguage: sn.defaultAudioLanguage,
+      commentCount: st.commentCount,
+      likeCount: st.likeCount,
       channelTitle: sn.channelTitle ?? '',
       title: sn.title ?? '',
       publishedAt,
