@@ -26,18 +26,27 @@ export type ChannelColumns = {
   videoCount: number;
 };
 
+const formatNumber = (num: number) => (
+  <span className="tabular-nums text-xs">{nf.format(num)}</span>
+);
+
+const copyToClipboard = (text: string) => {
+  navigator.clipboard.writeText(text);
+  toast.success(`${text} 복사완료`);
+};
+
 export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
   {
     accessorKey: 'name',
     header: '채널명',
     cell: ({ row }) => (
-      <span className="tabular-nums text-xs flex gap-1 items-center">
-        <Avatar className={'w-6 h-6'}>
+      <div className="flex gap-1 items-center text-xs">
+        <Avatar className="w-6 h-6">
           <AvatarImage src={row.original.icon} />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
-        <p className={'font-bold'}>{row.original.name}</p>
-      </span>
+        <p className="font-bold">{row.original.name}</p>
+      </div>
     ),
   },
   {
@@ -45,11 +54,8 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     header: '핸들',
     cell: ({ row }) => (
       <p
-        className={'cursor-pointer text-xs break-words font-bold'}
-        onClick={() => {
-          navigator.clipboard.writeText(row.original.handle);
-          toast.success(`${row.original.handle} 복사완료`);
-        }}
+        className="cursor-pointer text-xs break-words font-bold"
+        onClick={() => copyToClipboard(row.original.handle)}
       >
         {row.original.handle}
       </p>
@@ -63,9 +69,9 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     cell: ({ row }) => {
       const tags = useTagStore.getState().jsonData;
       return (
-        <div className={'break-words whitespace-normal'}>
-          {row.original.tag.split(',').map((tag, i) => (
-            <Badge variant="secondary" key={i} size={'sm'}>
+        <div className="flex flex-wrap gap-1">
+          {row.original.tag.split(',').map((tag) => (
+            <Badge variant="secondary" key={tag} size="sm">
               {tags[tag]}
             </Badge>
           ))}
@@ -77,30 +83,24 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     accessorKey: 'regionCode',
     header: '국가',
     size: 50,
-    cell: ({ row }) => <p className={'text-xs'}>{row.original.regionCode}</p>,
+    cell: ({ row }) => <p className="text-xs">{row.original.regionCode}</p>,
   },
   {
     accessorKey: 'subscriberCount',
     header: '구독자 수',
     size: 50,
-    cell: ({ row }) => (
-      <span className="tabular-nums text-xs">{nf.format(row.original.subscriberCount)}</span>
-    ),
+    cell: ({ row }) => formatNumber(row.original.subscriberCount),
   },
   {
     accessorKey: 'viewCount',
     header: '총 조회수',
     size: 120,
-    cell: ({ row }) => (
-      <span className="tabular-nums text-xs">{nf.format(row.original.viewCount)}</span>
-    ),
+    cell: ({ row }) => formatNumber(row.original.viewCount),
   },
   {
     accessorKey: 'videoCount',
     header: '동영상 수',
-    cell: ({ row }) => (
-      <span className="tabular-nums text-xs">{nf.format(row.original.videoCount)}</span>
-    ),
+    cell: ({ row }) => formatNumber(row.original.videoCount),
   },
   {
     accessorKey: 'memo',
@@ -108,12 +108,8 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     maxSize: 400,
     minSize: 200,
     cell: ({ row }) => (
-      <Tip txt={row.original.memo} className={'max-w-[400px] w-full'}>
-        <span
-          className={
-            'ellipsisLine2 cursor-pointer min-w-[100px] max-w-[300px] w-full text-xs break-words whitespace-normal'
-          }
-        >
+      <Tip txt={row.original.memo} className="max-w-[400px]">
+        <span className="ellipsisLine2 cursor-pointer min-w-[100px] max-w-[300px] text-xs break-words whitespace-normal">
           {row.original.memo}
         </span>
       </Tip>
@@ -128,18 +124,14 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
   {
     accessorKey: 'platform',
     header: '플랫폼',
-    cell: ({ row }) => {
-      //TODO: 플랫폼 아이콘으로 변경
-      let platform = row.original.platform;
-      if (platform === 'youtube') {
-        return (
-          <div className={'flex items-center justify-center'}>
-            <Youtube className={'text-red-600 mr-2'} />
-          </div>
-        );
-      }
-      return <Badge variant="destructive">{platform}</Badge>;
-    },
+    cell: ({ row }) =>
+      row.original.platform === 'youtube' ? (
+        <div className="flex items-center justify-center">
+          <Youtube className="text-red-600" />
+        </div>
+      ) : (
+        <Badge variant="destructive">{row.original.platform}</Badge>
+      ),
   },
   {
     accessorKey: 'fetchedAt',
@@ -151,6 +143,7 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     accessorKey: 'link',
     header: '링크',
     size: 120,
+    enableSorting: false,
     cell: ({ row }) => (
       <Button
         size="sm"
@@ -160,6 +153,5 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
         열기
       </Button>
     ),
-    enableSorting: false,
   },
 ];

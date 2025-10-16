@@ -13,8 +13,8 @@ export default function SearchVideoResult() {
     relevanceLanguage,
     regionCode,
   } = useKeywordPair();
-  const { isPopularVideosOnly, maxChannels, days: publishedAfterC } = useChannelPair();
-  const dataInfo = `Total ${data.length}/ ${maxResults}개 | 검색모드: ${mode} | 키워드: ${keyword} | 기간: ${mode === 'keywords' ? publishedAfterK : publishedAfterC}일 | 국가: ${regionCode}`;
+  const { isPopularVideosOnly, maxChannels, days: publishedAfterC, channelIds } = useChannelPair();
+  const dataInfo = `Total ${data.length}/ ${mode === 'keywords' ? maxResults : Number(maxChannels) * channelIds.length}개 | 검색모드: ${mode} | 키워드: ${keyword} | 기간: ${mode === 'keywords' ? publishedAfterK : publishedAfterC}일 | 국가: ${regionCode}`;
   return (
     <div className="flex flex-1 px-4 w-full">
       <DataTable<VideoRow, unknown>
