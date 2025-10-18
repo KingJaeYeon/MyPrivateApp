@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
-import useTableStore from '@/store/tableStore.ts';
+import useTableStore from '@/store/useTableStore.ts';
 import useMeasure from 'react-use-measure';
 import { useEffect } from 'react';
 

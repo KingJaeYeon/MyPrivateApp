@@ -5,7 +5,7 @@ import { differenceInHours, parseISO } from 'date-fns';
 
 import { VideoRow } from '@/components/data-table-columns/result-columns.tsx';
 import { ChannelPayload } from '@/schemas/filter.schema.ts';
-import useChannelStore from '@/store/channels.ts';
+import useChannelStore from '@/store/useChannelStore.ts';
 import { incrementQuota, logApiRequest } from '@/lib/log.ts';
 
 // ── 필터링 헬퍼 함수들 ──

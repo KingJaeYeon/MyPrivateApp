@@ -2,8 +2,8 @@ import { isoAfterNDays, formatDuration, parseISODurationToSec } from '@/lib/date
 import { request_youtube } from '@/service/axios.ts';
 import { differenceInHours, parseISO } from 'date-fns';
 import { chunk } from '@/lib/utils.ts';
-import useSettingStore from '@/store/setting.ts';
-import { useLogStore } from '@/store/search-video-log.ts';
+import useSettingStore from '@/store/useSettingStore.ts';
+import { useLogStore } from '@/store/useLogStore.ts';
 import { VideoRow } from '@/components/data-table-columns/result-columns.tsx';
 
 export type FetchPopularParams = {

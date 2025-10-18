@@ -10,7 +10,7 @@ import { ChevronDown } from 'lucide-react';
 import { TAG_COLUMNS, TagColumns } from '@/components/data-table-columns/tag-columns.tsx';
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input.tsx';
-import useTagStore from '@/store/tag.ts';
+import useTagStore from '@/store/useTagStore.ts';
 import { toast } from 'sonner';
 import { AddTag } from '@/pages/tag/components/AddTag.tsx';
 

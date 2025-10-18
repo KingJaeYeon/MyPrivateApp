@@ -1,11 +1,11 @@
-import useChannelStore from '@/store/channels.ts';
+import useChannelStore from '@/store/useChannelStore.ts';
 import { DataTable } from '@/components/data-table.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import {
   ChannelColumns,
   CHANNELS_COLUMNS,
 } from '@/components/data-table-columns/channel-columns.tsx';
-import useTagStore from '@/store/tag.ts';
+import useTagStore from '@/store/useTagStore.ts';
 import TagSelector from '@/pages/channels/components/TagSelector.tsx';
 import { AddChannelModal } from '@/pages/channels/components/AddChannelModal.tsx';
 

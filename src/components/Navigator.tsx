@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import useTagStore from '@/store/tag.ts';
+import useTagStore from '@/store/useTagStore.ts';
 
 export default function Navigator() {
   const { pathname } = useLocation();

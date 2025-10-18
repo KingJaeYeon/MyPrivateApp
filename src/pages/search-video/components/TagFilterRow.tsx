@@ -10,7 +10,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
-import useTagStore from '@/store/tag';
+import useTagStore from '@/store/useTagStore.ts';
 import { useEffect, useState } from 'react';
 import { Label } from '@/components/ui/label.tsx';
 import ButtonSwitcher from '@/components/ButtonSwitcher.tsx';
@@ -18,10 +18,10 @@ import { Alert, AlertTitle } from '@/components/ui/alert.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
 import { toast } from 'sonner';
 import { Muted } from '@/components/typography.tsx';
-import useChannelStore from '@/store/channels.ts';
+import useChannelStore from '@/store/useChannelStore.ts';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
 import { ChannelColumns } from '@/components/data-table-columns/channel-columns.tsx';
-import { useVideoSearchStore } from '@/store/videoFilterV2.ts';
+import { useVideoSearchStore } from '@/store/useVideoSearchStore.ts';
 import { useChannelPair, useTagsPair } from '@/hook/useVideoSearchSelectors.tsx';
 
 export function TagFilterRow() {

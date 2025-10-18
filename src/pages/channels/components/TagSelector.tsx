@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useState } from 'react';
-import useTagStore from '@/store/tag.ts';
+import useTagStore from '@/store/useTagStore.ts';
 
 export default function TagSelector({
   value,

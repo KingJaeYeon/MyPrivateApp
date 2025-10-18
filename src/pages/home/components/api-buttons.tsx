@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button.tsx';
 import { Trash2 } from 'lucide-react';
-import useSettingStore from '@/store/setting.ts';
+import useSettingStore from '@/store/useSettingStore.ts';
 import type { ApiType } from '@/pages/home/Home.tsx';
 import { useMutation } from '@tanstack/react-query';
 import { pingTest } from '@/service/pingtest.ts';

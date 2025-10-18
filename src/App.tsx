@@ -6,12 +6,12 @@ import { Home } from '@/pages/home/Home.tsx';
 import SearchVideo from '@/pages/search-video/SearchVideo.tsx';
 import SearchVideoResult from '@/pages/search-video-result/SearchVideoResult.tsx';
 import { useEffect, useState } from 'react';
-import useSettingStore from '@/store/setting.ts';
+import useSettingStore from '@/store/useSettingStore.ts';
 import { ThemeProvider } from '@/providers/theme-provider.tsx';
 import TagPage from '@/pages/tag/TagPage.tsx';
-import useTagStore from '@/store/tag.ts';
+import useTagStore from '@/store/useTagStore.ts';
 import ChannelsPage from '@/pages/channels/ChannelsPage.tsx';
-import useChannelStore from '@/store/channels.ts';
+import useChannelStore from '@/store/useChannelStore.ts';
 
 function App() {
   const { init } = useSettingStore();

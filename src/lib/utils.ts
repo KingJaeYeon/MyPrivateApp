@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { ExcelColumn, ExcelConfig, SheetConfig } from '@/store/setting.ts';
+import { ExcelColumn, ExcelConfig, SheetConfig } from '@/store/useSettingStore.ts';
 
 export type FontSize =
   | 'text-2xs'

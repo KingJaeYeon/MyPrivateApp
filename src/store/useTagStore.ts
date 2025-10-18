@@ -2,9 +2,9 @@ import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { TagColumns } from '@/components/data-table-columns/tag-columns.tsx';
 import { buildAoaFromObjects } from '@/lib/utils.ts';
-import useSettingStore from '@/store/setting.ts';
+import useSettingStore from '@/store/useSettingStore.ts';
 import { toast } from 'sonner';
-import useChannelStore from '@/store/channels.ts';
+import useChannelStore from '@/store/useChannelStore.ts';
 
 /** 전체 앱 설정 */
 export type State = {

@@ -1,12 +1,12 @@
 // src/pages/ActionsButtons.tsx
 import { Button } from '@/components/ui/button.tsx';
-import useSettingStore from '@/store/setting.ts';
-import { useLogStore } from '@/store/search-video-log.ts';
+import useSettingStore from '@/store/useSettingStore.ts';
+import { useLogStore } from '@/store/useLogStore.ts';
 import { useMutation } from '@tanstack/react-query';
 import { getVideoByKeywords } from '@/service/youtube.video-keywords.ts';
 import { getVideosByChannels } from '@/service/youtube.video-channels.ts';
 import { zodParseSafe } from '@/lib/zod.ts';
-import { FilterUI, useVideoSearchStore } from '@/store/videoFilterV2.ts';
+import { FilterUI, useVideoSearchStore } from '@/store/useVideoSearchStore.ts';
 import {
   ChannelFilterSchema,
   ChannelPayload,

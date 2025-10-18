@@ -1,7 +1,7 @@
 import { ChannelColumns } from '@/components/data-table-columns/channel-columns.tsx';
 import { useState } from 'react';
-import useTagStore from '@/store/tag.ts';
-import useChannelStore from '@/store/channels.ts';
+import useTagStore from '@/store/useTagStore.ts';
+import useChannelStore from '@/store/useChannelStore.ts';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { Label } from '@/components/ui/label.tsx';

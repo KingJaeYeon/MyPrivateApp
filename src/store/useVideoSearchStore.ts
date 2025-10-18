@@ -12,9 +12,9 @@ import {
   KeywordFilterUI,
   TagsFilterUI,
 } from '@/schemas/filter.schema';
-import useSettingStore from '@/store/setting.ts';
+import useSettingStore from '@/store/useSettingStore.ts';
 import { buildAoaFromObjects } from '@/lib/utils.ts';
-import useTagStore from '@/store/tag.ts';
+import useTagStore from '@/store/useTagStore.ts';
 // V2 refactor
 /** 슬라이스별 UI 타입 */
 
@@ -25,7 +25,7 @@ type FilterSlice = {
     common: CommonFilterUI;
     channel: ChannelFilterUI;
     keyword: KeywordFilterUI;
-    tags: { key: string[]; logic: 'AND' | 'OR' };
+    tags: TagsFilterUI;
   };
   setCommon: <K extends keyof CommonFilterUI>(k: K, v: CommonFilterUI[K]) => void;
   setChannel: <K extends keyof ChannelFilterUI>(k: K, v: ChannelFilterUI[K]) => void;
@@ -153,7 +153,7 @@ export const useVideoSearchStore = create<VideoSearchState>()(
           if (s.common.mode === 'keywords') {
             return { ...s.common, ...s.keyword } as FilterUI;
           }
-          return { ...s.common, ...s.channel } as FilterUI;
+          return { ...s.common, ...s.channel, ...s.tags } as FilterUI;
         },
 
         // -------- Result

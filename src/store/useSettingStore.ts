@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import { FilterData } from './videoFilter.ts';
 
 import { VideoRow } from '@/components/data-table-columns/result-columns.tsx';
+import { FilterUI } from '@/store/useVideoSearchStore.ts';
 
 export type ExcelFiles =
   | 'tag'
@@ -78,7 +78,7 @@ export type State = {
       usedQuota: number;
       quotaUpdatedAt: string;
     };
-    youtubeHistory: { data: FilterData; result: VideoRow[]; searchedAt: number }[];
+    youtubeHistory: { data: FilterUI; result: VideoRow[]; searchedAt: number }[];
   };
 };
 

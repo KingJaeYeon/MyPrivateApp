@@ -3,7 +3,7 @@ import { ActionsButtons } from '@/pages/search-video/components/ActionsButtons.t
 import { FilterOptions } from '@/pages/search-video/components/FilterOptions.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { Link } from 'react-router-dom';
-import useSettingStore from '@/store/setting.ts';
+import useSettingStore from '@/store/useSettingStore.ts';
 
 export default function SearchVideo() {
   const usedQuota = useSettingStore((r) => r.data.youtube.usedQuota);

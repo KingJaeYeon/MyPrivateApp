@@ -1,4 +1,4 @@
-import { useVideoSearchStore } from '@/store/videoFilterV2.ts';
+import { useVideoSearchStore } from '@/store/useVideoSearchStore.ts';
 import { useShallow } from 'zustand/react/shallow';
 
 export const useCommonPair = () =>

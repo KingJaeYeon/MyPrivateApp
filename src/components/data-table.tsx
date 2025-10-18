@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/table';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import useMeasure from 'react-use-measure';
-import useTableStore from '@/store/tableStore.ts';
+import useTableStore from '@/store/useTableStore.ts';
 import { cn, FontSize } from '@/lib/utils.ts';
 import { useSpring, animated } from '@react-spring/web';
 import useSyncScroll from '@/hook/useSyncScroll.ts';

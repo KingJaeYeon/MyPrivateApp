@@ -1,4 +1,4 @@
-import { useLogStore } from '@/store/search-video-log.ts';
+import { useLogStore } from '@/store/useLogStore.ts';
 import { Textarea } from '@/components/ui/textarea.tsx';
 import { useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button.tsx';

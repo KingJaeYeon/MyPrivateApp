@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button.tsx';
-import useSettingStore from '@/store/setting.ts';
+import useSettingStore from '@/store/useSettingStore.ts';
 import { isAfter, isSameDay, setHours, setMinutes, setSeconds } from 'date-fns';
 import { useEffect, useState } from 'react';
 

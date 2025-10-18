@@ -1,5 +1,5 @@
-import { useLogStore } from '@/store/search-video-log.ts';
-import useSettingStore from '@/store/setting.ts';
+import { useLogStore } from '@/store/useLogStore.ts';
+import useSettingStore from '@/store/useSettingStore.ts';
 
 const logApiRequest = (url: string) => {
   useLogStore.getState().note(`[API 요청] ${url}`);

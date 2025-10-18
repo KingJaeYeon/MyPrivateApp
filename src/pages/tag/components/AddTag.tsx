@@ -1,4 +1,4 @@
-import useTagStore from '@/store/tag.ts';
+import useTagStore from '@/store/useTagStore.ts';
 import { useState } from 'react';
 import { TagColumns } from '@/components/data-table-columns/tag-columns.tsx';
 import { Button } from '@/components/ui/button.tsx';

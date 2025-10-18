@@ -1,7 +1,7 @@
 import { Label } from '@/components/ui/label.tsx';
 import { Input } from '@/components/ui/input.tsx';
 import { useEffect, useState } from 'react';
-import useSettingStore, { State } from '@/store/setting.ts';
+import useSettingStore, { State } from '@/store/useSettingStore.ts';
 import { Button } from '@/components/ui/button.tsx';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
 import { cn } from '@/lib/utils.ts';

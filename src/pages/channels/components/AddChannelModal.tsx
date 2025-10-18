@@ -1,5 +1,5 @@
-import useSettingStore from '@/store/setting.ts';
-import useChannelStore from '@/store/channels.ts';
+import useSettingStore from '@/store/useSettingStore.ts';
+import useChannelStore from '@/store/useChannelStore.ts';
 import { useState } from 'react';
 import {
   ChannelColumns,
