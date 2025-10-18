@@ -83,7 +83,7 @@ function TableHead({ className, headerKey, ...props }: any) {
       ref={measureRef}
       data-slot="table-head"
       className={cn(
-        'px-3 text-sm text-foreground h-10 py-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]',
+        'text-foreground h-10 px-1.5 py-2 text-left align-middle text-sm font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]',
         className
       )}
       {...props}
@@ -99,7 +99,7 @@ const TableCell = React.forwardRef<HTMLTableCellElement, React.ComponentProps<'t
       ref={ref}
       data-slot="table-cell"
       className={cn(
-        'px-3.5 whitespace-nowrap py-0.5 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] text-xs',
+        'px-2 py-0.5 align-middle text-xs whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]',
         className
       )}
       {...props}
@@ -113,7 +113,7 @@ const TableCaption = React.forwardRef<HTMLTableCaptionElement, React.ComponentPr
     <caption
       ref={ref}
       data-slot="table-caption"
-      className={cn('text-sm text-muted-foreground mt-4', className)}
+      className={cn('text-muted-foreground mt-4 text-sm', className)}
       {...props}
     />
   )

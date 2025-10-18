@@ -12,6 +12,9 @@ import {
   KeywordFilterUI,
   TagsFilterUI,
 } from '@/schemas/filter.schema';
+import useSettingStore from '@/store/setting.ts';
+import { buildAoaFromObjects } from '@/lib/utils.ts';
+import useTagStore from '@/store/tag.ts';
 // V2 refactor
 /** 슬라이스별 UI 타입 */
 
@@ -38,6 +41,7 @@ type ResultSlice = {
   result: { data: VideoRow[]; meta?: any };
   setResult: (rows: VideoRow[]) => void;
   clearResult: () => void;
+  saved: () => Promise<void>;
 };
 
 type ErrorSlice = {
@@ -156,6 +160,14 @@ export const useVideoSearchStore = create<VideoSearchState>()(
         result: { data: [], meta: undefined },
         setResult: (rows) => set({ result: { data: rows }, isChanged: false }, false, 'result:set'),
         clearResult: () => set({ result: { data: [] } }, false, 'result:clear'),
+        saved: async () => {
+          const channelSheet = useSettingStore.getState().data.excel.channel;
+          const { name, location } = useSettingStore.getState().data.folder;
+          const aoa = buildAoaFromObjects(get().result.data, channelSheet);
+          await window.excelApi.overwrite(`${location}/${name.result}`, aoa, 'Sheet1');
+          set({ isChanged: false });
+          useTagStore.getState().updateCounter('channel');
+        },
 
         // -------- Error
         fieldErrorsKeys: [],

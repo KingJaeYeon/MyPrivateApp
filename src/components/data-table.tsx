@@ -21,7 +21,7 @@ import {
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import useMeasure from 'react-use-measure';
 import useTableStore from '@/store/tableStore.ts';
-import { cn } from '@/lib/utils.ts';
+import { cn, FontSize } from '@/lib/utils.ts';
 import { useSpring, animated } from '@react-spring/web';
 import useSyncScroll from '@/hook/useSyncScroll.ts';
 
@@ -34,6 +34,7 @@ type Props<TData, TValue> = {
   hasNo?: boolean;
   isFixHeader?: boolean;
   name?: string;
+  fontSize?: { head?: FontSize; cell?: FontSize };
 };
 /*** 테스트
  **/
@@ -45,6 +46,7 @@ export function DataTable<TData, TValue>({
   tableControls,
   onClickRow,
   hasNo,
+  fontSize,
 }: Props<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [ref, { y, height }] = useMeasure();
@@ -64,7 +66,7 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     defaultColumn: {
       size: 80, // 기본 폭
-      minSize: 40, // 최소 폭
+      minSize: 20, // 최소 폭
       maxSize: 600, // 필요시
     },
   });
@@ -124,9 +126,9 @@ export function DataTable<TData, TValue>({
   }, [name, setTriggerHeight]);
 
   return (
-    <div className="space-y-2 flex flex-1 flex-col">
+    <div className="flex flex-1 flex-col space-y-2">
       {/* 스크롤 컨테이너 */}
-      <div className={'flex flex-col gap-1 w-full text-sm text-muted-foreground'}>
+      <div className={'text-muted-foreground flex w-full flex-col gap-1 text-sm'}>
         {tableControls && tableControls(table)}
         {/*    정렬 표시*/}
         {sorting.length > 0 && (
@@ -135,11 +137,14 @@ export function DataTable<TData, TValue>({
             {sorting.map((s, i) => {
               const col = table.getColumn(s.id);
               if (!col) return null;
+              const def = col.columnDef;
+              const rendered = typeof def.header === 'function' ? def.meta : def.header;
+
               const dir = s.desc ? '▼' : '▲';
               return (
                 <span key={s.id}>
                   {i > 0 && <span className={'mr-1'}>, </span>}
-                  {col.columnDef.header?.toString()} {dir} ({i + 1})
+                  {rendered?.toString()} {dir} ({i + 1})
                 </span>
               );
             })}
@@ -147,20 +152,20 @@ export function DataTable<TData, TValue>({
         )}
       </div>
       <div
-        className={'w-full overflow-x-auto flex flex-1 relative scrollWidth3 border rounded-md'}
+        className={'scrollWidth3 relative flex w-full flex-1 overflow-x-auto rounded-md border'}
         ref={ref1}
       >
         <div className={'w-full'} ref={tableMeasure[0]}>
           {isFixHeader && isFixedHeader && (
             <animated.div
-              className={'fixed z-[200] flex flex-row border-b-2 bg-background'}
+              className={'bg-background fixed z-[200] flex flex-row border-b-2'}
               style={{
                 ...props,
                 top: `${headerTop - 2}px`,
               }}
             >
               <div
-                className={'flex scrollNone overflow-auto hover:bg-muted/50'}
+                className={'scrollNone hover:bg-muted/50 flex overflow-auto'}
                 ref={ref2}
                 style={{
                   width: tableMeasure[1].width,
@@ -183,12 +188,15 @@ export function DataTable<TData, TValue>({
                         >
                           <div
                             onClick={canSort ? onClick : undefined}
-                            className="flex items-center justify-start text-center  text-sm"
+                            className={cn(
+                              'flex items-center justify-start text-center text-sm',
+                              fontSize?.head && fontSize.head
+                            )}
                             style={{
                               width: getHeaderWidth(`${name}-${h.id}`),
                             }}
                           >
-                            <span className="text-center px-3">
+                            <span className="px-1.5 text-center">
                               {h.isPlaceholder
                                 ? null
                                 : flexRender(h.column.columnDef.header, h.getContext())}
@@ -197,7 +205,7 @@ export function DataTable<TData, TValue>({
                                   {sortDir === 'asc' ? '▲' : sortDir === 'desc' ? '▼' : ''}
                                   {/* ✅ 다중 정렬 순위 표시 */}
                                   {h.column.getSortIndex() !== -1 && (
-                                    <span className="text-xs ">{h.column.getSortIndex() + 1}</span>
+                                    <span className="text-xs">{h.column.getSortIndex() + 1}</span>
                                   )}
                                 </span>
                               )}
@@ -211,8 +219,8 @@ export function DataTable<TData, TValue>({
               </div>
             </animated.div>
           )}
-          <div className="overflow-auto flex flex-1 ">
-            <div className="w-full h-full absolute top-0 left-0">
+          <div className="flex flex-1 overflow-auto">
+            <div className="absolute top-0 left-0 h-full w-full">
               <Table className="relative" ref={headerRef}>
                 <TableHeader className="bg-background z-10" ref={ref}>
                   {table.getHeaderGroups().map((hg) => (
@@ -228,7 +236,8 @@ export function DataTable<TData, TValue>({
                             onClick={canSort ? onClick : undefined}
                             className={cn(
                               canSort ? 'cursor-pointer select-none' : '',
-                              hasNo && h.id === 'no' && 'pr-0'
+                              hasNo && h.id === 'no' && 'pr-0',
+                              fontSize?.head && fontSize.head
                             )}
                             aria-sort={
                               sortDir === false
@@ -274,7 +283,15 @@ export function DataTable<TData, TValue>({
                           {r.getVisibleCells().map((c) => (
                             <TableCell
                               key={c.id}
-                              className={cn(hasNo && c.column.columnDef.id === `no` && 'pr-0')}
+                              className={cn(
+                                hasNo && c.column.columnDef.id === `no` && 'pr-0',
+                                fontSize?.cell && fontSize.cell
+                              )}
+                              style={{
+                                width: c.column.columnDef.size,
+                                maxWidth: c.column.columnDef.maxSize,
+                                minWidth: c.column.columnDef.minSize,
+                              }}
                             >
                               {flexRender(c.column.columnDef.cell, c.getContext())}
                             </TableCell>
@@ -284,7 +301,7 @@ export function DataTable<TData, TValue>({
                     </>
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={columns.length} className="h-24 text-center">
+                      <TableCell colSpan={columns.length} className={'h-24 text-center'}>
                         결과 없음
                       </TableCell>
                     </TableRow>

@@ -10,6 +10,21 @@
     -webkit-app-region: no-drag;
   }
 }
+
+@utility text-2xs {
+  line-height: 0.875rem;
+  font-size: 0.625rem;
+}
+@utility text-0.5xs {
+  line-height: 1.1rem;
+  font-size: 0.8125rem; /* 13px */
+}
+@utility text-1.5xs {
+  line-height: 0.95rem;
+  font-size: 0.6875rem; /* 13px */
+}
+
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

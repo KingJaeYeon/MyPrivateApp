@@ -17,8 +17,16 @@ import {
 import { toast } from 'sonner';
 
 export function ActionsButtons() {
-  const { setResult, setErrors, clearErrors, isChanged, clearResult, filter, getFilterPayload } =
-    useVideoSearchStore();
+  const {
+    setResult,
+    setErrors,
+    clearErrors,
+    isChanged,
+    clearResult,
+    filter,
+    getFilterPayload,
+    result,
+  } = useVideoSearchStore();
   const youtubeApiKey = useSettingStore((r) => r.data.youtube.apiKey);
   const Log = useLogStore();
 
@@ -99,6 +107,8 @@ export function ActionsButtons() {
     Log.stopped();
   };
 
+  const saveExcel = () => {};
+
   return (
     <div className="flex gap-3">
       <Button size="sm" onClick={onStart} disabled={isPendingC || isPendingK}>
@@ -110,7 +120,9 @@ export function ActionsButtons() {
       <Button size="sm" onClick={clearResult}>
         결과 지우기
       </Button>
-      <Button size="sm">엑셀로 저장</Button>
+      <Button size="sm" disabled={result.data.length === 0} onClick={saveExcel}>
+        엑셀로 저장
+      </Button>
       <Button size="sm">작업 불러오기(엑셀)</Button>
     </div>
   );

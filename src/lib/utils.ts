@@ -2,6 +2,24 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { ExcelColumn, ExcelConfig, SheetConfig } from '@/store/setting.ts';
 
+export type FontSize =
+  | 'text-2xs'
+  | 'text-1.5xs'
+  | 'text-xs'
+  | 'text-0.5xs'
+  | 'text-sm'
+  | 'text-base'
+  | 'text-lg'
+  | 'text-xl'
+  | 'text-2xl'
+  | 'text-3xl'
+  | 'text-4xl'
+  | 'text-5xl'
+  | 'text-6xl'
+  | 'text-7xl'
+  | 'text-8xl'
+  | 'text-9xl';
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -63,4 +81,22 @@ function buildAoaFromObjects(
   return [header, ...body];
 }
 
-export { getOrderedColumns, buildAoaFromObjects };
+/**
+ * 숫자를 K, M, B, T 단위로 축약해서 반환
+ * 예: 1500 → "1.5K", 2000000 → "2M"
+ */
+function formatCompactNumber(num: number): string {
+  if (num === null || num === undefined || isNaN(num)) return '0';
+
+  const absNum = Math.abs(num);
+  const sign = num < 0 ? '-' : '';
+
+  if (absNum >= 1_000_000_000_000) return `${sign}${(absNum / 1_000_000_000_000).toFixed(1)}T`;
+  if (absNum >= 1_000_000_000) return `${sign}${(absNum / 1_000_000_000).toFixed(1)}B`;
+  if (absNum >= 1_000_000) return `${sign}${(absNum / 1_000_000).toFixed(1)}M`;
+  if (absNum >= 1_000) return `${sign}${(absNum / 1_000).toFixed(1)}K`;
+
+  return `${sign}${absNum.toString()}`;
+}
+
+export { getOrderedColumns, buildAoaFromObjects, formatCompactNumber };

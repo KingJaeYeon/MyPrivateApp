@@ -16,14 +16,15 @@ export default function SearchVideoResult() {
   const { isPopularVideosOnly, maxChannels, days: publishedAfterC, channelIds } = useChannelPair();
   const dataInfo = `Total ${data.length}/ ${mode === 'keywords' ? maxResults : Number(maxChannels) * channelIds.length}개 | 검색모드: ${mode} | 키워드: ${keyword} | 기간: ${mode === 'keywords' ? publishedAfterK : publishedAfterC}일 | 국가: ${regionCode}`;
   return (
-    <div className="flex flex-1 px-4 w-full">
+    <div className="flex w-full flex-1 px-4">
       <DataTable<VideoRow, unknown>
         columns={RESULT_COLUMNS}
         hasNo={true}
         isFixHeader={true}
         data={data}
+        fontSize={{ head: 'text-0.5xs', cell: 'text-1.5xs' }}
         tableControls={(_) => {
-          return <div className="text-sm text-muted-foreground">{dataInfo}</div>;
+          return <div className="text-muted-foreground text-sm">{dataInfo}</div>;
         }}
       />
     </div>
