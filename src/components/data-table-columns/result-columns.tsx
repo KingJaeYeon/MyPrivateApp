@@ -89,7 +89,7 @@ export const RESULT_COLUMNS: ColumnDef<VideoRow>[] = [
   {
     accessorKey: 'tags',
     header: '태그',
-    maxSize: 60,
+    minSize: 40,
     cell: ({ row }) => {
       const tags = row.original.tags ?? [];
 

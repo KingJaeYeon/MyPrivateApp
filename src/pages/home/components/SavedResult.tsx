@@ -35,23 +35,29 @@ export function SavedResult() {
       <div className={'flex h-80 gap-4'}>
         <ScrollArea className="h-full w-60 rounded-md border">
           <div className="p-4">
-            {savedFiles.map((fileName) => (
-              <React.Fragment key={fileName}>
-                <div
-                  className={cn(
-                    'cursor-pointer text-sm',
-                    fileName === select && 'text-destructive'
-                  )}
-                  onClick={() => setSelect(fileName)}
-                >
-                  {fileName}
-                </div>
-                <Separator className="my-2" />
-              </React.Fragment>
-            ))}
+            {savedFiles.map((fileName) => {
+              const display = fileName.split('cid');
+              const values = display[1].split('_');
+              return (
+                <React.Fragment key={fileName}>
+                  <div
+                    className={cn(
+                      'cursor-pointer text-sm',
+                      fileName === select && 'text-destructive'
+                    )}
+                    onClick={() => setSelect(fileName)}
+                  >
+                    {`${display[0]} ${values[1]}`}
+                  </div>
+                  <Separator className="my-2" />
+                </React.Fragment>
+              );
+            })}
           </div>
         </ScrollArea>
-        <div className={'h-full flex-1 border border-red-500'}>d</div>
+        <div className={'h-full flex-1 rounded-md border border-red-500'}>
+          {JSON.stringify(select)}
+        </div>
       </div>
     </div>
   );

@@ -83,11 +83,6 @@ export type State = {
 };
 
 type Action = {
-  // updateApiKey: (type: 'youtubeApiKey', apiKey: string) => Promise<void>;
-  // init: () => Promise<void>;
-  // deleteApiKey: (type: 'youtubeApiKey') => Promise<void>;
-  // updateQuota: (used: number) => void;
-
   init: () => Promise<void>;
   updateIn: <K extends keyof State['data']>(key: K, value: State['data'][K]) => Promise<void>;
 };
@@ -138,8 +133,14 @@ const seed: State['data'] = {
         { id: 8, label: '조회수/구독자수', column: 'viewsPerSubscriber' },
         { id: 9, label: '영상길이', column: 'duration' },
         { id: 10, label: '링크', column: 'link' },
+        { id: 11, label: '채널ID', column: 'channelId' },
+        { id: 12, label: '태그', column: 'tags' },
+        { id: 13, label: '기본언어', column: 'defaultLanguage' },
+        { id: 14, label: '기본오디오', column: 'defaultAudioLanguage' },
+        { id: 15, label: '좋아요', column: 'likeCount' },
+        { id: 16, label: '댓글수', column: 'commentCount' },
       ],
-      order: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      order: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
       optional: [],
     },
     prompt: {

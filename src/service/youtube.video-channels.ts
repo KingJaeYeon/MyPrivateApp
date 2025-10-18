@@ -157,7 +157,7 @@ function toRowsWithSubscribers(vItems: any[]): VideoRow[] {
       viewsPerSubscriber: vps,
       duration: formatDuration(durSec),
       link: `https://www.youtube.com/watch?v=${id}`,
-      thumbnailUrl: snippet.thumbnails?.medium?.url || snippet.thumbnails?.default?.url || '',
+      thumbnailUrl: snippet.thumbnails?.maxres?.url || snippet.thumbnails?.default?.url || '',
       subscriberCount: subs,
     } as VideoRow;
   });

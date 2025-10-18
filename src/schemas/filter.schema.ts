@@ -39,8 +39,8 @@ export const ChannelFilterSchema = z.object({
 });
 
 export const TagSchema = z.object({
-  key: z.array(z.string()),
-  logic: z.enum(['AND', 'OR']),
+  tagKey: z.array(z.string()),
+  tagLogic: z.enum(['AND', 'OR']),
 });
 
 /** UI 타입(파싱 전, 문자열 위주) / 제출 페이로드 타입(파싱 후, 숫자/불리언 정규화) */
@@ -85,6 +85,6 @@ export const defaultKeywordUI: KeywordFilterUI = {
 };
 
 export const defaultTagsUI: TagsFilterUI = {
-  key: [],
-  logic: 'AND',
+  tagKey: [],
+  tagLogic: 'AND',
 };

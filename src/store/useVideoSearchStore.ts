@@ -1,6 +1,6 @@
 // src/store/filter.store.ts
 import { create } from 'zustand';
-import { devtools, persist, createJSONStorage } from 'zustand/middleware';
+import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 import { VideoRow } from '@/components/data-table-columns/result-columns.tsx'; // 경로 확인 필요
 import {
   ChannelFilterUI,
@@ -13,8 +13,8 @@ import {
   TagsFilterUI,
 } from '@/schemas/filter.schema';
 import useSettingStore from '@/store/useSettingStore.ts';
-import { buildAoaFromObjects } from '@/lib/utils.ts';
-import useTagStore from '@/store/useTagStore.ts';
+import { buildAoaFromObjects, makeExcelFilename } from '@/lib/utils.ts';
+import { format } from 'date-fns';
 // V2 refactor
 /** 슬라이스별 UI 타입 */
 
@@ -161,12 +161,16 @@ export const useVideoSearchStore = create<VideoSearchState>()(
         setResult: (rows) => set({ result: { data: rows }, isChanged: false }, false, 'result:set'),
         clearResult: () => set({ result: { data: [] } }, false, 'result:clear'),
         saved: async () => {
-          const channelSheet = useSettingStore.getState().data.excel.channel;
-          const { name, location } = useSettingStore.getState().data.folder;
-          const aoa = buildAoaFromObjects(get().result.data, channelSheet);
-          await window.excelApi.overwrite(`${location}/${name.result}`, aoa, 'Sheet1');
-          set({ isChanged: false });
-          useTagStore.getState().updateCounter('channel');
+          const resultSheet = useSettingStore.getState().data.excel.result;
+          const { name, location, exportFile } = useSettingStore.getState().data.folder;
+          const aoa = buildAoaFromObjects(get().result.data, resultSheet);
+          const prefix =
+            exportFile.fileStampMode === 'date'
+              ? format(new Date(), 'yyyy-MM-dd')
+              : format(new Date(), 'yyyy-MM-dd HH:mm');
+          const payload = get().getFilterPayload();
+          const fileName = makeExcelFilename(prefix, payload, get().result.data.length);
+          await window.excelApi.overwrite(`${location}/${name.result}/${fileName}`, aoa, 'Sheet1');
         },
 
         // -------- Error

@@ -25,17 +25,17 @@ import { useVideoSearchStore } from '@/store/useVideoSearchStore.ts';
 import { useChannelPair, useTagsPair } from '@/hook/useVideoSearchSelectors.tsx';
 
 export function TagFilterRow() {
-  const { key: tags, logic } = useTagsPair();
+  const { tagKey, tagLogic } = useTagsPair();
   const { setTags } = useVideoSearchStore();
   const [selectedChannels, setSelectedChannels] = useState<ChannelColumns[]>([]);
   const { channelIds } = useChannelPair();
 
   const onChangeLogic = (v: string) => {
-    setTags('logic', v as 'AND' | 'OR');
+    setTags('tagLogic', v as 'AND' | 'OR');
   };
 
   const onChangeTags = (v: string[]) => {
-    setTags('key', v);
+    setTags('tagKey', v);
   };
 
   return (
@@ -49,7 +49,7 @@ export function TagFilterRow() {
         <div className={'flex justify-between gap-4'}>
           <Label className={'opacity-80'}>태그 필터</Label>
           <ButtonSwitcher
-            state={logic}
+            state={tagLogic}
             setState={onChangeLogic}
             size={'sm'}
             list={[
@@ -60,14 +60,14 @@ export function TagFilterRow() {
         </div>
         <div className={'flex items-center gap-2'}>
           <TagSelector
-            selectedTags={tags}
+            selectedTags={tagKey}
             setSelectedTags={onChangeTags}
             selectedChannels={selectedChannels}
             setSelectedChannels={setSelectedChannels}
-            logic={logic}
+            logic={tagLogic}
           />
           <Alert size={'sm'} className={'w-[300px]'}>
-            <AlertTitle>{`채널 ${channelIds.length}개 검색(${logic})`}</AlertTitle>
+            <AlertTitle>{`채널 ${channelIds.length}개 검색(${tagLogic})`}</AlertTitle>
           </Alert>
         </div>
       </div>

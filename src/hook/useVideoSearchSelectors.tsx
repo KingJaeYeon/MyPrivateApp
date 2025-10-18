@@ -36,7 +36,7 @@ export const useKeywordPair = () =>
 export const useTagsPair = () =>
   useVideoSearchStore(
     useShallow((s) => ({
-      key: s.filter.tags.key,
-      logic: s.filter.tags.logic,
+      tagKey: s.filter.tags.tagKey,
+      tagLogic: s.filter.tags.tagLogic,
     }))
   );

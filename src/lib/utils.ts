@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { ExcelColumn, ExcelConfig, SheetConfig } from '@/store/useSettingStore.ts';
+import { FilterUI } from '@/store/useVideoSearchStore';
 
 export type FontSize =
   | 'text-2xs'
@@ -99,4 +100,38 @@ function formatCompactNumber(num: number): string {
   return `${sign}${absNum.toString()}`;
 }
 
-export { getOrderedColumns, buildAoaFromObjects, formatCompactNumber };
+function makeExcelFilename(prefixDate: string, filter: FilterUI, count: number) {
+  const parts: string[] = [`cid_${createCid()}`, `mode-${filter.mode}`, `data-${count}`];
+
+  parts.push(`vph-${filter.minViewsPerHour}`);
+  parts.push(`minV-${filter.minViews}`);
+  parts.push(`dur-${filter.videoDuration}`);
+
+  if (filter.mode === 'keywords') {
+    parts.push(`kw-${filter.keyword.replace(/\s+/g, '-')}`);
+    parts.push(`days-${filter.days}`);
+    parts.push(`lang-${filter.relevanceLanguage}`);
+    parts.push(`maxR-${filter.maxResults}`);
+    parts.push(`region-${filter.regionCode}`);
+  }
+
+  if (filter.mode === 'channels') {
+    parts.push(`days-${filter.days}`);
+    parts.push(`maxC-${filter.maxChannels}`);
+    parts.push(`popular-${filter.isPopularVideosOnly ? 'true' : 'false'}`);
+  }
+
+  return `[${prefixDate}]` + parts.join('_') + '.xlsx';
+}
+
+function createCid(): string {
+  return Math.random().toString(36).slice(2, 8);
+}
+
+export {
+  getOrderedColumns,
+  buildAoaFromObjects,
+  formatCompactNumber,
+  makeExcelFilename,
+  createCid,
+};

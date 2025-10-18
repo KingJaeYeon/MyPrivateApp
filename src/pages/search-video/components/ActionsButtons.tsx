@@ -15,6 +15,8 @@ import {
   KeywordPayload,
 } from '@/schemas/filter.schema.ts';
 import { toast } from 'sonner';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
 
 export function ActionsButtons() {
   const {
@@ -24,16 +26,21 @@ export function ActionsButtons() {
     isChanged,
     clearResult,
     filter,
-    getFilterPayload,
     result,
+    getFilterPayload,
+    saved,
   } = useVideoSearchStore();
-  const youtubeApiKey = useSettingStore((r) => r.data.youtube.apiKey);
+  const {
+    data: {
+      folder: { name, location },
+      youtube: { apiKey },
+    },
+  } = useSettingStore();
   const Log = useLogStore();
 
   const { mutate: mutateC, isPending: isPendingC } = useMutation({
     mutationKey: ['search-youtube-channel', filter], // (선택) 디버그 가독성
-    mutationFn: async (d: ChannelPayload) =>
-      await getVideosByChannels({ ...d, apiKey: youtubeApiKey }),
+    mutationFn: async (d: ChannelPayload) => await getVideosByChannels({ ...d, apiKey }),
     onSuccess: (data) => {
       setResult(data); // ✅ VideoRow[] 저장
       Log.completed();
@@ -43,11 +50,9 @@ export function ActionsButtons() {
       alert(error?.message || '요청 중 오류가 발생했습니다.');
     },
   });
-
   const { mutate: mutateK, isPending: isPendingK } = useMutation({
     mutationKey: ['search-youtube-keyword', filter], // (선택) 디버그 가독성
-    mutationFn: async (d: KeywordPayload) =>
-      await getVideoByKeywords({ ...d, apiKey: youtubeApiKey }),
+    mutationFn: async (d: KeywordPayload) => await getVideoByKeywords({ ...d, apiKey }),
     onSuccess: (data) => {
       setResult(data); // ✅ VideoRow[] 저장
       Log.completed();
@@ -59,7 +64,7 @@ export function ActionsButtons() {
   });
 
   const onStart = () => {
-    if (!youtubeApiKey) {
+    if (!apiKey) {
       window.alert('YouTube API 키를 먼저 저장해주세요.');
       return;
     }
@@ -107,7 +112,41 @@ export function ActionsButtons() {
     Log.stopped();
   };
 
-  const saveExcel = () => {};
+  const onSaveExcel = async () => {
+    if (isChanged) {
+      if (confirm('현재 필터 설정을 기반으로 파일 이름이 저장됩니다.\n내용을 저장하시겠습니까?')) {
+        try {
+          await saved();
+          const date = new Date('2023-12-03T09:00:00');
+          const formatted = format(date, 'yyyy년 MM월 dd일 (EEE) a h:mm', { locale: ko });
+          toast('엑셀파일 생성완료', {
+            description: formatted,
+            action: {
+              label: 'Folder',
+              onClick: () => window.electronAPI.openFolder(`${location}/${name.result}`),
+            },
+          });
+        } catch (e) {}
+      }
+    } else {
+      if (confirm('저장하시겠습니까?')) {
+        try {
+          await saved();
+          const date = new Date('2023-12-03T09:00:00');
+          const formatted = format(date, 'yyyy년 MM월 dd일 (EEE) a h:mm', { locale: ko });
+          toast('엑셀파일 생성완료', {
+            description: formatted,
+            action: {
+              label: 'Folder',
+              onClick: () => window.electronAPI.openFolder(`${location}/${name.result}`),
+            },
+          });
+        } catch (e) {}
+      }
+    }
+  };
+
+  const onGetExcel = () => {};
 
   return (
     <div className="flex gap-3">
@@ -120,10 +159,17 @@ export function ActionsButtons() {
       <Button size="sm" onClick={clearResult}>
         결과 지우기
       </Button>
-      <Button size="sm" disabled={result.data.length === 0} onClick={saveExcel}>
+      <Button
+        size="sm"
+        onClick={onSaveExcel}
+        disabled={result.data.length === 0}
+        variant={isChanged && result.data.length !== 0 ? 'destructive' : 'default'}
+      >
         엑셀로 저장
       </Button>
-      <Button size="sm">작업 불러오기(엑셀)</Button>
+      <Button size="sm" onClick={onGetExcel}>
+        작업 불러오기(엑셀)
+      </Button>
     </div>
   );
 }

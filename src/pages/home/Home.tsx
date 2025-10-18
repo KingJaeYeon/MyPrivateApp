@@ -85,7 +85,6 @@ export function Home() {
         </div>
       </div>
 
-      {/*<FileNameRule />*/}
       <SavedResult />
       <div className="flex w-full flex-col gap-4">
         <Label htmlFor="mode" className="min-w-[100px]">
