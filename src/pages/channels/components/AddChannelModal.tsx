@@ -73,7 +73,7 @@ export function AddChannelModal() {
       <AlertDialogContent className={'max-w-[calc(100%-100px)] h-[calc(100%-100px)] flex flex-col'}>
         <AlertDialogHeader className={'flex flex-1'}>
           <AlertDialogTitle className={'flex gap-2 items-center mb-4'}>
-            <div className={'text-xl'}>채널추가</div>
+            <div>채널추가</div>
             <div className={'text-sm'}>
               (사용한 쿼터:{' '}
               <span className={'font-mono'}>{usedQuota.toLocaleString()} / 10000)</span>

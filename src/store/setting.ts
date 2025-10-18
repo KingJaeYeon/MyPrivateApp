@@ -76,6 +76,7 @@ export type State = {
     youtube: {
       apiKey: string;
       usedQuota: number;
+      quotaUpdatedAt: string;
     };
     youtubeHistory: { data: FilterData; result: VideoRow[]; searchedAt: number }[];
   };
@@ -187,7 +188,7 @@ const seed: State['data'] = {
       fileStampMode: 'date',
     },
   },
-  youtube: { apiKey: '', usedQuota: 0 },
+  youtube: { apiKey: '', usedQuota: 0, quotaUpdatedAt: '' },
   youtubeHistory: [],
 };
 

@@ -10,6 +10,7 @@ const incrementQuota = async (amount: number) => {
   await settingStore.updateIn('youtube', {
     apiKey: settingStore.data.youtube.apiKey,
     usedQuota: settingStore.data.youtube.usedQuota + amount,
+    quotaUpdatedAt: settingStore.data.youtube.quotaUpdatedAt,
   });
 };
 
