@@ -13,9 +13,11 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty';
 import { IconFolder } from '@/assets/svg';
-import { ArrowUpRightIcon } from 'lucide-react';
+import { ArrowUpRightIcon, RefreshCcw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
+import { useVideoSearchStore } from '@/store/useVideoSearchStore.ts';
+import DialogFileResult from '@/components/DialogFileResult.tsx';
 
 export function SavedResult() {
   const { name, location } = useSettingStore((r) => r.data.folder);
@@ -40,7 +42,7 @@ export function SavedResult() {
           Saved Result
         </Label>
         <Button size={'sm'} onClick={getFiles}>
-          새로고침
+          <RefreshCcw />
         </Button>
       </div>
       <div className={'flex h-80 gap-4'}>
@@ -82,6 +84,7 @@ function DetailOption({
   reset: () => Promise<void>;
 }) {
   const { data } = useSettingStore();
+  const { setSavedData } = useVideoSearchStore();
   if (!select) {
     return <EmptyCard />;
   }
@@ -106,6 +109,18 @@ function DetailOption({
       toast.error('다시 시도해주세요.');
     }
   };
+
+  const onDetail = async () => {
+    const rows = await window.excelApi.read(
+      `${data.folder.location}/${data.folder.name.result}/${select}`
+    );
+    const result = rows.map((r, i) => {
+      const tags = !!r.tags ? r.tags.split('_') : [];
+      return { ...r, no: i + 1, tags };
+    });
+    setSavedData(result);
+  };
+
   return (
     <section className="flex h-full flex-1 flex-col gap-3 rounded-md border p-4">
       <header className="flex items-center justify-between">
@@ -123,9 +138,11 @@ function DetailOption({
         </div>
       </header>
       <div className={'flex flex-1 items-center justify-center gap-4'}>
-        <Button size={'lg'} className={'w-26'}>
-          상세보기
-        </Button>
+        <DialogFileResult>
+          <Button size={'lg'} className={'w-26'} onClick={onDetail}>
+            상세보기
+          </Button>
+        </DialogFileResult>
         <Button size="lg" className={'w-26'} variant="destructive" onClick={onDelete}>
           삭제
         </Button>
@@ -144,10 +161,6 @@ function DetailOption({
         })}
       </dl>
     </section>
-    // <div className={'h-full flex-1 rounded-md border border-red-500 p-4'}>
-    //   <p className={'text-xl'}>{date[0]}</p>
-    //   {JSON.stringify(select)}
-    // </div>
   );
 }
 

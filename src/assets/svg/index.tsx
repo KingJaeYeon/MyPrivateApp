@@ -8,3 +8,4 @@ export * from './IconPlusMinus';
 export * from './IconArrow';
 export * from './IconProvider';
 export * from './IconFolder';
+export * from './IconClose';

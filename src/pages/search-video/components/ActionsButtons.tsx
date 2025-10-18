@@ -17,6 +17,7 @@ import {
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import { useNavigate } from 'react-router-dom';
 
 export function ActionsButtons() {
   const {
@@ -30,6 +31,7 @@ export function ActionsButtons() {
     getFilterPayload,
     saved,
   } = useVideoSearchStore();
+  const navigate = useNavigate();
   const {
     data: {
       folder: { name, location },
@@ -146,7 +148,9 @@ export function ActionsButtons() {
     }
   };
 
-  const onGetExcel = () => {};
+  const onGetExcel = () => {
+    navigate('/');
+  };
 
   return (
     <div className="flex gap-3">

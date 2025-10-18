@@ -84,7 +84,6 @@ export function Home() {
           <ExcelFilesLocation />
         </div>
       </div>
-
       <SavedResult />
       <div className="flex w-full flex-col gap-4">
         <Label htmlFor="mode" className="min-w-[100px]">

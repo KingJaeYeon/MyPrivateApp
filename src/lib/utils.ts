@@ -65,6 +65,13 @@ function getOrderedColumns(
   return orderedDefs;
 }
 
+function formatArrayValue(value: any): string {
+  if (Array.isArray(value)) {
+    return value.join('_');
+  }
+  return value ?? '';
+}
+
 function buildAoaFromObjects(
   rows: Record<string, any>[], // 앱 내부 column기반 데이터 배열
   sheet: SheetConfig // 해당 시트 설정
@@ -78,7 +85,7 @@ function buildAoaFromObjects(
   const header = orderedDefs.map((d) => d.column);
 
   // 바디(column 키로 값 추출)
-  const body = rows.map((obj) => orderedDefs.map((d) => obj[d.column]));
+  const body = rows.map((obj) => orderedDefs.map((d) => formatArrayValue(obj[d.column])));
 
   return [header, ...body];
 }
