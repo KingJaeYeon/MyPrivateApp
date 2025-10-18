@@ -104,9 +104,10 @@ export function Home() {
             )}
           </div>
           <div className={'flex flex-1'}>
-            {Array.from({ length: 8 }, (v, k) => {
+            {Array.from({ length: 8 }, (_, i) => {
               return (
                 <Button
+                  key={'dee' + i}
                   className={'flex w-full flex-1 rounded-none border'}
                   variant={'secondary'}
                 ></Button>
