@@ -1,6 +1,6 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@plugin "tailwindcss-animate";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@plugin 'tailwindcss-animate';
 /*@custom-variant dark (&:is(.dark *));*/
 @layer utilities {
   .drag {
@@ -23,7 +23,6 @@
   line-height: 0.95rem;
   font-size: 0.6875rem; /* 13px */
 }
-
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);

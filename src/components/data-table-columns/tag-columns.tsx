@@ -44,13 +44,13 @@ export const TAG_COLUMNS = (isEdit?: boolean): ColumnDef<TagColumns>[] => {
     {
       accessorKey: 'idx',
       header: 'idx',
-      cell: ({ row }) => <span className="tabular-nums text-xs">{row.original.idx}</span>,
+      cell: ({ row }) => <span className="text-xs tabular-nums">{row.original.idx}</span>,
     },
     {
       accessorKey: 'name',
       header: '태그명',
       cell: ({ row }) => (
-        <div className={'flex justify-between w-full'}>
+        <div className={'flex w-full justify-between'}>
           {isEdit ? (
             <input
               className={'cursor-pointer text-xs break-words whitespace-normal text-green-500'}
@@ -95,7 +95,7 @@ export const TAG_COLUMNS = (isEdit?: boolean): ColumnDef<TagColumns>[] => {
       header: '전체수',
       size: 120,
       cell: ({ row }) => (
-        <span className="tabular-nums text-xs">{nf.format(row.original.total)}</span>
+        <span className="text-xs tabular-nums">{nf.format(row.original.total)}</span>
       ),
     }
   );

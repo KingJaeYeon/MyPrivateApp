@@ -51,7 +51,7 @@ export default function QuotaReset() {
 
   return (
     <Button
-      className={'rounded-none border w-full flex flex-1'}
+      className={'flex w-full flex-1 rounded-none border'}
       variant={over1Day ? 'destructive' : 'secondary'}
       onClick={onClick}
     >

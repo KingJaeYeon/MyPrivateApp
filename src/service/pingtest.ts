@@ -2,7 +2,7 @@ import { request_youtube } from '@/service/axios.ts';
 
 type ApiKey = {
   apiKey: string;
-  type: 'youtubeApiKey'
+  type: 'youtubeApiKey';
 };
 
 export async function pingTest({ apiKey, type }: ApiKey) {

@@ -38,7 +38,7 @@ export default function TagSelector({
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0 scrollWidth3">
+      <PopoverContent className="scrollWidth3 w-[200px] p-0">
         <Command>
           <CommandInput placeholder="Search Tag..." className="h-9" />
           <CommandList>

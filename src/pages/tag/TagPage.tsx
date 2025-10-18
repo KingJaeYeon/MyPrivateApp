@@ -28,14 +28,14 @@ export default function TagPage() {
   };
 
   return (
-    <div className="flex flex-1 px-4 gap-5 w-full">
+    <div className="flex w-full flex-1 gap-5 px-4">
       <div className={'flex flex-7'}>
         <DataTable<TagColumns, unknown>
           columns={columns}
           data={data}
           tableControls={(table) => {
             return (
-              <div className={'flex justify-between w-full'}>
+              <div className={'flex w-full justify-between'}>
                 <div className={'flex gap-1'}>
                   <DropdownMenu>
                     <DropdownMenuTrigger>
@@ -69,7 +69,7 @@ export default function TagPage() {
                       console.log(table.getColumn('idx'));
                       return table.getColumn('idx')?.setFilterValue(event.target.value);
                     }}
-                    className="w-[130px] h-8"
+                    className="h-8 w-[130px]"
                   />
                   <Input
                     placeholder="Search Tag..."
@@ -78,7 +78,7 @@ export default function TagPage() {
                       console.log(table.getColumn('name'));
                       return table.getColumn('name')?.setFilterValue(event.target.value);
                     }}
-                    className="w-[200px] h-8"
+                    className="h-8 w-[200px]"
                   />
                 </div>
                 <div className={'flex gap-2'}>

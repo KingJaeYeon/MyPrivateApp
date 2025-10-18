@@ -70,18 +70,18 @@ export function AddChannelModal() {
           수정
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent className={'max-w-[calc(100%-100px)] h-[calc(100%-100px)] flex flex-col'}>
+      <AlertDialogContent className={'flex h-[calc(100%-100px)] max-w-[calc(100%-100px)] flex-col'}>
         <AlertDialogHeader className={'flex flex-1'}>
-          <AlertDialogTitle className={'flex gap-2 items-center mb-4'}>
+          <AlertDialogTitle className={'mb-4 flex items-center gap-2'}>
             <div>채널추가</div>
             <div className={'text-sm'}>
               (사용한 쿼터:{' '}
               <span className={'font-mono'}>{usedQuota.toLocaleString()} / 10000)</span>
             </div>
           </AlertDialogTitle>
-          <div className={'flex-1 flex flex-col'}>
+          <div className={'flex flex-1 flex-col'}>
             <HandleSearchForm onSearch={(handles) => mutate({ handles })} isPending={isPending} />
-            <div className={'flex flex-1 gap-2 mt-2'}>
+            <div className={'mt-2 flex flex-1 gap-2'}>
               <DataTable<ChannelColumns, unknown>
                 columns={CHANNELS_COLUMNS}
                 onClickRow={setSelect}

@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 type Props = {
   className?: string;
@@ -12,7 +12,7 @@ export function Loading1({ className }: Props) {
       height="24"
       fill="none"
       viewBox="0 0 24 24"
-      className={cn("animate-spinner text-icon", className)}
+      className={cn('animate-spinner text-icon', className)}
     >
       <path
         stroke="currentColor"
@@ -27,7 +27,7 @@ export function Loading1({ className }: Props) {
 export function Loading2({ className }: { className?: string }) {
   return (
     <svg
-      className={cn("animate-spinner h-[18px] w-[18px] text-icon", className)}
+      className={cn('animate-spinner text-icon h-[18px] w-[18px]', className)}
       width="22"
       height="22"
       viewBox="0 0 22 22"
@@ -45,9 +45,9 @@ export function Loading2({ className }: { className?: string }) {
 export function CardLoading() {
   return (
     <div className="flex items-center justify-center">
-      <div className="animate-loader [&amp;:nth-child(3)]:m-0 me-[6px] h-[8px] w-[8px] rounded-full bg-icon"></div>
-      <div className="animate-loader [&amp;:nth-child(3)]:m-0 me-[6px] h-[8px] w-[8px] rounded-full bg-icon delay-100"></div>
-      <div className="animate-loader [&amp;:nth-child(3)]:m-0 me-[6px] h-[8px] w-[8px] rounded-full bg-icon delay-200"></div>
+      <div className="animate-loader [&amp;:nth-child(3)]:m-0 bg-icon me-[6px] h-[8px] w-[8px] rounded-full"></div>
+      <div className="animate-loader [&amp;:nth-child(3)]:m-0 bg-icon me-[6px] h-[8px] w-[8px] rounded-full delay-100"></div>
+      <div className="animate-loader [&amp;:nth-child(3)]:m-0 bg-icon me-[6px] h-[8px] w-[8px] rounded-full delay-200"></div>
     </div>
   );
 }

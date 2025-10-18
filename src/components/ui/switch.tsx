@@ -54,7 +54,7 @@ const SwitchThumb = React.forwardRef<
   <SwitchPrimitive.Thumb
     data-slot="switch-thumb"
     className={cn(
-      'pointer-events-none block h-[19px] w-[19px] rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-0 data-[state=unchecked]:translate-x-9.5 data-[state=checked]:bg-switch-on-thumb data-[state=unchecked]:bg-switch-off-thumb'
+      'bg-background data-[state=checked]:bg-switch-on-thumb data-[state=unchecked]:bg-switch-off-thumb pointer-events-none block h-[19px] w-[19px] rounded-full shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-0 data-[state=unchecked]:translate-x-9.5'
     )}
   />
 ));
@@ -68,8 +68,8 @@ const SwitchThemeThumb = React.forwardRef<
     <SwitchPrimitive.Thumb
       data-slot="switch-thumb"
       className={cn(
-        'dark:data-[state=unchecked]:bg-[hsl(180,1%,86%)] dark:data-[state=checked]:bg-[hsl(228,3%,34%)]',
-        'h-[18px] w-[18px] pointer-events-none flex items-center justify-center rounded-full  shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-0.5 data-[state=unchecked]:translate-x-6',
+        'dark:data-[state=checked]:bg-[hsl(228,3%,34%)] dark:data-[state=unchecked]:bg-[hsl(180,1%,86%)]',
+        'pointer-events-none flex h-[18px] w-[18px] items-center justify-center rounded-full shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-0.5 data-[state=unchecked]:translate-x-6',
         className
       )}
       {...props}
@@ -86,8 +86,8 @@ const SwitchThemeThumb = React.forwardRef<
 const SwitchLabel = ({ isChecked }: { isChecked: boolean }) => (
   <div
     className={cn(
-      'text-xs absolute',
-      isChecked ? 'right-3 text-switch-on-thumb' : 'left-1.5 text-switch-off-thumb'
+      'absolute text-xs',
+      isChecked ? 'text-switch-on-thumb right-3' : 'text-switch-off-thumb left-1.5'
     )}
   >
     {isChecked ? 'ON' : 'OFF'}

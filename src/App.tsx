@@ -59,7 +59,7 @@ function App() {
     return (
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <div className="flex h-screen items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <div className="border-primary h-12 w-12 animate-spin rounded-full border-b-2"></div>
           {/* 필요하면 "로딩 중..." 텍스트도 함께 */}
         </div>
       </ThemeProvider>
@@ -67,13 +67,13 @@ function App() {
   }
   return (
     <SystemProvider>
-      <div className="flex min-h-svh flex-col items-center justify-center w-full">
+      <div className="flex min-h-svh w-full flex-col items-center justify-center">
         <div
           className={
-            'flex items-center text-lg h-[36px] drag justify-between w-full bg-secondary pl-[80px] pr-[12px]'
+            'drag bg-secondary flex h-[36px] w-full items-center justify-between pr-[12px] pl-[80px] text-lg'
           }
         >
-          <div className={'flex gap-6 items-center'}>
+          <div className={'flex items-center gap-6'}>
             <p className={'text-sm'}>YouTube Searcher</p>
           </div>
           <ThemeToggle />

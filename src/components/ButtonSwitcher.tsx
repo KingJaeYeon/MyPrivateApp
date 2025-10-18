@@ -50,13 +50,13 @@ export default function ButtonSwitcher({
     <div
       className={cn(
         buttonVariants({ size, variant: 'none' }),
-        'relative rounded-md p-[3px] flex bg-secondary text-secondary-foreground'
+        'bg-secondary text-secondary-foreground relative flex rounded-md p-[3px]'
       )}
     >
       <animated.div
         className={cn(
           buttonVariants({ size: 'xs', variant: 'none' }),
-          'z-0 absolute left-[3px] top-[50%] translate-y-[-50%] rounded-md text-secondary bg-background',
+          'text-secondary bg-background absolute top-[50%] left-[3px] z-0 translate-y-[-50%] rounded-md',
           wrapperClassName
         )}
         style={animatedStyle}
@@ -66,7 +66,7 @@ export default function ButtonSwitcher({
           <div
             ref={(el: any) => (itemRefs.current[index] = el)}
             className={cn(
-              `flex text-xs z-0 cursor-pointer select-none items-center justify-center whitespace-nowrap rounded-full px-2`,
+              `z-0 flex cursor-pointer items-center justify-center rounded-full px-2 text-xs whitespace-nowrap select-none`,
               state === item.value ? '' : 'opacity-70',
               className
             )}

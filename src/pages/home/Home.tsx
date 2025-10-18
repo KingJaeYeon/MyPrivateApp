@@ -42,7 +42,7 @@ export function Home() {
   const ConnectionStatus = ({ type, isConnect }: { type: ApiType; isConnect: boolean }) => {
     if (isConnect && !isEditing[type]) {
       return (
-        <div className="gap-2 flex">
+        <div className="flex gap-2">
           <EditButton type={type} setIsEditing={setIsEditing} setEditValues={setEditValues} />
           <DeleteButton />
         </div>
@@ -51,7 +51,7 @@ export function Home() {
 
     if (isConnect && isEditing[type]) {
       return (
-        <div className="gap-2 flex">
+        <div className="flex gap-2">
           <ConnectButton type={type} editValues={editValues} setIsEditing={setIsEditing} />
           <CancelButton type={type} setIsEditing={setIsEditing} setEditValues={setEditValues} />
         </div>
@@ -64,8 +64,8 @@ export function Home() {
   const buttons = [<FileNameRule />, <QuotaReset />];
 
   return (
-    <div className={'flex flex-1 w-full p-4 flex-col gap-8 '}>
-      <div className={'flex flex-col gap-3 max-w-[800px] w-full'}>
+    <div className={'flex w-full flex-1 flex-col gap-8 p-4'}>
+      <div className={'flex w-full max-w-[800px] flex-col gap-3'}>
         <div className="flex w-full items-center gap-4">
           <Label htmlFor="mode" className="min-w-[100px]">
             YouTube API
@@ -76,7 +76,7 @@ export function Home() {
             value={getValue('youtubeApiKey')}
             placeholder="입력해주세요."
             onChange={(e) => onChange(e.target.value, 'youtubeApiKey')}
-            className="w-[500px] h-8"
+            className="h-8 w-[500px]"
           />
           <ConnectionStatus type={'youtubeApiKey'} isConnect={hasYoutubeApiKey} />
         </div>
@@ -87,7 +87,7 @@ export function Home() {
 
       {/*<FileNameRule />*/}
       <SavedResult />
-      <div className="flex flex-col w-full gap-4">
+      <div className="flex w-full flex-col gap-4">
         <Label htmlFor="mode" className="min-w-[100px]">
           Buttons
         </Label>
@@ -98,7 +98,7 @@ export function Home() {
               (_, i) =>
                 buttons[i] ?? (
                   <Button
-                    className={'rounded-none border w-full flex flex-1'}
+                    className={'flex w-full flex-1 rounded-none border'}
                     variant={'secondary'}
                   ></Button>
                 )
@@ -108,7 +108,7 @@ export function Home() {
             {Array.from({ length: 8 }, (v, k) => {
               return (
                 <Button
-                  className={'rounded-none border w-full flex flex-1'}
+                  className={'flex w-full flex-1 rounded-none border'}
                   variant={'secondary'}
                 ></Button>
               );

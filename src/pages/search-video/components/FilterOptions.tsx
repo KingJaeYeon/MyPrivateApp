@@ -43,11 +43,11 @@ export function FilterOptions() {
         <div
           className={cn(
             'grid overflow-hidden transition-[grid-template-rows] duration-300',
-            'grid-rows-[1fr] pb-3 border-b'
+            'grid-rows-[1fr] border-b pb-3'
           )}
         >
-          <div className="min-h-0 flex flex-wrap items-center gap-2">
-            <div className={'flex gap-4 justify-between h-9 items-center'}>
+          <div className="flex min-h-0 flex-wrap items-center gap-2">
+            <div className={'flex h-9 items-center justify-between gap-4'}>
               <Label htmlFor="keyword" className="min-w-fit">
                 키워드
                 <Tip
@@ -69,16 +69,16 @@ export function FilterOptions() {
                 value={keyword}
                 placeholder="입력해주세요."
                 onChange={(e) => setKeyword('keyword', e.target.value)}
-                className="w-[250px] h-8"
+                className="h-8 w-[250px]"
                 aria-invalid={fieldErrorsKeys.includes('keyword')}
               />
             </div>
           </div>
         </div>
       )}
-      <div className={'grid-cols-3 grid w-full gap-x-6'}>
+      <div className={'grid w-full grid-cols-3 gap-x-6'}>
         <div className="flex flex-col gap-2">
-          <div className="flex w-full max-w-sm items-center gap-2 justify-between">
+          <div className="flex w-full max-w-sm items-center justify-between gap-2">
             <Label htmlFor="mode" className="min-w-fit">
               실행모드
             </Label>
@@ -96,7 +96,7 @@ export function FilterOptions() {
           </div>
           {mode === 'keywords' && (
             <React.Fragment>
-              <div className="flex w-full max-w-sm items-center gap-4 h-8 justify-between">
+              <div className="flex h-8 w-full max-w-sm items-center justify-between gap-4">
                 <Label htmlFor="maxResults" className="min-w-fit">
                   최대 검색 개수 ({maxResults})
                 </Label>
@@ -117,7 +117,7 @@ export function FilterOptions() {
           )}
           {mode === 'channels' && (
             <React.Fragment>
-              <div className="flex w-full max-w-sm items-center gap-4 justify-between h-8">
+              <div className="flex h-8 w-full max-w-sm items-center justify-between gap-4">
                 <Label htmlFor="maxChannels" className="min-w-fit">
                   채널당 최대 검색 수 ({maxChannels})
                 </Label>
@@ -134,7 +134,7 @@ export function FilterOptions() {
                   }}
                 />
               </div>
-              <div className="flex w-full max-w-sm items-center gap-2 justify-between h-8">
+              <div className="flex h-8 w-full max-w-sm items-center justify-between gap-2">
                 <Label htmlFor="language" className="min-w-fit">
                   채널별 인기영상 보기
                   <Tip txt={'off : 최신순으로 수집 \non: 최근 N일 내 모든 영상내에서 인기순\n'}>
@@ -152,7 +152,7 @@ export function FilterOptions() {
 
         {/* 컬럼 2 */}
         <div className="flex flex-col gap-2">
-          <div className="flex w-full max-w-sm items-center gap-2 justify-between">
+          <div className="flex w-full max-w-sm items-center justify-between gap-2">
             <Label htmlFor="minViews" className={'min-w-fit'}>
               최소 조회수
             </Label>
@@ -160,11 +160,11 @@ export function FilterOptions() {
               id="minViews"
               value={minViews}
               onChange={(e) => setCommon('minViews', e.target.value)}
-              className="w-[70px] h-8"
+              className="h-8 w-[70px]"
               aria-invalid={fieldErrorsKeys.includes('minViews')}
             />
           </div>
-          <div className="flex w-full max-w-sm items-center gap-2 justify-between">
+          <div className="flex w-full max-w-sm items-center justify-between gap-2">
             <Label htmlFor="MinimumViewsPerHour" className={'min-w-fit'}>
               최소 시간당 조회수(vph)
             </Label>
@@ -172,11 +172,11 @@ export function FilterOptions() {
               id="MinimumViewsPerHour"
               value={minViewsPerHour}
               onChange={(e) => setCommon('minViewsPerHour', e.target.value)}
-              className="w-[70px] h-8"
+              className="h-8 w-[70px]"
               aria-invalid={fieldErrorsKeys.includes('minViewsPerHour')}
             />
           </div>
-          <div className="flex w-full max-w-sm items-center gap-2 justify-between">
+          <div className="flex w-full max-w-sm items-center justify-between gap-2">
             <Label htmlFor="day" className={'min-w-fit'}>
               최근 {Number(days) > 0 ? days : 'N'}일 이내 업로드된 영상 분석
               <Tip txt={'채널검색: 최대 360\n키워드검색: 최대 50'}>
@@ -198,7 +198,7 @@ export function FilterOptions() {
                   setKeyword('days', value);
                 }
               }}
-              className="w-[70px] h-8"
+              className="h-8 w-[70px]"
               aria-invalid={fieldErrorsKeys.includes('days')}
             />
           </div>
@@ -206,7 +206,7 @@ export function FilterOptions() {
 
         {/* 컬럼 3 */}
         <div className="flex flex-col gap-2">
-          <div className="flex w-full max-w-sm items-center gap-2 justify-between">
+          <div className="flex w-full max-w-sm items-center justify-between gap-2">
             <Label htmlFor="videoDuration" className="min-w-fit">
               영상 유형
               <Tip txt="롱폼(20분이상), 일반(4~20분), 쇼츠(4분미만)">
@@ -230,7 +230,7 @@ export function FilterOptions() {
               </SelectContent>
             </Select>
           </div>
-          <div className="flex w-full max-w-sm items-center gap-2 justify-between">
+          <div className="flex w-full max-w-sm items-center justify-between gap-2">
             <Label htmlFor="shortsDuration" className="min-w-fit">
               쇼츠 기준(s)(준비중)
             </Label>
@@ -238,12 +238,12 @@ export function FilterOptions() {
               id="shortsDuration"
               value={shortsDuration}
               onChange={(e) => setCommon('shortsDuration', e.target.value)}
-              className="w-[100px] h-8"
+              className="h-8 w-[100px]"
               aria-invalid={fieldErrorsKeys.includes('shortsDuration')}
             />
           </div>
           {mode === 'keywords' && (
-            <div className="flex w-full max-w-sm items-center gap-2 justify-between">
+            <div className="flex w-full max-w-sm items-center justify-between gap-2">
               <Label htmlFor="country" className="min-w-fit">
                 대상 국가 / 언어
                 <Tip
@@ -280,7 +280,7 @@ export function FilterOptions() {
                   id="relevanceLanguage"
                   value={relevanceLanguage}
                   onChange={(e) => setKeyword('relevanceLanguage', e.target.value)}
-                  className="w-[90px] h-8"
+                  className="h-8 w-[90px]"
                 />
               </ButtonGroup>
             </div>

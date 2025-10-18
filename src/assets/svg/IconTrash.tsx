@@ -1,9 +1,9 @@
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 export default function IconTrash({ className }: { className?: string }) {
   return (
     <svg
-      className={cn(className, "text-icon")}
+      className={cn(className, 'text-icon')}
       xmlns="http://www.w3.org/2000/svg"
       width="18"
       height="18"

@@ -37,7 +37,7 @@ function SelectTrigger({
       {children}
       <SelectPrimitive.Icon asChild>
         <ChevronDownIcon
-          className="data-[size=default]:size-4 data-[size=sm]:size-3.5 opacity-50"
+          className="opacity-50 data-[size=default]:size-4 data-[size=sm]:size-3.5"
           data-size={size}
         />
       </SelectPrimitive.Icon>

@@ -38,7 +38,7 @@ export function WatchLog() {
   }
 
   return (
-    <div className={'gap-2 w-full flex-1 flex flex-col max-h-[250px]'}>
+    <div className={'flex max-h-[250px] w-full flex-1 flex-col gap-2'}>
       <div className={'flex justify-between'}>
         <p className={'text-foreground'}>로그 / 진행 상황</p>
         <div className={'flex gap-2'}>
@@ -66,7 +66,7 @@ export function WatchLog() {
         value={logs.join('\n')}
         readOnly
         className={
-          'scrollWidth3 resize-none flex-1 bg-secondary/50 rounded p-2 text-xs overflow-y-auto'
+          'scrollWidth3 bg-secondary/50 flex-1 resize-none overflow-y-auto rounded p-2 text-xs'
         }
       />
     </div>

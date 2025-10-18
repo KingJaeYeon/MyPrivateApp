@@ -14,7 +14,7 @@ export default function Navigator() {
     { path: '/reference', label: 'Reference' },
   ];
   return (
-    <div className={'text-lg flex gap-4 w-full justify-start px-4 py-3'}>
+    <div className={'flex w-full justify-start gap-4 px-4 py-3 text-lg'}>
       {routes.map((route) => (
         <Link
           key={route.path}

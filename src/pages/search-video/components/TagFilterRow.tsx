@@ -42,11 +42,11 @@ export function TagFilterRow() {
     <div
       className={cn(
         'grid overflow-hidden transition-[grid-template-rows] duration-300',
-        'grid-rows-[1fr] pb-3 border-b'
+        'grid-rows-[1fr] border-b pb-3'
       )}
     >
-      <div className="min-h-0 flex flex-wrap items-center gap-2">
-        <div className={'flex gap-4 justify-between'}>
+      <div className="flex min-h-0 flex-wrap items-center gap-2">
+        <div className={'flex justify-between gap-4'}>
           <Label className={'opacity-80'}>태그 필터</Label>
           <ButtonSwitcher
             state={logic}
@@ -58,7 +58,7 @@ export function TagFilterRow() {
             ]}
           />
         </div>
-        <div className={'flex gap-2 items-center'}>
+        <div className={'flex items-center gap-2'}>
           <TagSelector
             selectedTags={tags}
             setSelectedTags={onChangeTags}
@@ -132,7 +132,7 @@ function TagSelector({
         <Button
           size={'sm'}
           variant={'outline'}
-          className={'min-w-[260px] justify-start px-2 cursor-pointer'}
+          className={'min-w-[260px] cursor-pointer justify-start px-2'}
         >
           {selectedTags.length === 0
             ? '태그 검색 ( Max:5 )...'
@@ -143,15 +143,15 @@ function TagSelector({
               ))}
         </Button>
       </SheetTrigger>
-      <SheetContent side={'left'} className={'min-w-[400px] flex flex-1 flex-col'}>
+      <SheetContent side={'left'} className={'flex min-w-[400px] flex-1 flex-col'}>
         <SheetHeader>
           <SheetTitle>태그 필터</SheetTitle>
           <SheetDescription hidden />
         </SheetHeader>
-        <div className="flex flex-col flex-1 auto-rows-min gap-6">
+        <div className="flex flex-1 auto-rows-min flex-col gap-6">
           <div className={'flex flex-col gap-3'}>
             <Muted>태그를 선택해주세요: {selectedTags.length}</Muted>
-            <div className={'flex flex-wrap gap-1 max-h-[250px] overflow-auto scrollWidth3'}>
+            <div className={'scrollWidth3 flex max-h-[250px] flex-wrap gap-1 overflow-auto'}>
               {tags.map((tag) => {
                 const selected = tempTags.includes(tag.name);
                 return (
@@ -181,18 +181,18 @@ function TagSelector({
               })}
             </div>
           </div>
-          <div className={'flex flex-col gap-3 flex-1'}>
+          <div className={'flex flex-1 flex-col gap-3'}>
             <Muted>해당되는 채널리스트: {selectedChannels.length}</Muted>
-            <div className={'relative flex flex-1 overflow-auto scrollWidth3 h-full'}>
-              <div className={'absolute w-full h-full'}>
-                <div className="w-full rounded-md border flex-1 h-full px-4 flex flex-col">
+            <div className={'scrollWidth3 relative flex h-full flex-1 overflow-auto'}>
+              <div className={'absolute h-full w-full'}>
+                <div className="flex h-full w-full flex-1 flex-col rounded-md border px-4">
                   {selectedChannels.map((channel) => (
-                    <div className={'flex w-full border-b justify-between items-center py-2'}>
+                    <div className={'flex w-full items-center justify-between border-b py-2'}>
                       <span
-                        className="tabular-nums text-xs py-2 flex flex-1 gap-1 items-center"
+                        className="flex flex-1 items-center gap-1 py-2 text-xs tabular-nums"
                         key={channel.channelId}
                       >
-                        <Avatar className={'w-6 h-6'}>
+                        <Avatar className={'h-6 w-6'}>
                           <AvatarImage src={channel.icon} />
                           <AvatarFallback>CN</AvatarFallback>
                         </Avatar>

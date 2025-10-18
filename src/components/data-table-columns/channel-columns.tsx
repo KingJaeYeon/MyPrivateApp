@@ -27,7 +27,7 @@ export type ChannelColumns = {
 };
 
 const formatNumber = (num: number) => (
-  <span className="tabular-nums text-xs">{nf.format(num)}</span>
+  <span className="text-xs tabular-nums">{nf.format(num)}</span>
 );
 
 const copyToClipboard = (text: string) => {
@@ -40,8 +40,8 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     accessorKey: 'name',
     header: '채널명',
     cell: ({ row }) => (
-      <div className="flex gap-1 items-center text-xs">
-        <Avatar className="w-6 h-6">
+      <div className="flex items-center gap-1 text-xs">
+        <Avatar className="h-6 w-6">
           <AvatarImage src={row.original.icon} />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
@@ -54,7 +54,7 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     header: '핸들',
     cell: ({ row }) => (
       <p
-        className="cursor-pointer text-xs break-words font-bold"
+        className="cursor-pointer text-xs font-bold break-words"
         onClick={() => copyToClipboard(row.original.handle)}
       >
         {row.original.handle}
@@ -109,7 +109,7 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     minSize: 200,
     cell: ({ row }) => (
       <Tip txt={row.original.memo} className="max-w-[400px]">
-        <span className="ellipsisLine2 cursor-pointer min-w-[100px] max-w-[300px] text-xs break-words whitespace-normal">
+        <span className="ellipsisLine2 max-w-[300px] min-w-[100px] cursor-pointer text-xs break-words whitespace-normal">
           {row.original.memo}
         </span>
       </Tip>
@@ -119,7 +119,7 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     accessorKey: 'publishedAt',
     header: '생성일',
     size: 120,
-    cell: ({ row }) => <span className="tabular-nums text-xs">{row.original.publishedAt}</span>,
+    cell: ({ row }) => <span className="text-xs tabular-nums">{row.original.publishedAt}</span>,
   },
   {
     accessorKey: 'platform',
@@ -137,7 +137,7 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     accessorKey: 'fetchedAt',
     header: '갱신날짜',
     size: 120,
-    cell: ({ row }) => <span className="tabular-nums text-xs">{row.original.fetchedAt}</span>,
+    cell: ({ row }) => <span className="text-xs tabular-nums">{row.original.fetchedAt}</span>,
   },
   {
     accessorKey: 'link',

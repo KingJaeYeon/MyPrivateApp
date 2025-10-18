@@ -88,22 +88,22 @@ export function FileNameRule() {
       }}
     >
       <AlertDialogTrigger asChild>
-        <Button className={'rounded-none border w-full flex flex-1'} variant={'secondary'}>
+        <Button className={'flex w-full flex-1 rounded-none border'} variant={'secondary'}>
           FileName Rule
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent className={'min-w-[700px]'}>
         <AlertDialogHeader>
           <AlertDialogTitle>FileName Rule</AlertDialogTitle>
-          <div className={'flex mb-3'}>
+          <div className={'mb-3 flex'}>
             <div className={'flex items-center gap-1 text-xs'}>
-              <div className={'rounded-full bg-green-600 w-2.5 h-2.5'} />
+              <div className={'h-2.5 w-2.5 rounded-full bg-green-600'} />
               File
             </div>
             <div className={'mx-2 border-r'}></div>
             <div className={'flex gap-3'}>
               <div className={'flex items-center gap-1 text-xs'}>
-                <div className={'rounded-full bg-destructive w-2.5 h-2.5'} />
+                <div className={'bg-destructive h-2.5 w-2.5 rounded-full'} />
                 <span>Folder</span>
               </div>
               <div className={'flex items-center gap-2 text-xs'}>
@@ -124,8 +124,8 @@ export function FileNameRule() {
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-2 w-full items-center gap-x-4 gap-y-3 mb-4">
-            <div className={'flex gap-1 flex-col'}>
+          <div className="mb-4 grid w-full grid-cols-2 items-center gap-x-4 gap-y-3">
+            <div className={'flex flex-col gap-1'}>
               <Label htmlFor="mode" className={'text-xs text-green-500'}>
                 TAGS
               </Label>
@@ -135,7 +135,7 @@ export function FileNameRule() {
                 value={editValues?.tag}
               />
             </div>
-            <div className={'flex gap-1 flex-col'}>
+            <div className={'flex flex-col gap-1'}>
               <Label htmlFor="mode" className={'text-xs text-green-500'}>
                 CHANNEL
               </Label>
@@ -145,7 +145,7 @@ export function FileNameRule() {
                 value={editValues?.channel}
               />
             </div>
-            <div className={'flex gap-1 flex-col'}>
+            <div className={'flex flex-col gap-1'}>
               <Label htmlFor="mode" className={'text-xs text-green-500'}>
                 PROMPT
               </Label>
@@ -155,8 +155,8 @@ export function FileNameRule() {
                 value={editValues?.prompt}
               />
             </div>
-            <div className={'flex gap-1 flex-col'}>
-              <Label htmlFor="mode" className={'text-xs text-destructive'}>
+            <div className={'flex flex-col gap-1'}>
+              <Label htmlFor="mode" className={'text-destructive text-xs'}>
                 RESULT
               </Label>
               <Input
@@ -165,7 +165,7 @@ export function FileNameRule() {
                 value={editValues?.result}
               />
             </div>
-            <div className={'flex gap-1 flex-col'}>
+            <div className={'flex flex-col gap-1'}>
               <Label htmlFor="mode" className={'text-xs text-green-500'}>
                 REFERENCE
               </Label>
@@ -175,7 +175,7 @@ export function FileNameRule() {
                 value={editValues?.reference}
               />
             </div>
-            <div className={'flex gap-1 flex-col'}>
+            <div className={'flex flex-col gap-1'}>
               <Label htmlFor="mode" className={'text-xs text-green-500'}>
                 ENGLISH
               </Label>
@@ -185,7 +185,7 @@ export function FileNameRule() {
                 value={editValues?.english}
               />
             </div>
-            <div className={'flex gap-1 flex-col'}>
+            <div className={'flex flex-col gap-1'}>
               <Label htmlFor="mode" className={'text-xs text-green-500'}>
                 PROGRESS
               </Label>

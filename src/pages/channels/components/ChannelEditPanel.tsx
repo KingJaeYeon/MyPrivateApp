@@ -48,11 +48,11 @@ export function ChannelEditPanel({
   };
 
   return (
-    <div className="w-[400px] border bg-background shadow-xl p-6 rounded-sm flex flex-col">
+    <div className="bg-background flex w-[400px] flex-col rounded-sm border p-6 shadow-xl">
       <div className={'flex flex-1 flex-col gap-3'}>
         <div className={'flex justify-between'}>
-          <span className="tabular-nums text-xs flex gap-1 items-center">
-            <Avatar className={'w-6 h-6'}>
+          <span className="flex items-center gap-1 text-xs tabular-nums">
+            <Avatar className={'h-6 w-6'}>
               <AvatarImage src={select.icon} />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
@@ -67,35 +67,35 @@ export function ChannelEditPanel({
         <div className={'grid grid-cols-2 gap-y-1'}>
           <div className={'flex'}>
             <Label>국가:</Label>
-            <p className={'cursor-pointer break-words whitespace-normal pl-2 text-sm font-bold'}>
+            <p className={'cursor-pointer pl-2 text-sm font-bold break-words whitespace-normal'}>
               {select.regionCode}
             </p>
           </div>
           <div className={'flex'}>
             <Label>조회수:</Label>
-            <span className="tabular-nums text-sm pl-2 font-bold">
+            <span className="pl-2 text-sm font-bold tabular-nums">
               {nf.format(select.viewCount)}
             </span>
           </div>
           <div className={'flex'}>
             <Label>구독자 수:</Label>
-            <span className="tabular-nums text-sm pl-2 font-bold">
+            <span className="pl-2 text-sm font-bold tabular-nums">
               {nf.format(select.subscriberCount)}
             </span>
           </div>
           <div className={'flex'}>
             <Label>생성일:</Label>
-            <span className="tabular-nums text-sm pl-2 font-bold">{select.publishedAt}</span>
+            <span className="pl-2 text-sm font-bold tabular-nums">{select.publishedAt}</span>
           </div>
         </div>
         <div className={'flex'}>
           <Label>채널ID(고유값):</Label>
-          <p className={'break-words whitespace-normal pl-2 text-sm font-bold'}>
+          <p className={'pl-2 text-sm font-bold break-words whitespace-normal'}>
             {select.channelId}
           </p>
         </div>
-        <div className={'flex flex-1 relative overflow-auto scrollWidth3 border-t pt-4'}>
-          <div className={'flex-col gap-4 absolute flex w-full'}>
+        <div className={'scrollWidth3 relative flex flex-1 overflow-auto border-t pt-4'}>
+          <div className={'absolute flex w-full flex-col gap-4'}>
             <div className={'flex flex-col gap-2'}>
               <Label>링크:</Label>
               <Input
@@ -113,20 +113,20 @@ export function ChannelEditPanel({
               />
             </div>
             <div className={'flex flex-col gap-2'}>
-              <div className={'flex gap-2 justify-between'}>
+              <div className={'flex justify-between gap-2'}>
                 <Label>태그</Label>
                 <Button
                   size={'icon-sm'}
-                  className={'w-5 h-5 cursor-pointer'}
+                  className={'h-5 w-5 cursor-pointer'}
                   variant={'ghost'}
                   onClick={() => setIsOpen(!isOpen)}
                 >
                   {isOpen ? <IconArrowDown /> : <IconArrowUp />}
                 </Button>
               </div>
-              <div className={'flex gap-0.5 flex-wrap'}>
+              <div className={'flex flex-wrap gap-0.5'}>
                 {select.tag === '' ? (
-                  <Label className={'text-xs cursor-pointer'} onClick={() => setIsOpen(!isOpen)}>
+                  <Label className={'cursor-pointer text-xs'} onClick={() => setIsOpen(!isOpen)}>
                     선택안함
                   </Label>
                 ) : (
@@ -150,7 +150,7 @@ export function ChannelEditPanel({
               </div>
               <div
                 data-isopen={isOpen}
-                className={cn('gap-1 flex flex-wrap mt-2', isOpen ? '' : 'hidden')}
+                className={cn('mt-2 flex flex-wrap gap-1', isOpen ? '' : 'hidden')}
               >
                 {tags.map((tag, i) => {
                   const isSelected = select?.tag.split(',').includes(tag.idx.toString());
@@ -181,7 +181,7 @@ export function ChannelEditPanel({
             <div className={'flex flex-col gap-2'}>
               <Label>메모</Label>
               <Textarea
-                className={'resize-none w-full h-[100px]'}
+                className={'h-[100px] w-full resize-none'}
                 value={select?.memo}
                 onChange={(e) => onChangeHandler('memo', e.target.value)}
               />
@@ -189,7 +189,7 @@ export function ChannelEditPanel({
           </div>
         </div>
       </div>
-      <div className="flex justify-end gap-2 mt-6">
+      <div className="mt-6 flex justify-end gap-2">
         <Button variant={'outline'} onClick={onCancel}>
           취소
         </Button>

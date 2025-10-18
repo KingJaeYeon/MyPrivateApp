@@ -6,9 +6,9 @@ import { Link } from 'react-router-dom';
 import useSettingStore from '@/store/setting.ts';
 
 export default function SearchVideo() {
-  const usedQuota = useSettingStore(r=>r.data.youtube.usedQuota);
+  const usedQuota = useSettingStore((r) => r.data.youtube.usedQuota);
   return (
-    <div className={'flex-1 flex flex-col w-full p-4'}>
+    <div className={'flex w-full flex-1 flex-col p-4'}>
       <div className={'flex flex-1 flex-col gap-4'}>
         <FilterOptions />
         <div className={'flex justify-between'}>

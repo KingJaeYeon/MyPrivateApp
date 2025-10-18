@@ -21,14 +21,14 @@ export default function ChannelsPage() {
   };
 
   return (
-    <div className="flex flex-1 px-4 gap-5 w-full">
+    <div className="flex w-full flex-1 gap-5 px-4">
       <DataTable<ChannelColumns, unknown>
         columns={CHANNELS_COLUMNS}
         data={data}
         isFixHeader={true}
         tableControls={(table) => {
           return (
-            <div className={'flex justify-between w-full'}>
+            <div className={'flex w-full justify-between'}>
               <div className={'flex gap-1'}>
                 <TagSelector
                   value={(table.getColumn('tag')?.getFilterValue() as string) ?? ''}
