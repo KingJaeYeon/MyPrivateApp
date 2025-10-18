@@ -64,7 +64,7 @@ export function Home() {
   const buttons = [<FileNameRule />, <QuotaReset />];
 
   return (
-    <div className={'flex w-full flex-1 flex-col gap-8 p-4'}>
+    <div className={'flex w-full flex-1 flex-col gap-6 p-4'}>
       <div className={'flex w-full max-w-[800px] flex-col gap-3'}>
         <div className="flex w-full items-center gap-4">
           <Label htmlFor="mode" className="min-w-[100px]">

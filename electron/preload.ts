@@ -71,4 +71,5 @@ contextBridge.exposeInMainWorld('excelApi', {
     ipcRenderer.invoke('excel:overwrite', filePath, data, sheetName),
   append: (filePath: string, rows: any[], sheetName?: string) =>
     ipcRenderer.invoke('excel:append', filePath, rows, sheetName),
+  delete: async (filePath: string) => await ipcRenderer.invoke('excel:delete', filePath),
 });

@@ -4,10 +4,9 @@ import { Label } from '@/components/ui/label.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { ScrollArea } from '@/components/ui/scroll-area.tsx';
 import { Separator } from '@/components/ui/separator.tsx';
-import { cn } from '@/lib/utils.ts';
+import { cn, parsedExcelFileName } from '@/lib/utils.ts';
 import {
   Empty,
-  EmptyContent,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
@@ -16,7 +15,7 @@ import {
 import { IconFolder } from '@/assets/svg';
 import { ArrowUpRightIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
-// import { IconFolder } from '@/assets/svg';
+import { toast } from 'sonner';
 
 export function SavedResult() {
   const { name, location } = useSettingStore((r) => r.data.folder);
@@ -35,9 +34,9 @@ export function SavedResult() {
   }, [location]);
 
   return (
-    <div className={'flex w-full max-w-[1000px] flex-col gap-4'}>
+    <div className={'flex w-full max-w-[1100px] flex-col gap-2'}>
       <div className={'flex min-w-fit justify-between'}>
-        <Label htmlFor="mode" className="min-w-[100px]">
+        <Label htmlFor="mode" className="min-w-[120px]">
           Saved Result
         </Label>
         <Button size={'sm'} onClick={getFiles}>
@@ -45,7 +44,7 @@ export function SavedResult() {
         </Button>
       </div>
       <div className={'flex h-80 gap-4'}>
-        <ScrollArea className="h-full w-60 rounded-md border">
+        <ScrollArea className="h-full w-[16rem] rounded-md border">
           <div className="p-4">
             {savedFiles.map((fileName, i) => {
               const display = fileName.split('cid');
@@ -67,61 +66,83 @@ export function SavedResult() {
             })}
           </div>
         </ScrollArea>
-        <DetailOption select={select} cancel={() => setSelect('')} />
+        <DetailOption select={select} cancel={() => setSelect('')} reset={getFiles} />
       </div>
     </div>
   );
 }
 
-function DetailOption({ select, cancel }: { select: string; cancel: () => void }) {
+function DetailOption({
+  select,
+  cancel,
+  reset,
+}: {
+  select: string;
+  cancel: () => void;
+  reset: () => Promise<void>;
+}) {
+  const { data } = useSettingStore();
   if (!select) {
-    return <EmmtyCard />;
+    return <EmptyCard />;
   }
 
-  const [date, rest] = select?.split('cid');
-  const [_, __, ...data] = rest.split('_');
+  const { result, date, isPopularOnly, count, dur, lang, keyword, cid } =
+    parsedExcelFileName(select);
+
+  const onDelete = async () => {
+    if (!confirm('정말 삭제하시겠습니까?')) {
+      return;
+    }
+
+    const result = await window.excelApi.delete(
+      `${data.folder.location}/${data.folder.name.result}/${select}`
+    );
+
+    if (result) {
+      cancel();
+      toast.success('삭제되었습니다.');
+      await reset();
+    } else {
+      toast.error('다시 시도해주세요.');
+    }
+  };
   return (
-    <section className="h-full flex-1 rounded-md border p-4">
-      <div className="space-y-4">
-        <header className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold">{date}</h2>
-          <div className="flex gap-2">
-            <Button size="sm" onClick={() => console.log('')}>
-              상세
-            </Button>
-            <Button size="sm" variant="secondary" onClick={cancel}>
-              취소
-            </Button>
-            <Button size="sm" variant="destructive" onClick={() => console.log('')}>
-              삭제
-            </Button>
+    <section className="flex h-full flex-1 flex-col gap-3 rounded-md border p-4">
+      <header className="flex items-center justify-between">
+        <div className={'flex flex-col gap-1'}>
+          <h2 className="text-2xl font-bold">{`${date} ${isPopularOnly ? '🔥' : ''}`}</h2>
+          <div className={'flex gap-4'}>
+            <p className={'text-muted-foreground text-xs'}>{`전체 데이터 수: ${count}`}</p>
+            <p className={'text-muted-foreground text-xs'}>{`영상 유형: ${dur}`}</p>
+            {!!lang && (
+              <p
+                className={'text-muted-foreground text-xs'}
+              >{`대상 국가/언어: ${lang.toUpperCase()}`}</p>
+            )}
           </div>
-        </header>
-
-        <code className="block rounded-lg bg-black/40 p-4 text-sm break-all">
-          {'active.filename'}
-          {JSON.stringify(data)}
-        </code>
-
-        <dl className="grid grid-cols-2 gap-4 text-sm">
-          <div>
-            <dt className="text-neutral-400">Mode</dt>
-            <dd className="font-mono">{'active.cid'}</dd>
-          </div>
-          <div>
-            <dt className="text-neutral-400">Rows</dt>
-            <dd>{'active.rows'}</dd>
-          </div>
-          <div>
-            <dt className="text-neutral-400">Saved at</dt>
-            <dd>{'active.savedAt'}</dd>
-          </div>
-          <div>
-            <dt className="text-neutral-400">Size</dt>
-            <dd>{'active.size'}</dd>
-          </div>
-        </dl>
+        </div>
+      </header>
+      <div className={'flex flex-1 items-center justify-center gap-4'}>
+        <Button size={'lg'} className={'w-26'}>
+          상세보기
+        </Button>
+        <Button size="lg" className={'w-26'} variant="destructive" onClick={onDelete}>
+          삭제
+        </Button>
+        <Button size={'lg'} className={'w-26'} variant={'secondary'} onClick={cancel}>
+          취소
+        </Button>
       </div>
+      <dl className="grid grid-cols-2 gap-4 text-sm">
+        {Object.keys(result).map((k, i) => {
+          return (
+            <div key={cid + i}>
+              <dt className="text-muted-foreground capitalize">{result[k]?.label}</dt>
+              <dd className="ml-1 font-mono">{`${result[k]?.value} ${result[k]?.value === 'keywords' ? ` - ${keyword}` : ''}`}</dd>
+            </div>
+          );
+        })}
+      </dl>
     </section>
     // <div className={'h-full flex-1 rounded-md border border-red-500 p-4'}>
     //   <p className={'text-xl'}>{date[0]}</p>
@@ -130,7 +151,7 @@ function DetailOption({ select, cancel }: { select: string; cancel: () => void }
   );
 }
 
-function EmmtyCard() {
+function EmptyCard() {
   return (
     <div className={'h-full flex-1 rounded-md border p-4'}>
       <Empty>

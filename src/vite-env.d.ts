@@ -61,6 +61,7 @@ declare global {
       read: (filePath: string) => Promise<any[]>;
       overwrite: (filePath: string, data: any[][], sheetName?: string) => Promise<boolean>;
       append: (filePath: string, rows: any[], sheetName?: string) => Promise<boolean>;
+      delete: (filePath: string) => Promise<boolean>;
     };
     ipcRenderer: import('electron').IpcRenderer;
   }

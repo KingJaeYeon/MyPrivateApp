@@ -106,4 +106,14 @@ export function setupExcelHandlers() {
       return true;
     }
   );
+
+  // 파일 삭제
+  ipcMain.handle('excel:delete', async (_e, filePath: string) => {
+    if (!fs.existsSync(filePath)) {
+      return false;
+    }
+
+    fs.unlinkSync(filePath);
+    return true;
+  });
 }

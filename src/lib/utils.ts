@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { ExcelColumn, ExcelConfig, SheetConfig } from '@/store/useSettingStore.ts';
 import { FilterUI } from '@/store/useVideoSearchStore';
+import { format, subDays } from 'date-fns';
 
 export type FontSize =
   | 'text-2xs'
@@ -103,25 +104,96 @@ function formatCompactNumber(num: number): string {
 function makeExcelFilename(prefixDate: string, filter: FilterUI, count: number) {
   const parts: string[] = [`cid_${createCid()}`, `mode-${filter.mode}`, `data-${count}`];
 
-  parts.push(`vph-${filter.minViewsPerHour}`);
-  parts.push(`minV-${filter.minViews}`);
-  parts.push(`dur-${filter.videoDuration}`);
-
   if (filter.mode === 'keywords') {
     parts.push(`kw-${filter.keyword.replace(/\s+/g, '-')}`);
     parts.push(`days-${filter.days}`);
     parts.push(`lang-${filter.relevanceLanguage}`);
-    parts.push(`maxR-${filter.maxResults}`);
     parts.push(`region-${filter.regionCode}`);
   }
 
   if (filter.mode === 'channels') {
     parts.push(`days-${filter.days}`);
-    parts.push(`maxC-${filter.maxChannels}`);
     parts.push(`popular-${filter.isPopularVideosOnly ? 'true' : 'false'}`);
   }
 
+  parts.push(`vph-${filter.minViewsPerHour}`);
+  parts.push(`minV-${filter.minViews}`);
+  parts.push(`dur-${filter.videoDuration}`);
+
   return `[${prefixDate}]` + parts.join('_') + '.xlsx';
+}
+
+function parsedExcelFileName(fileName: string) {
+  const clean = fileName.replace(/\.xlsx$/, '').trim();
+
+  // [2025-10-18] 형식의 날짜 추출
+  const [date, rest] = clean?.split('cid');
+  const cleanDate = date.replace(/[\[\]]/g, '');
+  // 날짜 제외하고 나머지 부분 분리
+  const parts = rest.split('_').slice(2);
+
+  const result: Record<string, any> = {};
+  let isPopularOnly = false;
+  let count = 0;
+  let dur = '전체';
+  let lang = '';
+  let keyword = '';
+  let cid = '';
+
+  for (const part of parts) {
+    const [key, ...valueParts] = part.split('-');
+    const value = valueParts.join('-'); // keyword 같은 경우 하이픈 포함 가능
+
+    switch (key) {
+      case 'cid':
+        cid = value;
+        break;
+      case 'mode':
+        result.mode = { value, label: '검색모드' };
+        break;
+      case 'data':
+        count = Number(value);
+        break;
+      case 'vph':
+        result.vph = { value, label: '최소 시간당 조회수(vph)' };
+        break;
+      case 'minV':
+        result.minViews = { value, label: '최소 조회수' };
+        break;
+      case 'dur':
+        if (value === 'any') dur = '전체';
+        if (value === 'short') dur = '쇼츠';
+        if (value === 'medium') dur = '일반';
+        if (value === 'long') dur = '롱폼';
+        break;
+      case 'kw':
+        keyword = value.replace(/-/g, ' ');
+        break;
+      case 'days':
+        const res = format(subDays(new Date(cleanDate), Number(value)), 'yyyy-MM-dd');
+        result.days = { value: res.toLocaleString(), label: '업로드일' };
+        break;
+      case 'lang':
+        let langTemp = value;
+        if (lang === '') {
+          langTemp = value + '/';
+        }
+        lang = lang + langTemp;
+        break;
+      case 'region':
+        let reTemp = value;
+        if (lang === '') {
+          reTemp = value + '/';
+        }
+        lang = lang + reTemp;
+        break;
+      case 'popular':
+        isPopularOnly = true;
+        break;
+    }
+  }
+
+  return { result, date, isPopularOnly, count, dur, lang, keyword, cid };
 }
 
 function createCid(): string {
@@ -133,5 +205,6 @@ export {
   buildAoaFromObjects,
   formatCompactNumber,
   makeExcelFilename,
+  parsedExcelFileName,
   createCid,
 };
