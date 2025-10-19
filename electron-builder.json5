@@ -4,7 +4,6 @@
   appId: 'YourAppID',
   asar: true,
   productName: 'PrivateApp',
-  buildVersion: null,
   directories: {
     output: 'release/${version}',
   },

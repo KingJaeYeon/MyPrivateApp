@@ -12,15 +12,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function SearchVideoResult() {
   const { data } = useVideoSearchStore((s) => s.result);
-  const { mode, minViews, minViewsPerHour, shortsDuration, videoDuration } = useCommonPair();
-  const {
-    keyword,
-    maxResults,
-    days: publishedAfterK,
-    relevanceLanguage,
-    regionCode,
-  } = useKeywordPair();
-  const { isPopularVideosOnly, maxChannels, days: publishedAfterC, channelIds } = useChannelPair();
+  const { mode } = useCommonPair();
+  const { keyword, maxResults, days: publishedAfterK, regionCode } = useKeywordPair();
+  const { maxChannels, days: publishedAfterC, channelIds } = useChannelPair();
   const { openModal } = useModalStore();
   const { data: channels } = useChannelStore();
   const navigate = useNavigate();

@@ -1,7 +1,7 @@
 {
   "name": "youtube-searcher-v2",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,17 +9,6 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "format": "prettier --write ."
-  },
-  "build": {
-    "appId": "com.example.myapp",
-    "mac": {
-      "category": "public.app-category.productivity",
-      "extendInfo": {
-        "NSDocumentsFolderUsageDescription": "태그 파일을 읽기 위해 Documents 폴더 접근이 필요합니다.",
-        "NSDesktopFolderUsageDescription": "엑셀 파일을 불러오기 위해 Desktop 폴더 접근이 필요합니다.",
-        "NSDownloadsFolderUsageDescription": "다운로드한 Excel 파일을 열기 위해 Downloads 폴더 접근이 필요합니다."
-      }
-    }
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",
