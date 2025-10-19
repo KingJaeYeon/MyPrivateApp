@@ -15,7 +15,7 @@ import { Checkbox } from '@/components/ui/checkbox.tsx';
 import React from 'react';
 import { TagFilterRow } from '@/pages/search-video/components/TagFilterRow.tsx';
 import { Slider } from '@/components/ui/slider.tsx';
-import { useChannelPair, useCommonPair, useKeywordPair } from '@/hook/useVideoSearchSelectors.tsx';
+import { useChannelPair, useCommonPair, useKeywordPair } from '@/hooks/useVideoSearchSelectors.tsx';
 import { cn } from '@/lib/utils.ts';
 import { ButtonGroup } from '@/components/ui/button-group.tsx';
 import flag from '../../../../public/flag.json';

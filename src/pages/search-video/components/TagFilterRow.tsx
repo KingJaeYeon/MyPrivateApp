@@ -22,7 +22,7 @@ import useChannelStore from '@/store/useChannelStore.ts';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
 import { ChannelColumns } from '@/components/data-table-columns/channel-columns.tsx';
 import { useVideoSearchStore } from '@/store/useVideoSearchStore.ts';
-import { useChannelPair, useTagsPair } from '@/hook/useVideoSearchSelectors.tsx';
+import { useChannelPair, useTagsPair } from '@/hooks/useVideoSearchSelectors.tsx';
 
 export function TagFilterRow() {
   const { tagKey, tagLogic } = useTagsPair();

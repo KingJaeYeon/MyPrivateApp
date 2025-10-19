@@ -1,7 +1,7 @@
 import { DataTable } from '@/components/data-table';
 import { RESULT_COLUMNS, VideoRow } from '@/components/data-table-columns/result-columns.tsx';
 import { useVideoSearchStore } from '@/store/useVideoSearchStore.ts';
-import { useChannelPair, useCommonPair, useKeywordPair } from '@/hook/useVideoSearchSelectors.tsx';
+import { useChannelPair, useCommonPair, useKeywordPair } from '@/hooks/useVideoSearchSelectors.tsx';
 
 export default function SearchVideoResult() {
   const { data } = useVideoSearchStore((s) => s.result);
