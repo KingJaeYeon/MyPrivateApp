@@ -70,7 +70,7 @@ export function AddChannelModal({ onClose, data }: ModalProps) {
   });
 
   useEffect(() => {
-    if (data) {
+    if (data?.data && data.data.length >= 1) {
       const curIds = curChannels.map((r) => r.channelId);
 
       const filtered = data.data.filter((v) => !curIds.includes(v.channelId));

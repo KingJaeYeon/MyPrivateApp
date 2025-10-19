@@ -6,6 +6,8 @@ import useSettingStore from '@/store/useSettingStore.ts';
 import { toast } from 'sonner';
 import useChannelStore from '@/store/useChannelStore.ts';
 
+type TagsKey = 'channel' | 'reference' | 'prompt' | 'english';
+
 /** 전체 앱 설정 */
 export type State = {
   data: TagColumns[];
@@ -18,7 +20,7 @@ type Action = {
   push: (arr: TagColumns[]) => boolean;
   removeTags: (removeArr: TagColumns[]) => void;
   saved: () => Promise<void>;
-  updateCounter: (type: string) => void;
+  updateCounter: (type: TagsKey) => void;
 };
 
 const useTagStore = create(
@@ -40,11 +42,29 @@ const useTagStore = create(
       set({ data: result, jsonData });
       get().updateCounter('channel');
     },
-    updateCounter: (type: string) => {
+    updateCounter: (type) => {
       const channels = useChannelStore.getState().data;
       const tags = [...get().data];
       const tagCountMap: Record<string, number> = {};
       if (type === 'channel') {
+        for (let i = 0; i < channels.length; i++) {
+          const channelArr = channels[i].tag.split(',');
+          for (let j = 0; j < channelArr.length; j++) {
+            const tag = channelArr[j].trim();
+            if (tag) {
+              tagCountMap[tag] = (tagCountMap[tag] || 0) + 1;
+            }
+          }
+        }
+
+        tags.forEach((tag) => {
+          tag.usedChannels = tagCountMap[tag.idx] || 0;
+          tag.total = (tag.usedVideos || 0) + (tagCountMap[tag.idx] || 0);
+        });
+        set({ data: tags });
+      }
+
+      if (type === 'reference') {
         for (let i = 0; i < channels.length; i++) {
           const channelArr = channels[i].tag.split(',');
           for (let j = 0; j < channelArr.length; j++) {

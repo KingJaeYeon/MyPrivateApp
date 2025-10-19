@@ -95,11 +95,14 @@ const seed: State['data'] = {
       essentialDefs: [
         { id: 1, label: 'idx', column: 'idx' },
         { id: 2, label: '태그명', column: 'name' },
-        { id: 3, label: '사용중인 채널', column: 'usedChannels' },
-        { id: 4, label: '사용중인 영상', column: 'usedVideos' },
-        { id: 5, label: '전체수', column: 'total' },
+        { id: 3, label: '채널', column: 'usedChannels' },
+        { id: 4, label: '동영상', column: 'usedVideos' },
+        { id: 5, label: '레퍼런스', column: 'usedReference' },
+        { id: 6, label: '프롬프트', column: 'usedPrompt' },
+        { id: 7, label: '영어', column: 'usedEnglish' },
+        { id: 8, label: '전체수', column: 'total' },
       ],
-      order: [1, 2, 3, 4, 5],
+      order: [1, 2, 3, 4, 5, 6, 7, 8],
       optional: [],
     },
     channel: {

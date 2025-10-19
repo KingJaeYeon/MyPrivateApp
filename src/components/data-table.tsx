@@ -166,7 +166,7 @@ export function DataTable<TData, TValue>({
         <div className={'w-full'} ref={tableMeasure[0]}>
           {isFixHeader && isFixedHeader && (
             <animated.div
-              className={'bg-background fixed z-[200] flex flex-row border-b-2'}
+              className={'bg-background fixed z-[50] flex flex-row border-b-2'}
               style={{
                 ...props,
                 top: `${headerTop - 2}px`,

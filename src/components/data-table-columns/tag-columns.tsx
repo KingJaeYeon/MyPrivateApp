@@ -9,6 +9,9 @@ export type TagColumns = {
   name: string;
   usedChannels: number;
   usedVideos: number;
+  usedReference: number;
+  usedPrompt: number;
+  usedEnglish: number;
   total: number;
 };
 
@@ -74,7 +77,7 @@ export const TAG_COLUMNS = (isEdit?: boolean): ColumnDef<TagColumns>[] => {
     },
     {
       accessorKey: 'usedChannels',
-      header: '사용중인 채널',
+      header: '채널',
       cell: ({ row }) => (
         <p className={'cursor-pointer text-xs break-words whitespace-normal'}>
           {row.original.usedChannels}
@@ -83,10 +86,37 @@ export const TAG_COLUMNS = (isEdit?: boolean): ColumnDef<TagColumns>[] => {
     },
     {
       accessorKey: 'usedVideos',
-      header: '사용중인 영상',
+      header: '동영상',
       cell: ({ row }) => (
         <p className={'cursor-pointer text-xs break-words whitespace-normal'}>
           {row.original.usedVideos}
+        </p>
+      ),
+    },
+    {
+      accessorKey: 'usedReference',
+      header: '레퍼런스',
+      cell: ({ row }) => (
+        <p className={'cursor-pointer text-xs break-words whitespace-normal'}>
+          {row.original.usedReference}
+        </p>
+      ),
+    },
+    {
+      accessorKey: 'usedPrompt',
+      header: '프롬프트',
+      cell: ({ row }) => (
+        <p className={'cursor-pointer text-xs break-words whitespace-normal'}>
+          {row.original.usedPrompt}
+        </p>
+      ),
+    },
+    {
+      accessorKey: 'usedEnglish',
+      header: '영어',
+      cell: ({ row }) => (
+        <p className={'cursor-pointer text-xs break-words whitespace-normal'}>
+          {row.original.usedEnglish}
         </p>
       ),
     },

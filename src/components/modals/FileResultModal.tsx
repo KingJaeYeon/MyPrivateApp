@@ -123,7 +123,6 @@ export default function FileResultModal({ onClose, data = [] }: ModalProps) {
               }}
             />
           </div>
-          {/*{JSON.stringify(data)}*/}
         </AlertDialogHeader>
       </AlertDialogContent>
     </AlertDialog>

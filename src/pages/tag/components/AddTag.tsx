@@ -12,6 +12,9 @@ const init = [
     name: '',
     usedChannels: 0,
     usedVideos: 0,
+    usedEnglish: 0,
+    usedPrompt: 0,
+    usedReference: 0,
     total: 0,
   },
 ];
@@ -38,6 +41,9 @@ export function AddTag() {
         name: '',
         usedChannels: 0,
         usedVideos: 0,
+        usedEnglish: 0,
+        usedPrompt: 0,
+        usedReference: 0,
         total: 0,
       },
     ]);
