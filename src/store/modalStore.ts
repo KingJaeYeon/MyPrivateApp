@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 
-export type ModalType = 'login' | 'signup' | 'confirm' | 'alert';
+export type ModalType = 'login' | 'signup' | 'confirm' | 'alert' | 'result';
 
 export interface ModalState {
   type: ModalType | null;
   isOpen: boolean;
-  data?: Record<string, any>;
+  data?: any;
 }
 
 interface ModalStore extends ModalState {

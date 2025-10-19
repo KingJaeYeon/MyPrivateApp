@@ -19,7 +19,6 @@ interface ConfirmModalProps {
 }
 
 /**
- * @deprecated
  * @param onClose
  * @param data
  * @constructor
@@ -37,9 +36,7 @@ export default function ConfirmModal({ onClose, data }: ConfirmModalProps) {
           <AlertDialogTitle>{data?.title || '확인'}</AlertDialogTitle>
           <AlertDialogDescription>{data?.message}</AlertDialogDescription>
         </AlertDialogHeader>
-        {window.location.href}
         <div className="flex justify-end gap-2">
-          <button onClick={() => window.location.reload()}>test</button>
           <Button variant="outline" onClick={onClose}>
             {data?.cancelText || '취소'}
           </Button>

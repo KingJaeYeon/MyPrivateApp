@@ -12,7 +12,6 @@ import TagPage from '@/pages/tag/TagPage.tsx';
 import useTagStore from '@/store/useTagStore.ts';
 import ChannelsPage from '@/pages/channels/ChannelsPage.tsx';
 import useChannelStore from '@/store/useChannelStore.ts';
-import { useModalStore } from '@/store/modalStore.ts';
 
 const routes = [
   { url: '/', element: <Home /> },
@@ -89,7 +88,6 @@ function App() {
         </div>
         <Navigator />
         <Outlet />
-        <SomeComponent />
         <Routes>
           {routes.map((v) => {
             const { url, element } = v;
@@ -103,48 +101,3 @@ function App() {
 }
 
 export default App;
-
-function SomeComponent() {
-  const { openModal } = useModalStore();
-
-  return (
-    <div className="space-y-4">
-      {/* 로그인 모달 */}
-      <button onClick={() => openModal('login')}>로그인</button>
-
-      {/* 회원가입 모달 */}
-      <button onClick={() => openModal('signup')}>회원가입</button>
-
-      {/* 확인 모달 */}
-      <button
-        onClick={() =>
-          openModal('confirm', {
-            title: '삭제 확인',
-            message: '정말 삭제하시겠습니까?',
-            cancelText: '취소',
-            confirmText: '삭제',
-            onConfirm: () => {
-              console.log('삭제됨');
-              // 삭제 API 호출
-            },
-          })
-        }
-      >
-        삭제
-      </button>
-
-      {/* 알림 모달 */}
-      <button
-        onClick={() =>
-          openModal('alert', {
-            title: '알림',
-            message: '저장되었습니다.',
-            buttonText: '확인',
-          })
-        }
-      >
-        알림
-      </button>
-    </div>
-  );
-}

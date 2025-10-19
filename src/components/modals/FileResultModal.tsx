@@ -2,28 +2,20 @@ import {
   AlertDialog,
   AlertDialogContent,
   AlertDialogHeader,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { ReactNode, useState } from 'react';
+} from '@/components/ui/alert-dialog.tsx';
 import { DataTable } from '@/components/data-table.tsx';
 import { RESULT_COLUMNS, VideoRow } from '@/components/data-table-columns/result-columns.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { IconClose } from '@/assets/svg';
-import { useVideoSearchStore } from '@/store/useVideoSearchStore.ts';
 
-export default function DialogFileResult({ children }: { children: ReactNode }) {
-  const { data } = useVideoSearchStore((s) => s.result);
-  const { clearResult } = useVideoSearchStore();
-  const [open, setOpen] = useState<boolean>();
+interface ModalProps {
+  onClose: () => void;
+  data?: VideoRow[];
+}
 
-  const onClose = () => {
-    clearResult();
-    setOpen(false);
-  };
-
+export default function FileResultModal({ onClose, data = [] }: ModalProps) {
   return (
-    <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger>{children}</AlertDialogTrigger>
+    <AlertDialog open={true} onOpenChange={onClose}>
       <AlertDialogContent className={'h-full min-w-full'}>
         <AlertDialogHeader>
           <div className="flex w-full flex-1 px-4">

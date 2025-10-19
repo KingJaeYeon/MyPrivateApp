@@ -16,8 +16,7 @@ import { IconFolder } from '@/assets/svg';
 import { ArrowUpRightIcon, RefreshCcw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
-import { useVideoSearchStore } from '@/store/useVideoSearchStore.ts';
-import DialogFileResult from '@/components/DialogFileResult.tsx';
+import { useModalStore } from '@/store/modalStore.ts';
 
 export function SavedResult() {
   const { name, location } = useSettingStore((r) => r.data.folder);
@@ -84,7 +83,8 @@ function DetailOption({
   reset: () => Promise<void>;
 }) {
   const { data } = useSettingStore();
-  const { setSavedData } = useVideoSearchStore();
+  const { openModal } = useModalStore();
+
   if (!select) {
     return <EmptyCard />;
   }
@@ -118,7 +118,7 @@ function DetailOption({
       const tags = !!r.tags ? r.tags.split('_') : [];
       return { ...r, no: i + 1, tags };
     });
-    setSavedData(result);
+    openModal('result', result);
   };
 
   return (
@@ -138,11 +138,9 @@ function DetailOption({
         </div>
       </header>
       <div className={'flex flex-1 items-center justify-center gap-4'}>
-        <DialogFileResult>
-          <Button size={'lg'} className={'w-26'} onClick={onDetail}>
-            상세보기
-          </Button>
-        </DialogFileResult>
+        <Button size={'lg'} className={'w-26'} onClick={onDetail}>
+          상세보기
+        </Button>
         <Button size="lg" className={'w-26'} variant="destructive" onClick={onDelete}>
           삭제
         </Button>

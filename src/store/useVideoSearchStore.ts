@@ -40,7 +40,6 @@ type FilterSlice = {
 type ResultSlice = {
   result: { data: VideoRow[]; meta?: any };
   setResult: (rows: VideoRow[]) => void;
-  setSavedData: (rows: VideoRow[]) => void;
   clearResult: () => void;
   saved: () => Promise<void>;
 };
@@ -53,7 +52,6 @@ type ErrorSlice = {
 
 type MetaSlice = {
   isChanged: boolean;
-  isSavedFile: boolean;
 };
 
 export type VideoSearchState = FilterSlice & ResultSlice & ErrorSlice & MetaSlice;
@@ -160,18 +158,8 @@ export const useVideoSearchStore = create<VideoSearchState>()(
 
         // -------- Result
         result: { data: [], meta: undefined },
-        setResult: (rows) =>
-          set(
-            { result: { data: rows }, isChanged: false, isSavedFile: false },
-            false,
-            'result:set'
-          ),
-        clearResult: () =>
-          set(
-            { result: { data: [] }, isChanged: false, isSavedFile: false },
-            false,
-            'result:clear'
-          ),
+        setResult: (rows) => set({ result: { data: rows }, isChanged: false }, false, 'result:set'),
+        clearResult: () => set({ result: { data: [] }, isChanged: false }, false, 'result:clear'),
         saved: async () => {
           const resultSheet = useSettingStore.getState().data.excel.result;
           const { name, location, exportFile } = useSettingStore.getState().data.folder;
@@ -184,10 +172,6 @@ export const useVideoSearchStore = create<VideoSearchState>()(
           const fileName = makeExcelFilename(prefix, payload, get().result.data.length);
           await window.excelApi.overwrite(`${location}/${name.result}/${fileName}`, aoa, 'Sheet1');
         },
-        setSavedData: (rows) => {
-          set({ result: { data: rows }, isChanged: false, isSavedFile: true }, false, 'result:set');
-        },
-
         // -------- Error
         fieldErrorsKeys: [],
         setErrors: (keys) => set({ fieldErrorsKeys: keys }, false, 'error:set'),
@@ -195,7 +179,6 @@ export const useVideoSearchStore = create<VideoSearchState>()(
 
         // -------- Meta
         isChanged: true,
-        isSavedFile: false,
       }),
       {
         name: 'yt-finder:video-search',
