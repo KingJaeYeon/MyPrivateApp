@@ -140,8 +140,20 @@ const seed: State['data'] = {
         { id: 15, label: '좋아요', column: 'likeCount' },
         { id: 16, label: '댓글수', column: 'commentCount' },
       ],
-      order: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
-      optional: [],
+      order: [
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
+      ],
+      optional: [
+        { id: 17, label: '', column: '' },
+        { id: 18, label: '핸들', column: 'chHandle' },
+        { id: 19, label: '채널아이콘', column: 'chIcon' },
+        { id: 20, label: '채널생성일', column: 'chPublishAt' },
+        { id: 21, label: '채널조회수', column: 'chViewCount' },
+        { id: 22, label: '채널영상수', column: 'chVideoCount' },
+        { id: 23, label: '채널링크', column: 'chLink' },
+        { id: 24, label: '갱신일', column: 'chFetchAt' },
+        { id: 25, label: '국가', column: 'chRegionCode' },
+      ],
     },
     prompt: {
       essentialDefs: [

@@ -1,10 +1,11 @@
 import { formatDuration, isoAfterNDays, parseISODurationToSec } from '@/lib/date.ts';
 import { request_youtube } from '@/service/axios.ts';
 import { chunk } from '@/lib/utils.ts';
-import { differenceInHours, parseISO } from 'date-fns';
+import { differenceInHours, format, parseISO } from 'date-fns';
 import { VideoRow } from '@/components/data-table-columns/result-columns.tsx';
 import { KeywordPayload } from '@/schemas/filter.schema.ts';
 import { incrementQuota, logApiRequest } from '@/lib/log.ts';
+import { ChannelColumns } from '@/components/data-table-columns/channel-columns.tsx';
 
 type FetchVideosParams = {
   apiKey: string;
@@ -115,9 +116,9 @@ const fetchChannelStats = async ({
 }: {
   apiKey: string;
   channelIds: string[];
-}): Promise<Record<string, { subs: number | null; handle: string }>> => {
+}): Promise<Record<string, Omit<ChannelColumns, 'channelId' | 'name' | 'tag' | 'memo'>>> => {
   const batches = chunk(channelIds, 50);
-  const stats: Record<string, { subs: number | null; handle: string }> = {};
+  const stats: Record<string, Omit<ChannelColumns, 'channelId' | 'name' | 'tag' | 'memo'>> = {};
 
   for (const batch of batches) {
     const cResp = await request_youtube.get('channels', {
@@ -134,10 +135,20 @@ const fetchChannelStats = async ({
     for (const ch of channels) {
       const cid = ch?.id as string;
       const hidden = ch?.statistics?.hiddenSubscriberCount;
-      const handle = (ch.snippet.customUrl as string) || '';
-      const subs = hidden ? null : Number(ch?.statistics?.subscriberCount ?? 0);
+      const subs = hidden ? 0 : Number(ch?.statistics?.subscriberCount ?? 0);
       if (cid) {
-        stats[cid] = { subs: Number.isFinite(subs as number) ? subs : null, handle };
+        stats[cid] = {
+          platform: 'youtube',
+          icon: ch.snippet.thumbnails?.default?.url || '',
+          subscriberCount: subs,
+          handle: (ch.snippet.customUrl as string) || '',
+          publishedAt: format(ch.snippet.publishedAt, 'yyyy.MM.dd'),
+          viewCount: parseInt(ch.statistics.viewCount),
+          videoCount: parseInt(ch.statistics.videoCount),
+          link: `https://www.youtube.com/channel/${cid}`,
+          fetchedAt: format(new Date().toISOString(), 'yyyy.MM.dd'),
+          regionCode: ch.snippet.country,
+        };
       }
     }
   }
@@ -174,8 +185,7 @@ async function toRowsWithSubscribers({
     const views = Number(statistics.viewCount ?? 0);
     const vph = views / ageH;
     const durSec = parseISODurationToSec(contentDetails.duration ?? 'PT0S');
-    const subs = channelStats[snippet.channelId].subs ?? null;
-    const handle = channelStats[snippet.channelId].handle;
+    const subs = channelStats[snippet.channelId].subscriberCount ?? null;
     const vps = subs && subs > 0 ? views / subs : null;
 
     return {
@@ -190,13 +200,20 @@ async function toRowsWithSubscribers({
       title: snippet.title ?? '',
       publishedAt,
       viewCount: views,
-      handle,
       viewsPerHour: vph,
       viewsPerSubscriber: vps,
       duration: formatDuration(durSec),
       link: `https://www.youtube.com/watch?v=${id}`,
       thumbnailUrl: snippet.thumbnails?.maxres?.url || snippet.thumbnails?.default?.url || '',
       subscriberCount: subs,
+      chHandle: channelStats[snippet.channelId].handle,
+      chFetchAt: channelStats[snippet.channelId].fetchedAt,
+      chIcon: channelStats[snippet.channelId].icon,
+      chLink: channelStats[snippet.channelId].link,
+      chPublishAt: channelStats[snippet.channelId].publishedAt,
+      chRegionCode: channelStats[snippet.channelId].regionCode,
+      chVideoCount: channelStats[snippet.channelId].videoCount,
+      chViewCount: channelStats[snippet.channelId].viewCount,
     };
   });
 }

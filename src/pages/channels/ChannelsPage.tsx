@@ -7,11 +7,12 @@ import {
 } from '@/components/data-table-columns/channel-columns.tsx';
 import useTagStore from '@/store/useTagStore.ts';
 import TagSelector from '@/pages/channels/components/TagSelector.tsx';
-import { AddChannelModal } from '@/pages/channels/components/AddChannelModal.tsx';
+import { useModalStore } from '@/store/modalStore.ts';
 
 export default function ChannelsPage() {
   const { data, isChanged, saved } = useChannelStore();
   const { data: tags } = useTagStore();
+  const { openModal } = useModalStore();
 
   const onSavedHandler = async () => {
     if (confirm('저장하시겠습니까?')) {
@@ -43,7 +44,9 @@ export default function ChannelsPage() {
                 </Button>
               </div>
               <div className={'flex gap-2'}>
-                <AddChannelModal />
+                <Button size={'sm'} variant={'secondary'} onClick={() => openModal('channel')}>
+                  수정
+                </Button>
                 <Button
                   size={'sm'}
                   onClick={onSavedHandler}

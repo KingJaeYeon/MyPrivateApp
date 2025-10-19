@@ -35,6 +35,7 @@ type Props<TData, TValue> = {
   isFixHeader?: boolean;
   name?: string;
   fontSize?: { head?: FontSize; cell?: FontSize };
+  isEdit?: boolean; // checkBox 해제용
 };
 /*** 테스트
  **/
@@ -47,6 +48,7 @@ export function DataTable<TData, TValue>({
   onClickRow,
   hasNo,
   fontSize,
+  isEdit,
 }: Props<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [ref, { y, height }] = useMeasure();
@@ -124,6 +126,12 @@ export function DataTable<TData, TValue>({
       setTriggerHeight(0, name);
     };
   }, [name, setTriggerHeight]);
+
+  useEffect(() => {
+    if (!isEdit) {
+      table.setRowSelection({});
+    }
+  }, [isEdit]);
 
   return (
     <div className="flex flex-1 flex-col space-y-2">

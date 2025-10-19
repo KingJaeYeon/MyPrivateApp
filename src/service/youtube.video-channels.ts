@@ -126,7 +126,21 @@ function toRowsWithSubscribers(vItems: any[]): VideoRow[] {
   // const obj = Object.fromEntries(pairs);
   // ✅ { ch1: 1000, ch2: { value:2000, meta:'text'} } 배열 길이는 2개까지 동작됨
   const subsMap = Object.fromEntries(
-    channels.map((ch) => [ch.channelId, { subs: ch.subscriberCount, handle: ch.handle }])
+    channels.map((ch) => [
+      ch.channelId,
+      {
+        handle: ch.handle,
+        platform: 'youtube',
+        icon: ch.icon,
+        subscriberCount: ch.subscriberCount,
+        publishedAt: ch.publishedAt,
+        viewCount: ch.viewCount,
+        videoCount: ch.videoCount,
+        link: `https://www.youtube.com/channel/${ch.channelId}`,
+        fetchedAt: ch.fetchedAt,
+        regionCode: ch.regionCode,
+      },
+    ])
   );
 
   // 2) VideoRow로 가공
@@ -140,8 +154,7 @@ function toRowsWithSubscribers(vItems: any[]): VideoRow[] {
     const views = Number(statistics.viewCount ?? 0);
     const vph = views / ageH;
     const durSec = parseISODurationToSec(contentDetails.duration ?? 'PT0S');
-    const subs = subsMap[snippet.channelId].subs ?? null;
-    const handle = subsMap[snippet.channelId].handle;
+    const subs = subsMap[snippet.channelId].subscriberCount ?? null;
     const vps = subs && subs > 0 ? views / subs : null;
 
     return {
@@ -154,7 +167,6 @@ function toRowsWithSubscribers(vItems: any[]): VideoRow[] {
       likeCount: statistics.likeCount,
       channelTitle: snippet.channelTitle ?? '',
       title: snippet.title ?? '',
-      handle,
       publishedAt,
       viewCount: views,
       viewsPerHour: vph,
@@ -163,6 +175,14 @@ function toRowsWithSubscribers(vItems: any[]): VideoRow[] {
       link: `https://www.youtube.com/watch?v=${id}`,
       thumbnailUrl: snippet.thumbnails?.maxres?.url || snippet.thumbnails?.default?.url || '',
       subscriberCount: subs,
+      chVideoCount: subsMap[snippet.channelId].videoCount,
+      chViewCount: subsMap[snippet.channelId].viewCount,
+      chRegionCode: subsMap[snippet.channelId].regionCode,
+      chLink: subsMap[snippet.channelId].link,
+      chPublishAt: subsMap[snippet.channelId].publishedAt,
+      chIcon: subsMap[snippet.channelId].icon,
+      chFetchAt: subsMap[snippet.channelId].fetchedAt,
+      chHandle: subsMap[snippet.channelId].handle,
     } as VideoRow;
   });
 }

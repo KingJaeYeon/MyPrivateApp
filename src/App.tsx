@@ -12,6 +12,7 @@ import TagPage from '@/pages/tag/TagPage.tsx';
 import useTagStore from '@/store/useTagStore.ts';
 import ChannelsPage from '@/pages/channels/ChannelsPage.tsx';
 import useChannelStore from '@/store/useChannelStore.ts';
+import ModalRenderer from '@/components/ModalRenderer.tsx';
 
 const routes = [
   { url: '/', element: <Home /> },
@@ -96,6 +97,7 @@ function App() {
           <Route path="*" element={<div>Not Found</div>} />
         </Routes>
       </div>
+      <ModalRenderer />
     </SystemProvider>
   );
 }

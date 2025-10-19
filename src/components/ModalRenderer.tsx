@@ -4,9 +4,18 @@ import SignupModal from '@/components/modals/SignupModal.tsx';
 import ConfirmModal from '@/components/modals/ConfirmModal.tsx';
 import AlertModal from '@/components/modals/AlertModal.tsx';
 import FileResultModal from '@/components/modals/FileResultModal.tsx';
+import { AddChannelModal } from '@/components/modals/AddChannelModal.tsx';
+import { useTransition, config, animated } from '@react-spring/web';
 
 export default function ModalRenderer() {
-  const { type, isOpen, closeModal, data } = useModalStore();
+  const { type, isOpen, closeModal, data, resultData } = useModalStore();
+
+  const transitions = useTransition(isOpen && type ? type : null, {
+    from: { opacity: 0, scale: 0.95 },
+    enter: { opacity: 1, scale: 1 },
+    leave: { opacity: 0, scale: 0.95 },
+    config: config.gentle,
+  });
 
   if (!isOpen || !type) {
     return null;
@@ -17,10 +26,13 @@ export default function ModalRenderer() {
     signup: <SignupModal onClose={closeModal} />,
     confirm: <ConfirmModal onClose={closeModal} data={data} />,
     alert: <AlertModal onClose={closeModal} data={data} />,
-    result: <FileResultModal onClose={closeModal} data={data} />,
+    result: <FileResultModal onClose={closeModal} data={resultData} />,
+    channel: <AddChannelModal onClose={closeModal} data={data} />,
   };
 
-  return modals[type] || null;
+  return transitions((style, item) =>
+    item ? <animated.div style={style}>{modals[item]}</animated.div> : null
+  );
 }
 
 // function SomeComponent() {

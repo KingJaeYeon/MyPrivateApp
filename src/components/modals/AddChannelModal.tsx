@@ -1,6 +1,6 @@
 import useSettingStore from '@/store/useSettingStore.ts';
 import useChannelStore from '@/store/useChannelStore.ts';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ChannelColumns,
   CHANNELS_COLUMNS,
@@ -15,18 +15,24 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog.tsx';
-import { Button } from '@/components/ui/button.tsx';
 import { DataTable } from '@/components/data-table.tsx';
 import { HandleSearchForm } from '@/pages/channels/components/HandleSearchForm.tsx';
 import { ChannelEditPanel } from '@/pages/channels/components/ChannelEditPanel.tsx';
+import { useModalStore } from '@/store/modalStore.ts';
+import { Button } from '@/components/ui/button.tsx';
 
-export function AddChannelModal() {
+interface ModalProps {
+  onClose: () => void;
+  data?: { data: any[]; isChanged: boolean };
+}
+
+export function AddChannelModal({ onClose, data }: ModalProps) {
   const usedQuota = useSettingStore((r) => r.data.youtube.usedQuota);
-  const { data, update } = useChannelStore();
+  const { data: curChannels, update } = useChannelStore();
   const [select, setSelect] = useState<ChannelColumns | null>(null);
   const youtubeApiKey = useSettingStore((r) => r.data.youtube.apiKey);
+  const { reOpenModal } = useModalStore();
 
   const { mutate, isPending } = useMutation({
     mutationFn: async ({ handles }: { handles: string }) => {
@@ -38,7 +44,7 @@ export function AddChannelModal() {
         .split(',')
         .map((c) => c.trim())
         .filter((c) => c !== '');
-      const existingHandles = data.map((d) => d.handle);
+      const existingHandles = curChannels.map((d) => d.handle);
       const newHandles = handleArr.filter((id) => !existingHandles.includes(id));
       if (newHandles.length === 0) {
         throw new Error('이미 추가된 채널입니다.');
@@ -47,10 +53,10 @@ export function AddChannelModal() {
       return fetchChannelsByHandle({ apiKey: youtubeApiKey, handles: newHandles });
     },
     onSuccess: (result) => {
-      const existingIds = data.map((d) => d.channelId);
+      const existingIds = curChannels.map((d) => d.channelId);
       const addArr = result.filter((channel) => !existingIds.includes(channel.channelId));
       const duplicates = result.filter((channel) => existingIds.includes(channel.channelId));
-      update([...data, ...addArr]);
+      update([...curChannels, ...addArr]);
 
       if (duplicates.length > 0) {
         const txt = `중복된 채널은 추가되지 않았습니다.\n채널정보를 갱신해주세요: ${duplicates.map((d) => d.handle).join(', ')}`;
@@ -63,13 +69,17 @@ export function AddChannelModal() {
     },
   });
 
+  useEffect(() => {
+    if (data) {
+      const curIds = curChannels.map((r) => r.channelId);
+
+      const filtered = data.data.filter((v) => !curIds.includes(v.channelId));
+      update([...curChannels, ...filtered]);
+    }
+  }, [data]);
+
   return (
-    <AlertDialog>
-      <AlertDialogTrigger>
-        <Button size={'sm'} variant={'secondary'}>
-          수정
-        </Button>
-      </AlertDialogTrigger>
+    <AlertDialog open={true} onOpenChange={onClose}>
       <AlertDialogContent className={'flex h-[calc(100%-100px)] max-w-[calc(100%-100px)] flex-col'}>
         <AlertDialogHeader className={'flex flex-1'}>
           <AlertDialogTitle className={'mb-4 flex items-center gap-2'}>
@@ -85,13 +95,14 @@ export function AddChannelModal() {
               <DataTable<ChannelColumns, unknown>
                 columns={CHANNELS_COLUMNS}
                 onClickRow={setSelect}
-                data={data}
+                data={curChannels}
               />
               <ChannelEditPanel select={select} setSelect={setSelect} />
             </div>
           </div>
         </AlertDialogHeader>
         <AlertDialogFooter className={'h-fit'}>
+          {data?.isChanged && <Button onClick={() => reOpenModal('result')}>뒤로가기</Button>}
           <AlertDialogCancel>닫기</AlertDialogCancel>
         </AlertDialogFooter>
       </AlertDialogContent>

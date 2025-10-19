@@ -1,9 +1,11 @@
 import { Link, useLocation } from 'react-router-dom';
 import useTagStore from '@/store/useTagStore.ts';
+import useChannelStore from '@/store/useChannelStore.ts';
 
 export default function Navigator() {
   const { pathname } = useLocation();
-  const isChanged = useTagStore((state) => state.isChanged);
+  const { isChanged } = useTagStore();
+  const { isChanged: isChangedC } = useChannelStore();
   const routes = [
     { path: '/', label: 'Home' },
     { path: '/tags', label: 'Tags' },
@@ -23,6 +25,10 @@ export default function Navigator() {
           onClick={(e) => {
             if (isChanged) {
               alert('태그 저장 후 이동하세요.');
+              e.preventDefault();
+            }
+            if (isChangedC) {
+              alert('채널 저장 후 이동하세요.');
               e.preventDefault();
             }
           }}
