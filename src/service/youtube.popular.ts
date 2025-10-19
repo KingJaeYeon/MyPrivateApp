@@ -64,6 +64,7 @@ export async function getPopularVideos(params: FetchPopularParams): Promise<Vide
     await settingStore.updateIn('youtube', {
       apiKey: settingStore.data.youtube.apiKey,
       usedQuota: settingStore.data.youtube.usedQuota + 1,
+      quotaUpdatedAt: settingStore.data.youtube.quotaUpdatedAt,
     }); // videos.list 1회 카운트
 
     const resp = await request_youtube.get('videos', { params: paramsObj });
@@ -126,6 +127,7 @@ export async function getPopularVideos(params: FetchPopularParams): Promise<Vide
     await settingStore.updateIn('youtube', {
       apiKey: settingStore.data.youtube.apiKey,
       usedQuota: settingStore.data.youtube.usedQuota + 1,
+      quotaUpdatedAt: settingStore.data.youtube.quotaUpdatedAt,
     }); // vid
 
     const cResp = await request_youtube.get('channels', { params: cParams });
@@ -170,6 +172,7 @@ export async function getPopularVideos(params: FetchPopularParams): Promise<Vide
       publishedAt,
       viewCount,
       viewsPerHour: vph,
+      handle: '',
       viewsPerSubscriber: vps,
       duration: formatDuration(durSec),
       link: `https://www.youtube.com/watch?v=${id}`,

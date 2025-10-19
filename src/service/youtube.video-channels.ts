@@ -125,7 +125,9 @@ function toRowsWithSubscribers(vItems: any[]): VideoRow[] {
   // const pairs = [['ch1', 1000], ['ch2', { value:2000, meta:'text'}]];
   // const obj = Object.fromEntries(pairs);
   // ✅ { ch1: 1000, ch2: { value:2000, meta:'text'} } 배열 길이는 2개까지 동작됨
-  const subsMap = Object.fromEntries(channels.map((ch) => [ch.channelId, ch.subscriberCount]));
+  const subsMap = Object.fromEntries(
+    channels.map((ch) => [ch.channelId, { subs: ch.subscriberCount, handle: ch.handle }])
+  );
 
   // 2) VideoRow로 가공
   const now = new Date();
@@ -138,7 +140,8 @@ function toRowsWithSubscribers(vItems: any[]): VideoRow[] {
     const views = Number(statistics.viewCount ?? 0);
     const vph = views / ageH;
     const durSec = parseISODurationToSec(contentDetails.duration ?? 'PT0S');
-    const subs = subsMap[snippet.channelId] ?? null;
+    const subs = subsMap[snippet.channelId].subs ?? null;
+    const handle = subsMap[snippet.channelId].handle;
     const vps = subs && subs > 0 ? views / subs : null;
 
     return {
@@ -151,6 +154,7 @@ function toRowsWithSubscribers(vItems: any[]): VideoRow[] {
       likeCount: statistics.likeCount,
       channelTitle: snippet.channelTitle ?? '',
       title: snippet.title ?? '',
+      handle,
       publishedAt,
       viewCount: views,
       viewsPerHour: vph,

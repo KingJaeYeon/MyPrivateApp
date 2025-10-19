@@ -115,15 +115,15 @@ const fetchChannelStats = async ({
 }: {
   apiKey: string;
   channelIds: string[];
-}): Promise<Record<string, number | null>> => {
+}): Promise<Record<string, { subs: number | null; handle: string }>> => {
   const batches = chunk(channelIds, 50);
-  const stats: Record<string, number | null> = {};
+  const stats: Record<string, { subs: number | null; handle: string }> = {};
 
   for (const batch of batches) {
     const cResp = await request_youtube.get('channels', {
       params: {
         key: apiKey,
-        part: 'statistics',
+        part: 'snippet,statistics',
         id: batch.join(','),
       },
     });
@@ -132,11 +132,12 @@ const fetchChannelStats = async ({
     const channels = cResp.data?.items ?? [];
 
     for (const ch of channels) {
-      const cid = ch?.id;
+      const cid = ch?.id as string;
       const hidden = ch?.statistics?.hiddenSubscriberCount;
+      const handle = (ch.snippet.customUrl as string) || '';
       const subs = hidden ? null : Number(ch?.statistics?.subscriberCount ?? 0);
       if (cid) {
-        stats[cid] = Number.isFinite(subs as number) ? subs : null;
+        stats[cid] = { subs: Number.isFinite(subs as number) ? subs : null, handle };
       }
     }
   }
@@ -173,7 +174,8 @@ async function toRowsWithSubscribers({
     const views = Number(statistics.viewCount ?? 0);
     const vph = views / ageH;
     const durSec = parseISODurationToSec(contentDetails.duration ?? 'PT0S');
-    const subs = channelStats[snippet.channelId] ?? null;
+    const subs = channelStats[snippet.channelId].subs ?? null;
+    const handle = channelStats[snippet.channelId].handle;
     const vps = subs && subs > 0 ? views / subs : null;
 
     return {
@@ -188,6 +190,7 @@ async function toRowsWithSubscribers({
       title: snippet.title ?? '',
       publishedAt,
       viewCount: views,
+      handle,
       viewsPerHour: vph,
       viewsPerSubscriber: vps,
       duration: formatDuration(durSec),
