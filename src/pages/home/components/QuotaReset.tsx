@@ -1,7 +1,8 @@
 import { Button } from '@/components/ui/button.tsx';
 import useSettingStore from '@/store/useSettingStore.ts';
-import { isAfter, isSameDay, setHours, setMinutes, setSeconds } from 'date-fns';
+import { isAfter, isSameDay, parse, setHours, setMinutes, setSeconds } from 'date-fns';
 import { useEffect, useState } from 'react';
+import { ko } from 'date-fns/locale';
 
 export default function QuotaReset() {
   const {
@@ -13,8 +14,10 @@ export default function QuotaReset() {
 
   const isValid = () => {
     const curTime = new Date();
-    const quotaTime = youtube.quotaUpdatedAt ? new Date(youtube.quotaUpdatedAt) : null;
-
+    const raw = youtube.quotaUpdatedAt;
+    const quotaTime = raw
+      ? parse(raw, 'yyyy. MM. dd. a h:mm:ss', new Date(), { locale: ko })
+      : null;
     // 오늘 날짜 기준 4시(16:00) 생성
     const today4PM = setSeconds(setMinutes(setHours(curTime, 16), 0), 0);
     // 1️⃣ 현재 시간이 오늘 오후 4시 이후인지
