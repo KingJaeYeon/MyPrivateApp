@@ -1,15 +1,11 @@
 import { ChannelColumns } from '@/components/data-table-columns/channel-columns.tsx';
-import { useState } from 'react';
-import useTagStore from '@/store/useTagStore.ts';
 import useChannelStore from '@/store/useChannelStore.ts';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { Label } from '@/components/ui/label.tsx';
 import { Input } from '@/components/ui/input.tsx';
-import { IconArrowDown, IconArrowUp } from '@/assets/svg';
-import { Badge } from '@/components/ui/badge.tsx';
-import { cn } from '@/lib/utils.ts';
 import { Textarea } from '@/components/ui/textarea.tsx';
+import { TagChooser } from '@/components/TagChooser.tsx';
 
 export function ChannelEditPanel({
   select,
@@ -20,9 +16,7 @@ export function ChannelEditPanel({
 }) {
   if (!select) return null;
   const nf = new Intl.NumberFormat();
-  const { jsonData, data: tags } = useTagStore.getState();
   const { data, update } = useChannelStore();
-  const [isOpen, setIsOpen] = useState(false);
   const onCancel = () => setSelect(null);
 
   const onChangeHandler = (key: keyof ChannelColumns, value: string) => {
@@ -112,72 +106,7 @@ export function ChannelEditPanel({
                 onChange={(e) => onChangeHandler('platform', e.target.value)}
               />
             </div>
-            <div className={'flex flex-col gap-2'}>
-              <div className={'flex justify-between gap-2'}>
-                <Label>태그</Label>
-                <Button
-                  size={'icon-sm'}
-                  className={'h-5 w-5 cursor-pointer'}
-                  variant={'ghost'}
-                  onClick={() => setIsOpen(!isOpen)}
-                >
-                  {isOpen ? <IconArrowDown /> : <IconArrowUp />}
-                </Button>
-              </div>
-              <div className={'flex flex-wrap gap-0.5'}>
-                {select.tag === '' ? (
-                  <Label className={'cursor-pointer text-xs'} onClick={() => setIsOpen(!isOpen)}>
-                    선택안함
-                  </Label>
-                ) : (
-                  select.tag.split(',').map((tag, i) => (
-                    <Badge
-                      variant="secondary"
-                      key={i}
-                      onClick={() => {
-                        const currentTags = select?.tag ? select.tag.split(',') : [];
-                        if (currentTags.includes(tag)) {
-                          // 이미 있으면 제거
-                          const newTags = currentTags.filter((t) => t !== tag);
-                          onChangeHandler('tag', newTags.join(','));
-                        }
-                      }}
-                    >
-                      {jsonData[tag]}
-                    </Badge>
-                  ))
-                )}
-              </div>
-              <div
-                data-isopen={isOpen}
-                className={cn('mt-2 flex flex-wrap gap-1', isOpen ? '' : 'hidden')}
-              >
-                {tags.map((tag, i) => {
-                  const isSelected = select?.tag.split(',').includes(tag.idx.toString());
-                  return (
-                    <Badge
-                      key={i}
-                      variant={isSelected ? 'secondary' : 'outline'}
-                      className={'cursor-pointer'}
-                      onClick={() => {
-                        const currentTags = select?.tag ? select.tag.split(',') : [];
-                        if (currentTags.includes(tag.idx.toString())) {
-                          // 이미 있으면 제거
-                          const newTags = currentTags.filter((t) => t !== tag.idx.toString());
-                          onChangeHandler('tag', newTags.join(','));
-                        } else {
-                          // 없으면 추가
-                          currentTags.push(tag.idx.toString());
-                          onChangeHandler('tag', currentTags.join(','));
-                        }
-                      }}
-                    >
-                      {tag.name}
-                    </Badge>
-                  );
-                })}
-              </div>
-            </div>
+            <TagChooser select={select.tag} setSelect={(tags) => onChangeHandler('tag', tags)} />
             <div className={'flex flex-col gap-2'}>
               <Label>메모</Label>
               <Textarea

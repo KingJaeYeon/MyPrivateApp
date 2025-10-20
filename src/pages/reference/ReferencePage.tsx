@@ -7,18 +7,21 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button.tsx';
 import { ChevronDown } from 'lucide-react';
-import { TAG_COLUMNS, TagColumns } from '@/components/data-table-columns/tag-columns.tsx';
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input.tsx';
-import useTagStore from '@/store/useTagStore.ts';
 import { toast } from 'sonner';
-import { AddTag } from '@/pages/tag/components/AddTag.tsx';
+import {
+  REFERENCE_COLUMNS,
+  ReferenceColumns,
+} from '@/components/data-table-columns/reference-columns.tsx';
+import useReferenceStore from '@/store/useReferenceStore.ts';
+import { AddReference } from '@/pages/reference/components/AddReference.tsx';
 
 export default function ReferencePage() {
-  const { data, removeTags, saved, isChanged } = useTagStore();
+  const { data, saved, isChanged } = useReferenceStore();
   const [isEdit, setEdit] = useState(false);
 
-  const columns = TAG_COLUMNS(isEdit);
+  const columns = REFERENCE_COLUMNS;
 
   const onSavedHandler = async () => {
     if (confirm('저장하시겠습니까?')) {
@@ -30,8 +33,8 @@ export default function ReferencePage() {
   return (
     <div className="flex w-full flex-1 gap-5 px-4">
       <div className={'flex flex-7'}>
-        <DataTable<TagColumns, unknown>
-          columns={columns}
+        <DataTable<ReferenceColumns, unknown>
+          columns={REFERENCE_COLUMNS}
           data={data}
           tableControls={(table) => {
             return (
@@ -93,7 +96,7 @@ export default function ReferencePage() {
                             toast.error('삭제할 항목을 선택하세요.');
                             return;
                           }
-                          removeTags(selected);
+                          // removeTags(selected);
                         }}
                       >
                         삭제
@@ -122,7 +125,7 @@ export default function ReferencePage() {
           }}
         />
       </div>
-      <AddTag />
+      <AddReference />
     </div>
   );
 }

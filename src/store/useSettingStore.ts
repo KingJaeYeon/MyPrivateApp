@@ -170,12 +170,13 @@ const seed: State['data'] = {
     },
     reference: {
       essentialDefs: [
-        { id: 1, label: '이름', column: 'name' },
+        { id: 1, label: '참조명', column: 'name' },
         { id: 2, label: '태그', column: 'tag' },
         { id: 3, label: '링크', column: 'link' },
         { id: 4, label: '메모', column: 'memo' },
+        { id: 5, label: '갱신일', column: 'updatedAt' },
       ],
-      order: [1, 2, 3, 4],
+      order: [1, 2, 3, 4, 5],
       optional: [],
     },
     english: {

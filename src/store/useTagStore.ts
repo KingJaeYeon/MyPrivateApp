@@ -5,6 +5,7 @@ import { buildAoaFromObjects } from '@/lib/utils.ts';
 import useSettingStore from '@/store/useSettingStore.ts';
 import { toast } from 'sonner';
 import useChannelStore from '@/store/useChannelStore.ts';
+import useReferenceStore from '@/store/useReferenceStore.ts';
 
 type TagsKey = 'channel' | 'reference' | 'prompt' | 'english';
 
@@ -47,6 +48,7 @@ const useTagStore = create(
       const channels = useChannelStore.getState().data;
       const tags = [...get().data];
       const tagCountMap: Record<string, number> = {};
+
       if (type === 'channel') {
         for (let i = 0; i < channels.length; i++) {
           const channelArr = channels[i].tag.split(',');
@@ -64,24 +66,25 @@ const useTagStore = create(
         });
         set({ data: tags });
       }
-
-      if (type === 'reference') {
-        for (let i = 0; i < channels.length; i++) {
-          const channelArr = channels[i].tag.split(',');
-          for (let j = 0; j < channelArr.length; j++) {
-            const tag = channelArr[j].trim();
-            if (tag) {
-              tagCountMap[tag] = (tagCountMap[tag] || 0) + 1;
-            }
-          }
-        }
-
-        tags.forEach((tag) => {
-          tag.usedChannels = tagCountMap[tag.idx] || 0;
-          tag.total = (tag.usedVideos || 0) + (tagCountMap[tag.idx] || 0);
-        });
-        set({ data: tags });
-      }
+      // const reference = useReferenceStore.getState().data;
+      // if (type === 'reference') {
+      //   for (let i = 0; i < reference.length; i++) {
+      //     const referenceArr = reference[i].tag.split(',');
+      //     for (let j = 0; j < referenceArr.length; j++) {
+      //       const tag = referenceArr[j].trim();
+      //       if (tag) {
+      //         tagCountMap[tag] = (tagCountMap[tag] || 0) + 1;
+      //       }
+      //     }
+      //   }
+      //
+      //   tags.forEach((tag) => {
+      //     tag.usedChannels = tagCountMap[tag.idx] || 0;
+      //     tag.usedReference = tagCountMap[tag.idx] || 0;
+      //     tag.total = (tag.usedVideos || 0) + (tagCountMap[tag.idx] || 0);
+      //   });
+      //   set({ data: tags });
+      // }
     },
     push: (arr) => {
       const temp = get().data;

@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input.tsx';
 import IconTrash from '@/assets/svg/IconTrash.tsx';
 import { IconPlus } from '@/assets/svg';
 
-const init = [
+const init: TagColumns[] = [
   {
     idx: '',
     name: '',
