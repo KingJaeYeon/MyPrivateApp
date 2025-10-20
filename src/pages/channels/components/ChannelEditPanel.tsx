@@ -99,7 +99,7 @@ export function ChannelEditPanel({
             <div className={'flex flex-col gap-2'}>
               <Label>링크:</Label>
               <Input
-                className={'w-[90%]'}
+                className={'w-full'}
                 value={select?.link}
                 onChange={(e) => onChangeHandler('link', e.target.value)}
               />
@@ -107,7 +107,7 @@ export function ChannelEditPanel({
             <div className={'flex flex-col gap-2'}>
               <Label>플랫폼:</Label>
               <Input
-                className={'w-[90%]'}
+                className={'w-full'}
                 value={select?.platform}
                 onChange={(e) => onChangeHandler('platform', e.target.value)}
               />

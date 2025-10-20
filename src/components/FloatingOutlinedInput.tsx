@@ -17,11 +17,7 @@ export interface FloatingInputProps extends React.InputHTMLAttributes<HTMLInputE
 export function FloatingOutlinedInput(props: FloatingInputProps & { sizeC?: 'lg' | 'default' }) {
   const { label, className, onChangeValue, isError, id, sizeC = 'default', ...rest } = props;
   const [isFocused, setIsFocused] = useState(false);
-  {
-    /*.body3 {
-        @apply font-pretendard text-16 font-normal leading-[150%] tracking-[0];
-    }*/
-  }
+
   const sizes = {
     default: {
       label: 'px-1',
@@ -77,7 +73,7 @@ export function FloatingOutlinedInput(props: FloatingInputProps & { sizeC?: 'lg'
       </label>
       <div
         className={cn(
-          'absolute z-[-1] flex h-full w-full rounded-[4px] border-2 border-[#1f1f1f]',
+          'border-input absolute z-[-1] flex h-full w-full rounded-[4px] border-2',
           isError && 'border-[#b3261e]'
         )}
       />
