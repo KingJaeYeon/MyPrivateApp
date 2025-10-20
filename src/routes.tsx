@@ -1,0 +1,48 @@
+import { RouteObject } from 'react-router-dom';
+import App from '@/App';
+import { Home } from '@/pages/home/Home';
+import SearchVideo from '@/pages/search-video/SearchVideo';
+import SearchVideoResult from '@/pages/search-video-result/SearchVideoResult';
+import TagPage from '@/pages/tag/TagPage';
+import ChannelsPage from '@/pages/channels/ChannelsPage';
+
+export const navigationRoutes = [
+  { path: '/', label: 'Home' },
+  { path: '/tags', label: 'Tags' },
+  { path: '/channels', label: 'Channels' },
+  { path: '/search-videos', label: 'Search Videos' },
+  { path: '/search-videos/result', label: 'Result' },
+];
+
+export const routes: RouteObject[] = [
+  {
+    path: '/',
+    element: <App />,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+      },
+      {
+        path: 'search-videos',
+        element: <SearchVideo />,
+      },
+      {
+        path: 'search-videos/result',
+        element: <SearchVideoResult />,
+      },
+      {
+        path: 'tags',
+        element: <TagPage />,
+      },
+      {
+        path: 'channels',
+        element: <ChannelsPage />,
+      },
+      {
+        path: '*',
+        element: <div>Not Found</div>,
+      },
+    ],
+  },
+];

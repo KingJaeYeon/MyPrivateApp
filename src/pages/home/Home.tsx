@@ -61,8 +61,6 @@ export function Home() {
     return <ConnectButton type={type} editValues={editValues} setIsEditing={setIsEditing} />;
   };
 
-  const buttons = [<FileNameRule />, <QuotaReset />];
-
   return (
     <div className={'flex w-full flex-1 flex-col gap-6 p-4'}>
       <div className={'flex w-full max-w-[800px] flex-col gap-3'}>
@@ -91,22 +89,21 @@ export function Home() {
         </Label>
         <div className={'flex flex-col'}>
           <div className={'flex flex-1'}>
-            {Array.from(
-              { length: 8 },
-              (_, i) =>
-                buttons[i] ?? (
-                  <Button
-                    className={'flex w-full flex-1 rounded-none border'}
-                    variant={'secondary'}
-                  ></Button>
-                )
-            )}
+            <FileNameRule />
+            <QuotaReset />
+            {Array.from({ length: 6 }, (_, i) => (
+              <Button
+                key={`home-${i}`}
+                className={'flex w-full flex-1 rounded-none border'}
+                variant={'secondary'}
+              >{`home-${i}`}</Button>
+            ))}
           </div>
           <div className={'flex flex-1'}>
             {Array.from({ length: 8 }, (_, i) => {
               return (
                 <Button
-                  key={'dee' + i}
+                  key={'home-' + i + 8}
                   className={'flex w-full flex-1 rounded-none border'}
                   variant={'secondary'}
                 ></Button>
