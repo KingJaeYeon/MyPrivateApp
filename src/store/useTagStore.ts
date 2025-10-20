@@ -29,7 +29,6 @@ const useTagStore = create(
     data: [],
     jsonData: {},
     isChanged: false,
-    hasFile: false,
     /** 앱 시작 시 호출: electron-store에서 값 불러와 zustand state 세팅 */
     init: async (filePath) => {
       const result = await window.excelApi.read(filePath);
