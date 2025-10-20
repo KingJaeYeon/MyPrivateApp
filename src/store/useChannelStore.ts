@@ -16,6 +16,7 @@ type Action = {
   init: (filePath: string) => Promise<void>;
   saved: () => Promise<void>;
   update: (data: ChannelColumns[] | []) => void;
+  reset: () => void;
 };
 
 const useChannelStore = create(
@@ -39,6 +40,9 @@ const useChannelStore = create(
       await window.excelApi.overwrite(`${location}/${name.channel}`, aoa, 'Sheet1');
       set({ isChanged: false });
       useTagStore.getState().updateCounter('channel');
+    },
+    reset: () => {
+      set({ data: [] });
     },
   }))
 );

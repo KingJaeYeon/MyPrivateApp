@@ -24,8 +24,10 @@ export function SavedResult() {
   const [select, setSelect] = useState<string>('');
 
   async function getFiles() {
-    const result = await window.fsApi.listExcel(`${location}/${name.result.split('/')[0]}`);
-    setSavedFiles(result);
+    try {
+      const result = await window.fsApi.listExcel(`${location}/${name.result.split('/')[0]}`);
+      setSavedFiles(result);
+    } catch (_) {}
   }
 
   useEffect(() => {

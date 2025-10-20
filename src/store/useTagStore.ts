@@ -21,6 +21,7 @@ type Action = {
   removeTags: (removeArr: TagColumns[]) => void;
   saved: () => Promise<void>;
   updateCounter: (type: TagsKey) => void;
+  reset: () => void;
 };
 
 const useTagStore = create(
@@ -28,6 +29,7 @@ const useTagStore = create(
     data: [],
     jsonData: {},
     isChanged: false,
+    hasFile: false,
     /** 앱 시작 시 호출: electron-store에서 값 불러와 zustand state 세팅 */
     init: async (filePath) => {
       const result = await window.excelApi.read(filePath);
@@ -143,6 +145,9 @@ const useTagStore = create(
 
       await window.excelApi.overwrite(`${location}/${name.tag}`, aoa, 'Sheet1');
       set({ jsonData, isChanged: false });
+    },
+    reset: () => {
+      set({ data: [], jsonData: {} });
     },
   }))
 );

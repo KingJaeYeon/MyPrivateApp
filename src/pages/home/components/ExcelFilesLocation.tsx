@@ -8,16 +8,17 @@ import { getOrderedColumns } from '@/lib/utils.ts';
 export function ExcelFilesLocation() {
   const [loading, setLoading] = useState<boolean>(false);
   const { location, name } = useSettingStore((r) => r.data.folder);
-  const excel = useSettingStore((r) => r.data.excel);
-  const { updateIn } = useSettingStore();
-  const { data } = useSettingStore.getState();
+  const {
+    data: { excel, folder, hasFile },
+    updateIn,
+  } = useSettingStore();
 
   async function handleClick() {
     const result = await window.electronAPI.pickFolder();
     if (!result) return;
 
     await updateIn('folder', {
-      ...data.folder,
+      ...folder,
       location: result,
     });
   }
@@ -98,6 +99,7 @@ export function ExcelFilesLocation() {
         await window.fsApi.ensureDir(path.result);
       }
       // const hasProgress = await window.fsApi.exists(`${location}/${name.progress}`)
+      await updateIn('hasFile', true);
       alert('생성완료');
     } catch (e) {
       alert('오류발생');
@@ -119,7 +121,11 @@ export function ExcelFilesLocation() {
         readOnly
       />
       {location && (
-        <Button variant={'secondary'} onClick={generateFiles} loading={loading}>
+        <Button
+          variant={hasFile ? 'secondary' : 'destructive'}
+          onClick={generateFiles}
+          loading={loading}
+        >
           Excel 생성
         </Button>
       )}

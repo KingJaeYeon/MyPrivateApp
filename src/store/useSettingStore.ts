@@ -79,6 +79,7 @@ export type State = {
       quotaUpdatedAt: string;
     };
     youtubeHistory: { data: FilterUI; result: VideoRow[]; searchedAt: number }[];
+    hasFile?: boolean;
   };
 };
 
@@ -206,12 +207,12 @@ const seed: State['data'] = {
   },
   youtube: { apiKey: '', usedQuota: 0, quotaUpdatedAt: '' },
   youtubeHistory: [],
+  hasFile: false,
 };
 
 const useSettingStore = create(
   immer<State & Action>((set, get) => ({
     data: seed,
-
     /** 앱 시작 시 호출: electron-store에서 값 불러와 zustand state 세팅 */
     init: async () => {
       try {

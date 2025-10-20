@@ -43,15 +43,22 @@ import { Link, useLocation, useBlocker } from 'react-router-dom';
 import useTagStore from '@/store/useTagStore.ts';
 import useChannelStore from '@/store/useChannelStore.ts';
 import { navigationRoutes } from '@/routes';
+import useSettingStore from '@/store/useSettingStore.ts';
 
 export default function Navigator() {
   const { pathname } = useLocation();
   const { isChanged: isChangedT } = useTagStore();
   const { isChanged: isChangedC } = useChannelStore();
+  const { data } = useSettingStore();
 
   // 네비게이션 차단
   useBlocker(({ currentLocation, nextLocation }) => {
     const isChange = isChangedT || isChangedC;
+    if (!data.hasFile && currentLocation.pathname !== nextLocation.pathname) {
+      alert('Excel 생성버튼을 클릭해주세요.');
+      return true;
+    }
+
     if (isChange && currentLocation.pathname !== nextLocation.pathname) {
       const message = isChangedT ? '태그 저장 후 이동하세요.' : '채널 저장 후 이동하세요.';
       alert(message);
