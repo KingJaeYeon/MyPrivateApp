@@ -8,7 +8,6 @@ import {
 import { Button } from '@/components/ui/button.tsx';
 import { ChevronDown } from 'lucide-react';
 import { TAG_COLUMNS, TagColumns } from '@/components/data-table-columns/tag-columns.tsx';
-import React, { useState } from 'react';
 import { Input } from '@/components/ui/input.tsx';
 import useTagStore from '@/store/useTagStore.ts';
 import { toast } from 'sonner';
@@ -16,9 +15,6 @@ import { AddTag } from '@/pages/tag/components/AddTag.tsx';
 
 export default function TagPage() {
   const { data, removeTags, saved, isChanged } = useTagStore();
-  const [isEdit, setEdit] = useState(false);
-
-  const columns = TAG_COLUMNS(isEdit);
 
   const onSavedHandler = async () => {
     if (confirm('저장하시겠습니까?')) {
@@ -31,7 +27,7 @@ export default function TagPage() {
     <div className="flex w-full flex-1 gap-5 px-4">
       <div className={'flex flex-7'}>
         <DataTable<TagColumns, unknown>
-          columns={columns}
+          columns={TAG_COLUMNS}
           data={data}
           tableControls={(table) => {
             return (
@@ -82,40 +78,31 @@ export default function TagPage() {
                   />
                 </div>
                 <div className={'flex gap-2'}>
-                  {isEdit ? (
-                    <React.Fragment>
-                      <Button
-                        size={'sm'}
-                        variant={'destructive'}
-                        onClick={() => {
-                          const selected = table.getSelectedRowModel().rows.map((r) => r.original);
-                          if (selected.length === 0) {
-                            toast.error('삭제할 항목을 선택하세요.');
-                            return;
-                          }
-                          removeTags(selected);
-                        }}
-                      >
-                        삭제
-                      </Button>
-                      <Button variant={'secondary'} size={'sm'} onClick={() => setEdit(false)}>
-                        취소
-                      </Button>
-                    </React.Fragment>
-                  ) : (
-                    <React.Fragment>
-                      <Button
-                        size={'sm'}
-                        onClick={onSavedHandler}
-                        variant={isChanged ? 'destructive' : 'default'}
-                      >
-                        저장
-                      </Button>
-                      <Button size={'sm'} variant={'secondary'} onClick={() => setEdit(true)}>
-                        수정
-                      </Button>
-                    </React.Fragment>
-                  )}
+                  <Button
+                    size={'sm'}
+                    onClick={onSavedHandler}
+                    variant={isChanged ? 'destructive' : 'default'}
+                  >
+                    저장
+                  </Button>
+                  <Button
+                    size={'sm'}
+                    variant={'destructive'}
+                    onClick={() => {
+                      if (!confirm('삭제하시겠습니까?\n(엑셀 갱신버튼은 따로 눌러야합니다.)')) {
+                        return;
+                      }
+                      const selected = table.getSelectedRowModel().rows.map((r) => r.original);
+                      if (selected.length === 0) {
+                        toast.error('삭제할 항목을 선택하세요.');
+                        return;
+                      }
+                      table.toggleAllPageRowsSelected(false);
+                      removeTags(selected);
+                    }}
+                  >
+                    삭제
+                  </Button>
                 </div>
               </div>
             );
