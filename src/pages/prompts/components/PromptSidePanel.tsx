@@ -39,7 +39,7 @@ export function PromptSidePanel({
       if (select) {
         setInput(select);
       } else {
-        const idx = !!data[data?.length - 1] ? data[data.length - 1]?.idx + 1 : 1;
+        const idx = !!data[data?.length - 1] ? +data[data.length - 1]?.idx + 1 : 1;
         setInput({ ...init, idx: idx.toString() });
       }
     }
@@ -52,8 +52,8 @@ export function PromptSidePanel({
       if (!result) {
         return;
       }
-
-      setInput(init);
+      const idx = !!data[data?.length - 1] ? +data[data.length - 1]?.idx + 2 : 1;
+      setInput({ ...init, idx: idx.toString() });
     }
   };
 
