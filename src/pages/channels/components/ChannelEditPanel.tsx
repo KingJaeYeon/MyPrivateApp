@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label.tsx';
 import { Input } from '@/components/ui/input.tsx';
 import { Textarea } from '@/components/ui/textarea.tsx';
 import { TagChooser } from '@/components/TagChooser.tsx';
+import React from 'react';
 
 export function ChannelEditPanel({
   select,
@@ -42,7 +43,7 @@ export function ChannelEditPanel({
   };
 
   return (
-    <div className="bg-background flex w-[400px] flex-col rounded-sm border p-6 shadow-xl">
+    <div className="bg-background flex w-[400px] flex-col rounded-sm border p-4 shadow-xl">
       <div className={'flex flex-1 flex-col gap-3'}>
         <div className={'flex justify-between'}>
           <span className="flex items-center gap-1 text-xs tabular-nums">
@@ -110,7 +111,7 @@ export function ChannelEditPanel({
             <div className={'flex flex-col gap-2'}>
               <Label>메모</Label>
               <Textarea
-                className={'h-[100px] w-full resize-none'}
+                className={'w-full resize-none'}
                 value={select?.memo}
                 onChange={(e) => onChangeHandler('memo', e.target.value)}
               />
@@ -118,7 +119,7 @@ export function ChannelEditPanel({
           </div>
         </div>
       </div>
-      <div className="mt-6 flex justify-end gap-2">
+      <div className="mt-3 flex justify-end gap-2">
         <Button variant={'outline'} onClick={onCancel}>
           취소
         </Button>

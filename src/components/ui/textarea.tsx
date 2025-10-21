@@ -4,12 +4,12 @@ import { cn } from '@/lib/utils';
 import { cva, VariantProps } from 'class-variance-authority';
 
 export const textareaVariants = cva(
-  'text-sm placeholder:text-sm flex min-h-[100px] w-full max-w-full resize-none bg-transparent dark:bg-input/30 px-3 py-2 focus-visible:outline-none disabled:pointer-events-none disabled:border-input-disabled-border disabled:text-input-disabled-foreground disabled:placeholder:opacity-20',
+  'text-sm placeholder:text-sm flex min-h-[150px] w-full max-w-full resize-none bg-transparent dark:bg-input/30 px-3 py-2 focus-visible:outline-none disabled:pointer-events-none disabled:border-input-disabled-border disabled:text-input-disabled-foreground disabled:placeholder:opacity-20',
   {
     variants: {
       variant: {
         default:
-          'placeholder:text-muted-foreground dark:bg-input/30 field-sizing-content min-h-16 w-full rounded-md focus:border-[3px] border-2 bg-transparent px-3 py-2 outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus:border-input',
+          'placeholder:text-muted-foreground dark:bg-input/30 field-sizing-content w-full rounded-md focus:border-[3px] border-2 bg-transparent px-3 py-2 outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus:border-input',
         blockquote:
           'rounded-none placeholder:leading-7 py-1 relative max-w-[40rem] mx-auto leading-7 bg-transparent border-l-4 border-r-none focus:border-input',
       },

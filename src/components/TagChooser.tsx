@@ -1,27 +1,37 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useTagStore from '@/store/useTagStore.ts';
 import { Label } from '@/components/ui/label.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { IconArrowDown, IconArrowUp } from '@/assets/svg';
 import { Badge } from '@/components/ui/badge.tsx';
 import { cn } from '@/lib/utils.ts';
+import { toast } from 'sonner';
 
 /**
  * @param select join(',')로 이어진 문자열
  * @param setSelect tags => join(',')로 이어진 문자열
+ * @param variants
  * @constructor
  * 배열로 변환시 split(',') 필요
  */
 export function TagChooser({
   select,
   setSelect,
+  variants = 'input',
 }: {
   select: string;
   setSelect: (tags: string) => void;
+  variants?: 'input' | 'float';
 }) {
+  if (variants === 'input') {
+    return <TypeInput select={select} setSelect={setSelect} />;
+  }
+  return <Floating select={select} setSelect={setSelect} />;
+}
+
+function TypeInput({ select, setSelect }: { select: string; setSelect: (tags: string) => void }) {
   const [isOpen, setIsOpen] = useState(false);
   const { jsonData, data: tags } = useTagStore.getState();
-
   return (
     <div className={'flex flex-col gap-2'}>
       <div className={'flex justify-between gap-2'}>
@@ -35,15 +45,19 @@ export function TagChooser({
           {isOpen ? <IconArrowDown /> : <IconArrowUp />}
         </Button>
       </div>
-      <div className={'flex flex-wrap gap-0.5'}>
+      <div
+        className={cn(
+          'dark:bg-input/30 border-input flex min-h-9 flex-wrap items-center gap-x-1 gap-y-1.5 rounded-md border bg-transparent px-3 py-2'
+        )}
+      >
         {select === '' ? (
-          <Label className={'cursor-pointer text-xs'} onClick={() => setIsOpen(!isOpen)}>
+          <Badge className={'cursor-pointer text-xs'} onClick={() => setIsOpen(!isOpen)}>
             선택안함
-          </Label>
+          </Badge>
         ) : (
           select.split(',').map((tag, i) => (
             <Badge
-              variant="secondary"
+              variant="green"
               key={i}
               onClick={() => {
                 const currentTags = select !== '' ? select.split(',') : [];
@@ -61,17 +75,23 @@ export function TagChooser({
       </div>
       <div
         data-isopen={isOpen}
-        className={cn('mt-1 flex flex-wrap gap-1', isOpen ? 'border-t-2 pt-3' : 'hidden')}
+        className={cn('mt-1 flex flex-wrap gap-1', isOpen ? 'border-t-2 px-2 pt-3' : 'hidden')}
       >
         {tags.map((tag, i) => {
           const isSelected = select?.split(',').includes(tag.idx.toString());
           return (
             <Badge
               key={i}
-              variant={isSelected ? 'secondary' : 'outline'}
+              variant={isSelected ? 'green' : 'secondary'}
               className={'cursor-pointer'}
               onClick={() => {
                 const currentTags = select !== '' ? select.split(',') : [];
+
+                if (currentTags.length >= 5) {
+                  toast.error('최대 5개까지 선택가능합니다.');
+                  return;
+                }
+
                 if (currentTags.includes(tag.idx.toString())) {
                   // 이미 있으면 제거
                   const newTags = currentTags.filter((t) => t !== tag.idx.toString());
@@ -87,6 +107,120 @@ export function TagChooser({
             </Badge>
           );
         })}
+      </div>
+    </div>
+  );
+}
+
+interface FloatingInputProps {
+  select: string;
+  setSelect: (value: string) => void;
+  id?: string;
+}
+function Floating(props: FloatingInputProps & { sizeC?: 'lg' | 'default' }) {
+  const { select, setSelect, id, sizeC = 'default' } = props;
+  const [isFocused, setIsFocused] = useState(false);
+  const { jsonData, data: tags } = useTagStore.getState();
+
+  const sizes = {
+    default: {
+      label: 'px-1',
+      input: 'flex-wrap min-h-[20px] text-sm px-[10px]',
+      container: 'flex-wrap min-h-[48px] text-sm py-3',
+    },
+    lg: {
+      label: 'px-1.5',
+      input: 'flex-wrap min-h-[28px] px-[14px]',
+      container: 'flex-wrap min-h-[56px] py-4',
+    },
+  };
+
+  useEffect(() => {
+    if (select !== '') {
+      setIsFocused(true);
+    } else {
+      setIsFocused(false);
+    }
+  }, [select]);
+
+  return (
+    <div className={'flex flex-col gap-2'}>
+      <div className={cn('relative isolate flex flex-col justify-center', sizes[sizeC].container)}>
+        <div className={cn('flex gap-1 px-2', sizes[sizeC].input)}>
+          {select === ''
+            ? ''
+            : select.split(',').map((tag, i) => (
+                <Badge
+                  variant="green"
+                  key={i}
+                  onClick={() => {
+                    const currentTags = select !== '' ? select.split(',') : [];
+                    if (currentTags.includes(tag)) {
+                      // 이미 있으면 제거
+                      const newTags = currentTags.filter((t) => t !== tag);
+                      setSelect(newTags.join(','));
+                    }
+                  }}
+                >
+                  {jsonData[tag]}
+                </Badge>
+              ))}
+        </div>
+        <label
+          htmlFor={id}
+          className={cn(
+            'bg-background absolute top-[30%] left-2',
+            isFocused ? 'top-[-8px] left-1 scale-[0.8] text-[#0b57b0]' : '',
+            sizes[sizeC].label
+          )}
+          style={{ transition: 'all .3s cubic-bezier(0.4,0,0.2,1)' }}
+        >
+          태그
+        </label>
+        <div className={'border-input absolute z-[-1] flex h-full w-full rounded-[4px] border-2'} />
+        <div
+          className={
+            'absolute z-[-1] flex h-full w-full rounded-[4px] border-[3px] border-[#0b57b0]'
+          }
+          style={{
+            transition: 'opacity .3s cubic-bezier(0.4,0,0.2,1)',
+            opacity: isFocused ? '1' : '0',
+          }}
+        />
+      </div>
+      <div className={'scrollWidth3 h-[150px] overflow-auto'}>
+        <div className={'mt-1 flex flex-wrap gap-1'}>
+          {tags.map((tag, i) => {
+            const isSelected = select?.split(',').includes(tag.idx.toString());
+            return (
+              <Badge
+                key={i}
+                variant={isSelected ? 'green' : 'secondary'}
+                className={'cursor-pointer'}
+                onClick={() => {
+                  const currentTags = select !== '' ? select.split(',') : [];
+
+                  if (currentTags.length >= 5) {
+                    toast.error('최대 5개까지 선택가능합니다.');
+                    return;
+                  }
+
+                  if (currentTags.includes(tag.idx.toString())) {
+                    // 이미 있으면 제거
+                    const newTags = currentTags.filter((t) => t !== tag.idx.toString());
+                    setSelect(newTags.join(','));
+                  } else {
+                    // 없으면 추가
+                    currentTags.push(tag.idx.toString());
+                    setSelect(currentTags.join(','));
+                  }
+                }}
+              >
+                {tag.name}
+              </Badge>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

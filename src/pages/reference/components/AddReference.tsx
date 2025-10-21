@@ -1,19 +1,13 @@
 import useTagStore from '@/store/useTagStore.ts';
 import { useState } from 'react';
-import { TagColumns } from '@/components/data-table-columns/tag-columns.tsx';
-import { Button } from '@/components/ui/button.tsx';
-import { Input } from '@/components/ui/input.tsx';
-import IconTrash from '@/assets/svg/IconTrash.tsx';
-import { IconArrowDown, IconArrowUp, IconPlus } from '@/assets/svg';
 import { ReferenceColumns } from '@/components/data-table-columns/reference-columns.tsx';
 import { format } from 'date-fns';
 import useReferenceStore from '@/store/useReferenceStore.ts';
 import { Textarea } from '@/components/ui/textarea.tsx';
 import { FloatingOutlinedInput } from '@/components/FloatingOutlinedInput.tsx';
 import { Label } from '@/components/ui/label.tsx';
-import { Badge } from '@/components/ui/badge.tsx';
-import { cn } from '@/lib/utils.ts';
 import { TagChooser } from '@/components/TagChooser.tsx';
+import { Button } from '@/components/ui/button.tsx';
 
 const init: ReferenceColumns = {
   updatedAt: format(new Date().toISOString(), 'yyyy.MM.dd'),
@@ -113,17 +107,15 @@ export function AddReference() {
           </div>
           <div>
             <TagChooser
+              variants={'float'}
               select={input.tag}
               setSelect={(tags) => setInput((prev) => ({ ...prev, tag: tags }))}
             />
           </div>
         </div>
-        {/*{inputs.length <= 5 && (*/}
-        {/*  <Button className={'font-bold'} onClick={addInput}>*/}
-        {/*    태그 추가*/}
-        {/*    <IconPlus />*/}
-        {/*  </Button>*/}
-        {/*)}*/}
+        <div className={'flex justify-end'}>
+          <Button>저장</Button>
+        </div>
       </div>
     </div>
   );

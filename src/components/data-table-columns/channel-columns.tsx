@@ -68,13 +68,20 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     minSize: 200,
     cell: ({ row }) => {
       const tags = useTagStore.getState().jsonData;
+      const cur = row.original.tag.split(',');
       return (
         <div className="flex flex-wrap gap-1">
-          {row.original.tag.split(',').map((tag) => (
-            <Badge variant="secondary" key={tag} size="sm">
-              {tags[tag]}
+          {cur[0] === '' ? (
+            <Badge variant="destructive" key={'none'} size="sm">
+              N/A
             </Badge>
-          ))}
+          ) : (
+            cur.map((tag) => (
+              <Badge variant="green" key={tag} size="sm">
+                {tags[tag]}
+              </Badge>
+            ))
+          )}
         </div>
       );
     },
