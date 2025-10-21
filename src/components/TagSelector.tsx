@@ -56,7 +56,7 @@ export default function TagSelector({
               </CommandItem>
               {tags.map((tag) => (
                 <CommandItem
-                  key={'tagSelectorN' + tag.idx}
+                  key={'tagSelectorNN' + tag.idx}
                   value={tag.name}
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? '' : currentValue);

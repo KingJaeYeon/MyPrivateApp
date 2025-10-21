@@ -1,5 +1,4 @@
-import useTagStore from '@/store/useTagStore.ts';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ReferenceColumns } from '@/components/data-table-columns/reference-columns.tsx';
 import { format } from 'date-fns';
 import useReferenceStore from '@/store/useReferenceStore.ts';
@@ -8,8 +7,10 @@ import { FloatingOutlinedInput } from '@/components/FloatingOutlinedInput.tsx';
 import { Label } from '@/components/ui/label.tsx';
 import { TagChooser } from '@/components/TagChooser.tsx';
 import { Button } from '@/components/ui/button.tsx';
+import { Badge } from '@/components/ui/badge.tsx';
 
 const init: ReferenceColumns = {
+  idx: '',
   updatedAt: format(new Date().toISOString(), 'yyyy.MM.dd'),
   name: '',
   link: '',
@@ -17,10 +18,33 @@ const init: ReferenceColumns = {
   memo: '',
 };
 
-export function ReferenceSidePanel({ type = 'new' }: { type?: 'new' | 'edit' }) {
-  const { update, push } = useReferenceStore();
-  const { updateCounter } = useTagStore();
+export function ReferenceSidePanel({
+  select,
+  isDeleting,
+  setSelect,
+}: {
+  select: ReferenceColumns | null;
+  setSelect: React.Dispatch<React.SetStateAction<ReferenceColumns | null>>;
+  isDeleting: boolean;
+}) {
+  const { data, update, push } = useReferenceStore();
   const [input, setInput] = useState<ReferenceColumns>(init);
+
+  useEffect(() => {
+    function setState() {
+      if (isDeleting) {
+        setInput(init);
+        setSelect(null);
+        return;
+      }
+      if (select) {
+        setInput(select);
+      } else {
+        setInput({ ...init, idx: data[data.length - 1].idx + 1 });
+      }
+    }
+    setState();
+  }, [select, isDeleting]);
 
   const pushInput = () => {
     if (confirm('추가하시겠습니까?\n(엑셀 갱신버튼은 따로 눌러야합니다.)')) {
@@ -31,6 +55,10 @@ export function ReferenceSidePanel({ type = 'new' }: { type?: 'new' | 'edit' }) 
 
       setInput(init);
     }
+  };
+
+  const updated = () => {
+    update(input);
   };
   //
   // const addInput = () => {
@@ -69,18 +97,23 @@ export function ReferenceSidePanel({ type = 'new' }: { type?: 'new' | 'edit' }) 
   // const isEmpty = inputs.every((e) => e.name !== '' && e.idx !== '');
 
   return (
-    <div className={'mt-10 flex flex-1/6 flex-col'}>
+    <div className={'mt-2 flex flex-1/6 flex-col'}>
+      <div className={'pb-2'}>
+        <Badge>{`Idx:${isDeleting ? '0' : input.idx}`}</Badge>
+      </div>
       <div className={'flex flex-col gap-3'}>
         <FloatingOutlinedInput
           id={'name'}
           label={'참조명'}
           value={input.name}
+          disabled={isDeleting}
           onChangeValue={(value: string) => setInput((prev) => ({ ...prev, name: value }))}
         />
         <FloatingOutlinedInput
           id={'link'}
           label={'링크'}
           value={input.link}
+          disabled={isDeleting}
           onChangeValue={(value: string) => setInput((prev) => ({ ...prev, link: value }))}
         />
         <FloatingOutlinedInput
@@ -99,6 +132,7 @@ export function ReferenceSidePanel({ type = 'new' }: { type?: 'new' | 'edit' }) 
               variant={'blockquote'}
               id={'memo'}
               value={input.memo}
+              disabled={isDeleting}
               showMaxLength={true}
               maxLength={250}
               className={'h-[200px] resize-none'}
@@ -108,15 +142,22 @@ export function ReferenceSidePanel({ type = 'new' }: { type?: 'new' | 'edit' }) 
           <div>
             <TagChooser
               variants={'float'}
+              disabled={isDeleting}
               select={input.tag}
               setSelect={(tags) => setInput((prev) => ({ ...prev, tag: tags }))}
             />
           </div>
         </div>
         <div className={'flex justify-end'}>
-          <Button disabled={!(!!input.name && !!input.link)} onClick={pushInput}>
-            저장
-          </Button>
+          {select ? (
+            <Button disabled={!(!!input.name && !!input.link)} onClick={updated}>
+              갱신
+            </Button>
+          ) : (
+            <Button disabled={!(!!input.name && !!input.link)} onClick={pushInput}>
+              저장
+            </Button>
+          )}
         </div>
       </div>
     </div>

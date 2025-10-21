@@ -6,6 +6,7 @@ import useTagStore from '@/store/useTagStore.ts';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
 
 export type ReferenceColumns = {
+  idx: string;
   name: string;
   tag: string;
   link: string;
@@ -39,22 +40,29 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
   {
     accessorKey: 'name',
     header: '참조명',
-    maxSize: 150,
+    minSize: 150,
     cell: ({ row }) => <p className="font-bold whitespace-break-spaces">{row.original.name}</p>,
   },
   {
     accessorKey: 'tag',
     header: '태그',
-    maxSize: 200,
+    minSize: 200,
     cell: ({ row }) => {
-      const tags = useTagStore.getState().jsonData;
+      const tagsJSON = useTagStore.getState().jsonData;
+      const cur = row?.original?.tag?.toString().split(',');
       return (
-        <div className="flex flex-wrap gap-1">
-          {row.original.tag.split(',').map((tag) => (
-            <Badge variant="green" key={tag} size="sm">
-              {tags[tag]}
+        <div className="flex flex-wrap gap-1 py-1">
+          {cur[0] === '' ? (
+            <Badge variant="destructive" key={'none'} size="sm">
+              N/A
             </Badge>
-          ))}
+          ) : (
+            cur.map((tag) => (
+              <Badge variant="green" key={tag} size="sm">
+                {tagsJSON?.[tag]}
+              </Badge>
+            ))
+          )}
         </div>
       );
     },

@@ -18,7 +18,6 @@ export function ChannelEditPanel({
   if (!select) return null;
   const nf = new Intl.NumberFormat();
   const { data, update } = useChannelStore();
-  const onCancel = () => setSelect(null);
 
   const onChangeHandler = (key: keyof ChannelColumns, value: string) => {
     if (!select) return;
@@ -48,7 +47,7 @@ export function ChannelEditPanel({
         <div className={'flex justify-between'}>
           <span className="flex items-center gap-1 text-xs tabular-nums">
             <Avatar className={'h-6 w-6'}>
-              <AvatarImage src={select.icon} />
+              <AvatarImage src={select?.icon} />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
             <p className={'font-bold'}>{`${select.name} (${select.handle})`}</p>
@@ -107,7 +106,11 @@ export function ChannelEditPanel({
                 onChange={(e) => onChangeHandler('platform', e.target.value)}
               />
             </div>
-            <TagChooser select={select.tag} setSelect={(tags) => onChangeHandler('tag', tags)} />
+            <TagChooser
+              select={select.tag}
+              setSelect={(tags) => onChangeHandler('tag', tags)}
+              disabled={true}
+            />
             <div className={'flex flex-col gap-2'}>
               <Label>메모</Label>
               <Textarea
@@ -120,9 +123,6 @@ export function ChannelEditPanel({
         </div>
       </div>
       <div className="mt-3 flex justify-end gap-2">
-        <Button variant={'outline'} onClick={onCancel}>
-          취소
-        </Button>
         <Button onClick={onUpdateRow}>저장</Button>
       </div>
     </div>

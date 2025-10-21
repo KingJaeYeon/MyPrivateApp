@@ -94,8 +94,10 @@ export function AddChannelModal({ onClose, data }: ModalProps) {
             <div className={'mt-2 flex flex-1 gap-2'}>
               <DataTable<ChannelColumns, unknown>
                 columns={CHANNELS_COLUMNS}
-                onClickRow={setSelect}
+                onSelectedRow={setSelect}
                 data={curChannels}
+                enableMultiRowSelection={false}
+                enableRowClickSelection={true}
               />
               <ChannelEditPanel select={select} setSelect={setSelect} />
             </div>

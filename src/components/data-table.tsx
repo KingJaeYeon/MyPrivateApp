@@ -29,13 +29,16 @@ type Props<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   tableControls?: (table: typeTable<TData>) => ReactNode;
-  onClickRow?: (row: TData) => void;
-  // No column 간격 css 수정
-  hasNo?: boolean;
-  isFixHeader?: boolean;
+  enableMultiRowSelection?: boolean; // select Multi 여부
+  enableRowClickSelection?: boolean; // select 영역 All Row vs checkbox 여부 (다만 disabled 로 저지 안됨)
+  onSelectedRow?: (row: TData | null) => void;
+  // css
+  hasNo?: boolean; // No column 간격 css 수정
+  isFixHeader?: boolean; // scrollHeader
+  fontSize?: { head?: FontSize; cell?: FontSize }; // fontSize
   name?: string;
-  fontSize?: { head?: FontSize; cell?: FontSize };
-  isEdit?: boolean; // checkBox 해제용
+  // select checkBox 해제용
+  isEdit?: boolean;
 };
 /*** 테스트
  **/
@@ -45,7 +48,9 @@ export function DataTable<TData, TValue>({
   isFixHeader = false,
   name = 'default',
   tableControls,
-  onClickRow,
+  onSelectedRow,
+  enableMultiRowSelection,
+  enableRowClickSelection,
   hasNo,
   fontSize,
   isEdit,
@@ -65,6 +70,7 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     enableMultiSort: true, // ✅ 다중 정렬 허용
+    enableMultiRowSelection,
     getFilteredRowModel: getFilteredRowModel(),
     defaultColumn: {
       size: 80, // 기본 폭
@@ -128,9 +134,7 @@ export function DataTable<TData, TValue>({
   }, [name, setTriggerHeight]);
 
   useEffect(() => {
-    if (!isEdit) {
-      table.setRowSelection({});
-    }
+    table.setRowSelection({});
   }, [isEdit]);
 
   return (
@@ -281,31 +285,41 @@ export function DataTable<TData, TValue>({
                 <TableBody>
                   {table.getRowModel().rows.length ? (
                     <>
-                      {table.getRowModel().rows.map((r) => (
-                        <TableRow
-                          key={r.id}
-                          data-state={r.getIsSelected() && 'selected'}
-                          onClick={onClickRow ? () => onClickRow(r.original) : undefined}
-                          className={cn(onClickRow ? 'hover:cursor-pointer' : undefined)}
-                        >
-                          {r.getVisibleCells().map((c) => (
-                            <TableCell
-                              key={c.id}
-                              className={cn(
-                                hasNo && c.column.columnDef.id === `no` && 'pr-0',
-                                fontSize?.cell && fontSize.cell
-                              )}
-                              style={{
-                                width: c.column.columnDef.size,
-                                maxWidth: c.column.columnDef.maxSize,
-                                minWidth: c.column.columnDef.minSize,
-                              }}
-                            >
-                              {flexRender(c.column.columnDef.cell, c.getContext())}
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      ))}
+                      {table.getRowModel().rows.map((r) => {
+                        return (
+                          <TableRow
+                            key={r.id}
+                            data-state={r.getIsSelected() && 'selected'}
+                            onClick={() => {
+                              if (enableRowClickSelection) {
+                                const isSelected = r.getIsSelected();
+                                r.toggleSelected(!isSelected);
+                                !!onSelectedRow && onSelectedRow(!isSelected ? r.original : null);
+                              } else {
+                                !!onSelectedRow && onSelectedRow(r.original);
+                              }
+                            }}
+                            className={cn(onSelectedRow ? 'hover:cursor-pointer' : undefined)}
+                          >
+                            {r.getVisibleCells().map((c) => (
+                              <TableCell
+                                key={c.id}
+                                className={cn(
+                                  hasNo && c.column.columnDef.id === `no` && 'pr-0',
+                                  fontSize?.cell && fontSize.cell
+                                )}
+                                style={{
+                                  width: c.column.columnDef.size,
+                                  maxWidth: c.column.columnDef.maxSize,
+                                  minWidth: c.column.columnDef.minSize,
+                                }}
+                              >
+                                {flexRender(c.column.columnDef.cell, c.getContext())}
+                              </TableCell>
+                            ))}
+                          </TableRow>
+                        );
+                      })}
                     </>
                   ) : (
                     <TableRow>

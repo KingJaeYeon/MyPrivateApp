@@ -22,7 +22,7 @@ export type State = {
 type Action = {
   init: (filePath: string) => Promise<void>;
   push: (arr: TagColumns[]) => boolean;
-  removeTags: (removeArr: TagColumns[]) => void;
+  remove: (removeArr: TagColumns[]) => void;
   saved: () => Promise<void>;
   updateCounter: (type: TagsKey | 'all') => void;
   reset: () => void;
@@ -58,7 +58,7 @@ const useTagStore = create(
         const localCountMap: Record<string, number> = {};
 
         for (let i = 0; i < storeData.length; i++) {
-          const tagArr = storeData[i].tag.split(',');
+          const tagArr = storeData[i].tag.toString().split(',');
           for (let j = 0; j < tagArr.length; j++) {
             const tag = tagArr[j].trim();
             if (tag) {
@@ -160,7 +160,7 @@ const useTagStore = create(
       set({ data: newArr, isChanged: true });
       return true;
     },
-    removeTags: (removeArr) => {
+    remove: (removeArr) => {
       const tags = get().data;
       let isUsed = false;
       const newArr = [];

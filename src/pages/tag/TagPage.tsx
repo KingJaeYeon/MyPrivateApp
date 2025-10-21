@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 import { AddTag } from '@/pages/tag/components/AddTag.tsx';
 
 export default function TagPage() {
-  const { data, removeTags, saved, isChanged } = useTagStore();
+  const { data, remove, saved, isChanged } = useTagStore();
 
   const onSavedHandler = async () => {
     if (confirm('저장하시겠습니까?')) {
@@ -29,6 +29,7 @@ export default function TagPage() {
         <DataTable<TagColumns, unknown>
           columns={TAG_COLUMNS}
           data={data}
+          enableRowClickSelection={true}
           tableControls={(table) => {
             return (
               <div className={'flex w-full justify-between'}>
@@ -98,7 +99,7 @@ export default function TagPage() {
                         return;
                       }
                       table.toggleAllPageRowsSelected(false);
-                      removeTags(selected);
+                      remove(selected);
                     }}
                   >
                     삭제

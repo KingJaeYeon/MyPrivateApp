@@ -22,12 +22,11 @@ const FILTER = [
 ];
 
 export default function ReferencePage() {
-  const { data, saved, isChanged } = useReferenceStore();
+  const { data, saved, isChanged, remove } = useReferenceStore();
   const { data: tags } = useTagStore();
   const [isEdit, setEdit] = useState(false);
   const [filter, setFilter] = React.useState(FILTER[0]);
-
-  const columns = REFERENCE_COLUMNS;
+  const [selectedRow, setSelectedRow] = useState<ReferenceColumns | null>(null);
 
   const onSavedHandler = async () => {
     if (confirm('저장하시겠습니까?')) {
@@ -42,6 +41,10 @@ export default function ReferencePage() {
         <DataTable<ReferenceColumns, unknown>
           columns={REFERENCE_COLUMNS}
           data={data}
+          isEdit={isEdit}
+          enableRowClickSelection={true}
+          enableMultiRowSelection={isEdit}
+          onSelectedRow={setSelectedRow}
           tableControls={(table) => {
             const onFilterChange = (value: string) => {
               // 이전 필터 값 초기화
@@ -97,7 +100,12 @@ export default function ReferencePage() {
                             toast.error('삭제할 항목을 선택하세요.');
                             return;
                           }
-                          // removeTags(selected);
+                          if (
+                            !confirm('정말 삭제하시겠습니까?\n(엑셀 갱신버튼은 따로 눌러야합니다.)')
+                          ) {
+                            return;
+                          }
+                          remove(selected);
                         }}
                       >
                         삭제
@@ -126,7 +134,7 @@ export default function ReferencePage() {
           }}
         />
       </div>
-      <ReferenceSidePanel />
+      <ReferenceSidePanel select={selectedRow} isDeleting={isEdit} setSelect={setSelectedRow} />
     </div>
   );
 }

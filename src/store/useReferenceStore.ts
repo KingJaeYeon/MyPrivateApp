@@ -5,6 +5,7 @@ import useSettingStore from '@/store/useSettingStore.ts';
 import { toast } from 'sonner';
 import useTagStore from '@/store/useTagStore.ts';
 import { ReferenceColumns } from '@/components/data-table-columns/reference-columns.tsx';
+import { format } from 'date-fns';
 
 /** 전체 앱 설정 */
 export type State = {
@@ -16,7 +17,8 @@ type Action = {
   init: (filePath: string) => Promise<void>;
   push: (obj: ReferenceColumns) => boolean;
   saved: () => Promise<void>;
-  update: (data: ReferenceColumns[] | []) => void;
+  update: (row: ReferenceColumns) => void;
+  remove: (rows: ReferenceColumns[]) => void;
   reset: () => void;
 };
 
@@ -29,9 +31,23 @@ const useReferenceStore = create(
       const result = await window.excelApi.read(filePath);
       set({ data: result });
     },
-    update: (data) => {
+    update: (row) => {
+      const cur = get().data;
+      const data = cur.map((v) => {
+        if (v.idx === row?.idx) {
+          return { ...row, updatedAt: format(new Date().toISOString(), 'yyyy.MM.dd') };
+        }
+        return v;
+      });
       set({ data, isChanged: true });
       toast.success('변경되었습니다.');
+    },
+    remove: (rows) => {
+      const cur = get().data;
+      const removeIds = rows.map((d) => d.idx);
+      const filtered = cur.filter((r) => !removeIds.includes(r.idx));
+
+      set({ data: filtered, isChanged: true });
     },
     push: (obj) => {
       const temp = get().data;
