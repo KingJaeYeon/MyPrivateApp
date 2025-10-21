@@ -3,6 +3,7 @@ import useSettingStore from '@/store/useSettingStore.ts';
 import useTagStore from '@/store/useTagStore.ts';
 import useChannelStore from '@/store/useChannelStore.ts';
 import useReferenceStore from '@/store/useReferenceStore.ts';
+import usePromptsStore from '@/store/usePromptsStore.ts';
 
 export default function useHasFiles() {
   const { location, name } = useSettingStore((r) => r.data.folder);
@@ -10,6 +11,7 @@ export default function useHasFiles() {
   const { init: initT, reset: resetT } = useTagStore();
   const { init: initC, reset: resetC } = useChannelStore();
   const { init: initR, reset: resetR } = useReferenceStore();
+  const { init: initP, reset: resetP } = usePromptsStore();
 
   useEffect(() => {
     async function start() {
@@ -18,6 +20,7 @@ export default function useHasFiles() {
           await initC(`${location}/${name.channel}`);
           await initT(`${location}/${name.tag}`);
           await initR(`${location}/${name.reference}`);
+          await initP(`${location}/${name.prompt}`);
           await window.fsApi.listExcel(`${location}/${name.result.split('/')[0]}`);
           await updateIn('hasFile', true);
           console.log('API Store initialized');
@@ -25,6 +28,7 @@ export default function useHasFiles() {
           resetC();
           resetT();
           resetR();
+          resetP();
           await updateIn('hasFile', false);
         }
       }

@@ -6,6 +6,7 @@ import SearchVideoResult from '@/pages/search-video-result/SearchVideoResult';
 import TagPage from '@/pages/tag/TagPage';
 import ChannelsPage from '@/pages/channels/ChannelsPage';
 import ReferencePage from '@/pages/reference/ReferencePage.tsx';
+import PromptsPage from '@/pages/prompts/PromptsPage.tsx';
 
 export const navigationRoutes = [
   { path: '/', label: 'Home' },
@@ -14,6 +15,7 @@ export const navigationRoutes = [
   { path: '/search-videos', label: 'Search Videos' },
   { path: '/search-videos/result', label: 'Result' },
   { path: '/reference', label: 'Reference' },
+  { path: '/prompts', label: 'Prompts' },
 ];
 
 export const routes: RouteObject[] = [
@@ -44,6 +46,10 @@ export const routes: RouteObject[] = [
       {
         path: 'reference',
         element: <ReferencePage />,
+      },
+      {
+        path: 'prompts',
+        element: <PromptsPage />,
       },
       {
         path: '*',

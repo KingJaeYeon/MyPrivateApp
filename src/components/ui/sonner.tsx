@@ -1,5 +1,6 @@
 import { Toaster as Sonner, type ToasterProps } from 'sonner';
 import { useTheme } from '@/providers/theme-provider.tsx';
+import React from 'react';
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = 'system' } = useTheme();
@@ -7,6 +8,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
       expand={true}
+      position={'top-right'}
       theme={theme as ToasterProps['theme']}
       className="toaster group"
       style={

@@ -223,7 +223,7 @@ function Floating(props: FloatingInputProps) {
           }}
         />
       </div>
-      <div className={'scrollWidth3 h-[120px] overflow-auto'}>
+      <div className={'scrollWidth3 h-[80px] overflow-auto'}>
         <div className={'mt-1 flex flex-wrap gap-1'}>
           {disabled
             ? null

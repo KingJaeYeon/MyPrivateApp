@@ -1,34 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import { ReferenceColumns } from '@/components/data-table-columns/reference-columns.tsx';
 import { format } from 'date-fns';
-import useReferenceStore from '@/store/useReferenceStore.ts';
 import { Textarea } from '@/components/ui/textarea.tsx';
 import { FloatingOutlinedInput } from '@/components/FloatingOutlinedInput.tsx';
 import { Label } from '@/components/ui/label.tsx';
 import { TagChooser } from '@/components/TagChooser.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
+import { PromptsColumns } from '@/components/data-table-columns/prompts-columns.tsx';
+import usePromptsStore from '@/store/usePromptsStore.ts';
 
-const init: ReferenceColumns = {
+const init: PromptsColumns = {
   idx: '',
   updatedAt: format(new Date().toISOString(), 'yyyy.MM.dd'),
-  name: '',
-  link: '',
+  prompt: '',
   tag: '',
   memo: '',
 };
 
-export function ReferenceSidePanel({
+export function PromptSidePanel({
   select,
   isDeleting,
   setSelect,
 }: {
-  select: ReferenceColumns | null;
-  setSelect: React.Dispatch<React.SetStateAction<ReferenceColumns | null>>;
+  select: PromptsColumns | null;
+  setSelect: React.Dispatch<React.SetStateAction<PromptsColumns | null>>;
   isDeleting: boolean;
 }) {
-  const { data, update, push } = useReferenceStore();
-  const [input, setInput] = useState<ReferenceColumns>(init);
+  const { data, update, push } = usePromptsStore();
+  const [input, setInput] = useState<PromptsColumns>(init);
 
   useEffect(() => {
     function setState() {
@@ -62,25 +61,11 @@ export function ReferenceSidePanel({
     update(input);
   };
   return (
-    <div className={'mt-2 flex flex-1/6 flex-col'}>
+    <div className={'mt-2 flex flex-1/4 flex-col'}>
       <div className={'pb-2'}>
         <Badge>{`Idx:${isDeleting ? '0' : input.idx}`}</Badge>
       </div>
       <div className={'flex flex-col gap-3'}>
-        <FloatingOutlinedInput
-          id={'name'}
-          label={'참조명'}
-          value={input.name}
-          disabled={isDeleting}
-          onChangeValue={(value: string) => setInput((prev) => ({ ...prev, name: value }))}
-        />
-        <FloatingOutlinedInput
-          id={'link'}
-          label={'링크'}
-          value={input.link}
-          disabled={isDeleting}
-          onChangeValue={(value: string) => setInput((prev) => ({ ...prev, link: value }))}
-        />
         <FloatingOutlinedInput
           id={'updatedAt'}
           label={'갱신날짜'}
@@ -89,6 +74,21 @@ export function ReferenceSidePanel({
           disabled={true}
         />
         <div className={'flex flex-col gap-4'}>
+          <div className={'flex flex-col gap-1'}>
+            <Label htmlFor={'prompt'} className={'text-sm'}>
+              프롬프트
+            </Label>
+            <Textarea
+              variant={'blockquote'}
+              id={'prompt'}
+              value={input.prompt}
+              disabled={isDeleting}
+              showMaxLength={true}
+              maxLength={1000}
+              className={'h-[200px] resize-none'}
+              onChange={(e) => setInput((prev) => ({ ...prev, prompt: e.target.value }))}
+            />
+          </div>
           <div className={'flex flex-col gap-1'}>
             <Label htmlFor={'memo'} className={'text-sm'}>
               메모
@@ -100,7 +100,7 @@ export function ReferenceSidePanel({
               disabled={isDeleting}
               showMaxLength={true}
               maxLength={250}
-              className={'h-[200px] resize-none'}
+              className={'h-[20px] resize-none'}
               onChange={(e) => setInput((prev) => ({ ...prev, memo: e.target.value }))}
             />
           </div>
@@ -115,11 +115,11 @@ export function ReferenceSidePanel({
         </div>
         <div className={'flex justify-end'}>
           {select ? (
-            <Button disabled={!(!!input.name && !!input.link)} onClick={updated}>
+            <Button disabled={!input.prompt} onClick={updated}>
               갱신
             </Button>
           ) : (
-            <Button disabled={!(!!input.name && !!input.link)} onClick={pushInput}>
+            <Button disabled={!input.prompt} onClick={pushInput}>
               저장
             </Button>
           )}

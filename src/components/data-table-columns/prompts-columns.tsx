@@ -1,19 +1,23 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import { Badge } from '@/components/ui/badge.tsx';
-import { Button } from '@/components/ui/button.tsx';
 import Tip from '@/components/Tip.tsx';
 import useTagStore from '@/store/useTagStore.ts';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
+import { toast } from 'sonner';
 
-export type ReferenceColumns = {
+export type PromptsColumns = {
   idx: string;
-  name: string;
   tag: string;
-  link: string;
+  prompt: string;
   memo: string;
   updatedAt: string;
 };
-export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
+
+const copyToClipboard = (text: string) => {
+  navigator.clipboard.writeText(text);
+  toast.success(`Prompt 복사완료`);
+};
+export const PROMPTS_COLUMNS: ColumnDef<PromptsColumns>[] = [
   {
     id: 'select',
     size: 40,
@@ -38,15 +42,9 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'name',
-    header: '참조명',
-    minSize: 150,
-    cell: ({ row }) => <p className="font-bold whitespace-break-spaces">{row.original.name}</p>,
-  },
-  {
     accessorKey: 'tag',
     header: '태그',
-    minSize: 200,
+    minSize: 100,
     cell: ({ row }) => {
       const tagsJSON = useTagStore.getState().jsonData;
       const cur = row?.original?.tag?.toString().split(',');
@@ -68,9 +66,24 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
     },
   },
   {
+    accessorKey: 'prompt',
+    header: '프롬프트',
+    minSize: 400,
+    cell: ({ row }) => (
+      <Tip txt={row.original.prompt} className="max-w-[600px]" side={'left'}>
+        <span
+          className="ellipsisLine4 min-w-[100px] cursor-pointer text-xs break-words whitespace-normal"
+          onClick={() => copyToClipboard(row.original.prompt)}
+        >
+          {row.original.prompt}
+        </span>
+      </Tip>
+    ),
+  },
+  {
     accessorKey: 'memo',
     header: '메모',
-    minSize: 400,
+    minSize: 200,
     cell: ({ row }) => (
       <Tip txt={row.original.memo} className="max-w-[600px]" side={'left'}>
         <span className="ellipsisLine2 min-w-[100px] cursor-pointer text-xs break-words whitespace-normal">
@@ -82,22 +95,7 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
   {
     accessorKey: 'updatedAt',
     header: '갱신날짜',
-    minSize: 120,
+    minSize: 80,
     cell: ({ row }) => <span className="text-xs tabular-nums">{row.original.updatedAt}</span>,
-  },
-  {
-    accessorKey: 'link',
-    header: '링크',
-    maxSize: 80,
-    enableSorting: false,
-    cell: ({ row }) => (
-      <Button
-        size="sm"
-        variant="secondary"
-        onClick={() => window.electronAPI.openExternal(row.original.link)}
-      >
-        열기
-      </Button>
-    ),
   },
 ];

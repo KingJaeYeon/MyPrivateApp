@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { cva, VariantProps } from 'class-variance-authority';
 
 export const textareaVariants = cva(
-  'text-sm placeholder:text-sm flex min-h-[150px] w-full max-w-full resize-none bg-transparent dark:bg-input/30 px-3 py-2 focus-visible:outline-none disabled:pointer-events-none disabled:border-input-disabled-border disabled:text-input-disabled-foreground disabled:placeholder:opacity-20',
+  'text-sm placeholder:text-sm flex min-h-[80px] w-full max-w-full resize-none bg-transparent dark:bg-input/30 px-3 py-2 focus-visible:outline-none disabled:pointer-events-none disabled:border-input-disabled-border disabled:text-input-disabled-foreground disabled:placeholder:opacity-20',
   {
     variants: {
       variant: {
@@ -17,7 +17,8 @@ export const textareaVariants = cva(
         true: 'border-destructive hover:border-destructive focus:border-destructive',
       },
       hasMaxLength: {
-        true: 'pr-[70px]',
+        // true: 'pr-[70px]',
+        true: '',
       },
     },
     defaultVariants: {

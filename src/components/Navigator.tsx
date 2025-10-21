@@ -45,17 +45,19 @@ import useChannelStore from '@/store/useChannelStore.ts';
 import { navigationRoutes } from '@/routes';
 import useSettingStore from '@/store/useSettingStore.ts';
 import useReferenceStore from '@/store/useReferenceStore.ts';
+import usePromptsStore from '@/store/usePromptsStore.ts';
 
 export default function Navigator() {
   const { pathname } = useLocation();
   const { isChanged: isChangedT } = useTagStore();
   const { isChanged: isChangedC } = useChannelStore();
   const { isChanged: isChangedR } = useReferenceStore();
+  const { isChanged: isChangedP } = usePromptsStore();
   const { data } = useSettingStore();
 
   // 네비게이션 차단
   useBlocker(({ currentLocation, nextLocation }) => {
-    const isChange = isChangedT || isChangedC || isChangedR;
+    const isChange = isChangedT || isChangedC || isChangedR || isChangedP;
     if (!data.hasFile && currentLocation.pathname !== nextLocation.pathname) {
       alert('Excel 생성버튼을 클릭해주세요.');
       return true;
