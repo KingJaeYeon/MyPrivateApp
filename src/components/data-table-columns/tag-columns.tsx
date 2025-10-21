@@ -10,7 +10,7 @@ export type TagColumns = {
   usedChannels: number;
   usedVideos: number;
   usedReference: number;
-  usedPrompt: number;
+  usedPrompts: number;
   usedEnglish: number;
   total: number;
 };
@@ -103,11 +103,11 @@ export const TAG_COLUMNS = (isEdit?: boolean): ColumnDef<TagColumns>[] => {
       ),
     },
     {
-      accessorKey: 'usedPrompt',
+      accessorKey: 'usedPrompts',
       header: '프롬프트',
       cell: ({ row }) => (
         <p className={'cursor-pointer text-xs break-words whitespace-normal'}>
-          {row.original.usedPrompt}
+          {row.original.usedPrompts}
         </p>
       ),
     },

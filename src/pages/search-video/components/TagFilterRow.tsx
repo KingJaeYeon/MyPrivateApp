@@ -156,7 +156,7 @@ function TagSelector({
                 const selected = tempTags.includes(tag.name);
                 return (
                   <Badge
-                    key={tag.idx}
+                    key={'selectTag-' + tag.idx}
                     className={'cursor-pointer'}
                     variant={selected ? 'green' : 'outline'}
                     onClick={() => {
@@ -198,12 +198,18 @@ function TagSelector({
                         </Avatar>
                         <p className={'font-bold'}>{channel.name}</p>
                       </span>
-                      <div className={'max-w-[180px] text-end'}>
-                        {channel.tag.split(',').map((tag, i) => (
-                          <Badge variant="secondary" key={i} size={'sm'}>
-                            {jsonData[tag]}
+                      <div className={'flex max-w-[180px] gap-0.5 text-end'}>
+                        {channel.tag.split(',')[0] === '' ? (
+                          <Badge variant="destructive" key={'none'} size={'sm'}>
+                            N/A
                           </Badge>
-                        ))}
+                        ) : (
+                          channel.tag.split(',').map((tag, i) => (
+                            <Badge variant="secondary" key={i} size={'sm'}>
+                              {jsonData[tag]}
+                            </Badge>
+                          ))
+                        )}
                       </div>
                     </div>
                   ))}

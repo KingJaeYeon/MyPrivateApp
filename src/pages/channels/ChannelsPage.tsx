@@ -6,8 +6,8 @@ import {
   CHANNELS_COLUMNS,
 } from '@/components/data-table-columns/channel-columns.tsx';
 import useTagStore from '@/store/useTagStore.ts';
-import TagSelector from '@/pages/channels/components/TagSelector.tsx';
 import { useModalStore } from '@/store/modalStore.ts';
+import TagSelector from '@/components/TagSelector.tsx';
 
 export default function ChannelsPage() {
   const { data, isChanged, saved } = useChannelStore();

@@ -15,7 +15,16 @@ export interface FloatingInputProps extends React.InputHTMLAttributes<HTMLInputE
 //           onChangeValue={(value: string) => setInput5(value)}
 //         />
 export function FloatingOutlinedInput(props: FloatingInputProps & { sizeC?: 'lg' | 'default' }) {
-  const { label, className, onChangeValue, isError, id, sizeC = 'default', ...rest } = props;
+  const {
+    label,
+    className,
+    onChangeValue,
+    isError,
+    id,
+    disabled,
+    sizeC = 'default',
+    ...rest
+  } = props;
   const [isFocused, setIsFocused] = useState(false);
 
   const sizes = {
@@ -32,8 +41,10 @@ export function FloatingOutlinedInput(props: FloatingInputProps & { sizeC?: 'lg'
   };
 
   useEffect(() => {
-    if (rest.value) {
+    if (rest.value !== '') {
       setIsFocused(true);
+    } else {
+      setIsFocused(false);
     }
   }, [rest.value]);
 
@@ -52,9 +63,11 @@ export function FloatingOutlinedInput(props: FloatingInputProps & { sizeC?: 'lg'
           if (!e.target.value) setIsFocused(false);
         }}
         onChange={(e) => onChangeValue(e.target.value)}
+        disabled={disabled}
         className={cn(
           'bg-background m-[2px] flex flex-1 border-none py-[12px] focus-visible:outline-none',
-          sizes[sizeC].input
+          sizes[sizeC].input,
+          disabled && 'cursor-not-allowed'
         )}
         {...rest}
       />

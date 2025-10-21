@@ -39,19 +39,19 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
   {
     accessorKey: 'name',
     header: '참조명',
+    maxSize: 150,
     cell: ({ row }) => <p className="font-bold whitespace-break-spaces">{row.original.name}</p>,
   },
   {
     accessorKey: 'tag',
     header: '태그',
-    maxSize: 1000,
-    minSize: 300,
+    maxSize: 200,
     cell: ({ row }) => {
       const tags = useTagStore.getState().jsonData;
       return (
         <div className="flex flex-wrap gap-1">
           {row.original.tag.split(',').map((tag) => (
-            <Badge variant="secondary" key={tag} size="sm">
+            <Badge variant="green" key={tag} size="sm">
               {tags[tag]}
             </Badge>
           ))}
@@ -62,11 +62,10 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
   {
     accessorKey: 'memo',
     header: '메모',
-    maxSize: 400,
-    minSize: 300,
+    minSize: 400,
     cell: ({ row }) => (
-      <Tip txt={row.original.memo} className="max-w-[400px]">
-        <span className="ellipsisLine2 max-w-[300px] min-w-[100px] cursor-pointer text-xs break-words whitespace-normal">
+      <Tip txt={row.original.memo} className="max-w-[600px]" side={'left'}>
+        <span className="ellipsisLine2 min-w-[100px] cursor-pointer text-xs break-words whitespace-normal">
           {row.original.memo}
         </span>
       </Tip>

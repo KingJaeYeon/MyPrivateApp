@@ -188,7 +188,7 @@ function Floating(props: FloatingInputProps & { sizeC?: 'lg' | 'default' }) {
           }}
         />
       </div>
-      <div className={'scrollWidth3 h-[150px] overflow-auto'}>
+      <div className={'scrollWidth3 h-[120px] overflow-auto'}>
         <div className={'mt-1 flex flex-wrap gap-1'}>
           {tags.map((tag, i) => {
             const isSelected = select?.split(',').includes(tag.idx.toString());

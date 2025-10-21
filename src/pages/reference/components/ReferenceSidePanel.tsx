@@ -17,21 +17,21 @@ const init: ReferenceColumns = {
   memo: '',
 };
 
-export function AddReference() {
-  const { update } = useReferenceStore();
-  const { jsonData, data: tags } = useTagStore.getState();
-  const [isOpen, setIsOpen] = useState(false);
+export function ReferenceSidePanel({ type = 'new' }: { type?: 'new' | 'edit' }) {
+  const { update, push } = useReferenceStore();
+  const { updateCounter } = useTagStore();
   const [input, setInput] = useState<ReferenceColumns>(init);
-  // const pushInput = () => {
-  //   if (confirm('추가하시겠습니까?\n(엑셀 갱신버튼은 따로 눌러야합니다.)')) {
-  //     const result = push(inputs);
-  //     if (!result) {
-  //       return;
-  //     }
-  //
-  //     setInputs(init);
-  //   }
-  // };
+
+  const pushInput = () => {
+    if (confirm('추가하시겠습니까?\n(엑셀 갱신버튼은 따로 눌러야합니다.)')) {
+      const result = push(input);
+      if (!result) {
+        return;
+      }
+
+      setInput(init);
+    }
+  };
   //
   // const addInput = () => {
   //   setInputs([
@@ -83,12 +83,13 @@ export function AddReference() {
           value={input.link}
           onChangeValue={(value: string) => setInput((prev) => ({ ...prev, link: value }))}
         />
-        {/*<FloatingOutlinedInput*/}
-        {/*  id={'updatedAt'}*/}
-        {/*  label={'갱신날짜'}*/}
-        {/*  value={input.tag}*/}
-        {/*  onChangeValue={(value: string) => setInput((prev) => ({ ...prev, tag: value }))}*/}
-        {/*/>*/}
+        <FloatingOutlinedInput
+          id={'updatedAt'}
+          label={'갱신날짜'}
+          value={input.updatedAt}
+          onChangeValue={(value: string) => setInput((prev) => ({ ...prev, updatedAt: value }))}
+          disabled={true}
+        />
         <div className={'flex flex-col gap-4'}>
           <div className={'flex flex-col gap-1'}>
             <Label htmlFor={'memo'} className={'text-sm'}>
@@ -98,7 +99,6 @@ export function AddReference() {
               variant={'blockquote'}
               id={'memo'}
               value={input.memo}
-              hasMaxLength={true}
               showMaxLength={true}
               maxLength={250}
               className={'h-[200px] resize-none'}
@@ -114,7 +114,9 @@ export function AddReference() {
           </div>
         </div>
         <div className={'flex justify-end'}>
-          <Button>저장</Button>
+          <Button disabled={!(!!input.name && !!input.link)} onClick={pushInput}>
+            저장
+          </Button>
         </div>
       </div>
     </div>

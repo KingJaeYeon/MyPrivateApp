@@ -6,6 +6,9 @@ import useSettingStore from '@/store/useSettingStore.ts';
 import { toast } from 'sonner';
 import useChannelStore from '@/store/useChannelStore.ts';
 import useReferenceStore from '@/store/useReferenceStore.ts';
+import { useVideoSearchStore } from '@/store/useVideoSearchStore.ts';
+import usePromptsStore from '@/store/usePromptsStore';
+import useEnglishStore from '@/store/useEnglishStore.ts';
 
 type TagsKey = 'channel' | 'reference' | 'prompt' | 'english';
 
@@ -21,7 +24,7 @@ type Action = {
   push: (arr: TagColumns[]) => boolean;
   removeTags: (removeArr: TagColumns[]) => void;
   saved: () => Promise<void>;
-  updateCounter: (type: TagsKey) => void;
+  updateCounter: (type: TagsKey | 'all') => void;
   reset: () => void;
 };
 
@@ -42,49 +45,100 @@ const useTagStore = create(
       );
 
       set({ data: result, jsonData });
-      get().updateCounter('channel');
+
+      // 파일로드되서 init은 세팅되서 필요없음
+      // get().updateCounter('all');
     },
     updateCounter: (type) => {
-      const channels = useChannelStore.getState().data;
       const tags = [...get().data];
-      const tagCountMap: Record<string, number> = {};
+      const countTagsFromStore = (
+        storeData: any[],
+        countField: keyof Omit<TagColumns, 'idx' | 'name'>
+      ) => {
+        const localCountMap: Record<string, number> = {};
 
-      if (type === 'channel') {
-        for (let i = 0; i < channels.length; i++) {
-          const channelArr = channels[i].tag.split(',');
-          for (let j = 0; j < channelArr.length; j++) {
-            const tag = channelArr[j].trim();
+        for (let i = 0; i < storeData.length; i++) {
+          const tagArr = storeData[i].tag.split(',');
+          for (let j = 0; j < tagArr.length; j++) {
+            const tag = tagArr[j].trim();
             if (tag) {
-              tagCountMap[tag] = (tagCountMap[tag] || 0) + 1;
+              localCountMap[tag] = (localCountMap[tag] || 0) + 1;
             }
           }
         }
 
         tags.forEach((tag) => {
-          tag.usedChannels = tagCountMap[tag.idx] || 0;
-          tag.total = (tag.usedVideos || 0) + (tagCountMap[tag.idx] || 0);
+          tag[countField] = localCountMap[tag.idx] || 0;
         });
-        set({ data: tags });
+      };
+
+      if (type === 'all') {
+        const channels = useChannelStore.getState().data;
+        const references = useReferenceStore.getState().data;
+        const prompts = usePromptsStore.getState().data;
+        const englishes = useEnglishStore.getState().data;
+
+        countTagsFromStore(channels, 'usedChannels');
+        countTagsFromStore(references, 'usedReference');
+        countTagsFromStore(prompts, 'usedPrompts');
+        countTagsFromStore(englishes, 'usedEnglish');
+
+        // total 계산
+        tags.forEach((tag) => {
+          tag.total =
+            (tag.usedChannels || 0) +
+            (tag.usedReference || 0) +
+            (tag.usedPrompts || 0) +
+            (tag.usedEnglish || 0);
+        });
+      } else if (type === 'channel') {
+        const channels = useChannelStore.getState().data;
+        countTagsFromStore(channels, 'usedChannels');
+
+        tags.forEach((tag) => {
+          tag.total =
+            (tag.usedChannels || 0) +
+            (tag.usedReference || 0) +
+            (tag.usedPrompts || 0) +
+            (tag.usedEnglish || 0);
+        });
+      } else if (type === 'reference') {
+        const references = useReferenceStore.getState().data;
+        countTagsFromStore(references, 'usedReference');
+
+        tags.forEach((tag) => {
+          tag.total =
+            (tag.usedChannels || 0) +
+            (tag.usedReference || 0) +
+            (tag.usedPrompts || 0) +
+            (tag.usedEnglish || 0);
+        });
+      } else if (type === 'prompt') {
+        const prompts = usePromptsStore.getState().data;
+        countTagsFromStore(prompts, 'usedPrompts');
+
+        tags.forEach((tag) => {
+          tag.total =
+            (tag.usedChannels || 0) +
+            (tag.usedReference || 0) +
+            (tag.usedPrompts || 0) +
+            (tag.usedEnglish || 0);
+        });
+      } else if (type === 'english') {
+        const englishes = useEnglishStore.getState().data;
+        countTagsFromStore(englishes, 'usedEnglish');
+
+        tags.forEach((tag) => {
+          tag.total =
+            (tag.usedChannels || 0) +
+            (tag.usedReference || 0) +
+            (tag.usedPrompts || 0) +
+            (tag.usedEnglish || 0);
+        });
       }
-      // const reference = useReferenceStore.getState().data;
-      // if (type === 'reference') {
-      //   for (let i = 0; i < reference.length; i++) {
-      //     const referenceArr = reference[i].tag.split(',');
-      //     for (let j = 0; j < referenceArr.length; j++) {
-      //       const tag = referenceArr[j].trim();
-      //       if (tag) {
-      //         tagCountMap[tag] = (tagCountMap[tag] || 0) + 1;
-      //       }
-      //     }
-      //   }
-      //
-      //   tags.forEach((tag) => {
-      //     tag.usedChannels = tagCountMap[tag.idx] || 0;
-      //     tag.usedReference = tagCountMap[tag.idx] || 0;
-      //     tag.total = (tag.usedVideos || 0) + (tagCountMap[tag.idx] || 0);
-      //   });
-      //   set({ data: tags });
-      // }
+
+      set({ data: tags });
+      get().saved();
     },
     push: (arr) => {
       const temp = get().data;
@@ -135,6 +189,7 @@ const useTagStore = create(
     saved: async () => {
       const tagSheet = useSettingStore.getState().data.excel.tag;
       const { name, location } = useSettingStore.getState().data.folder;
+      const { setTags } = useVideoSearchStore.getState();
       const aoa = buildAoaFromObjects(get().data, tagSheet);
 
       const jsonData = get().data.reduce(
@@ -147,6 +202,7 @@ const useTagStore = create(
 
       await window.excelApi.overwrite(`${location}/${name.tag}`, aoa, 'Sheet1');
       set({ jsonData, isChanged: false });
+      setTags('tagKey', []);
     },
     reset: () => {
       set({ data: [], jsonData: {} });

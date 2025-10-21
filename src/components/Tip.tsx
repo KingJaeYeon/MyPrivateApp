@@ -11,6 +11,7 @@ export default function Tip({
   asChild = false,
   color,
   align,
+  side,
 }: {
   children: React.ReactNode;
   className?: string;
@@ -18,6 +19,7 @@ export default function Tip({
   asChild?: boolean;
   color?: 'green' | 'red';
   align?: 'center' | 'end' | 'start';
+  side?: 'left' | 'right' | 'top' | 'bottom';
 }) {
   return (
     <Tooltip>
@@ -31,7 +33,7 @@ export default function Tip({
       >
         {children}
       </TooltipTrigger>
-      <TooltipContent className={className} align={align}>
+      <TooltipContent className={className} align={align} side={side}>
         <p className={'whitespace-break-spaces'}>{txt}</p>
       </TooltipContent>
     </Tooltip>

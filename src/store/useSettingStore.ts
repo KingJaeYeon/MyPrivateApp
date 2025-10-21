@@ -99,7 +99,7 @@ const seed: State['data'] = {
         { id: 3, label: '채널', column: 'usedChannels' },
         { id: 4, label: '동영상', column: 'usedVideos' },
         { id: 5, label: '레퍼런스', column: 'usedReference' },
-        { id: 6, label: '프롬프트', column: 'usedPrompt' },
+        { id: 6, label: '프롬프트', column: 'usedPrompts' },
         { id: 7, label: '영어', column: 'usedEnglish' },
         { id: 8, label: '전체수', column: 'total' },
       ],

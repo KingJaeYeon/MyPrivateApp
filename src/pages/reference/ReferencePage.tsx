@@ -1,12 +1,5 @@
 import { DataTable } from '@/components/data-table.tsx';
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button.tsx';
-import { ChevronDown } from 'lucide-react';
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input.tsx';
 import { toast } from 'sonner';
@@ -15,11 +8,24 @@ import {
   ReferenceColumns,
 } from '@/components/data-table-columns/reference-columns.tsx';
 import useReferenceStore from '@/store/useReferenceStore.ts';
-import { AddReference } from '@/pages/reference/components/AddReference.tsx';
+import { ReferenceSidePanel } from '@/pages/reference/components/ReferenceSidePanel.tsx';
+
+import TagSelector from '@/components/TagSelector.tsx';
+import useTagStore from '@/store/useTagStore.ts';
+import { ButtonGroup } from '@/components/ui/button-group';
+
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
+
+const FILTER = [
+  { label: '참조', value: 'name' },
+  { label: '메모', value: 'memo' },
+];
 
 export default function ReferencePage() {
   const { data, saved, isChanged } = useReferenceStore();
+  const { data: tags } = useTagStore();
   const [isEdit, setEdit] = useState(false);
+  const [filter, setFilter] = React.useState(FILTER[0]);
 
   const columns = REFERENCE_COLUMNS;
 
@@ -37,52 +43,47 @@ export default function ReferencePage() {
           columns={REFERENCE_COLUMNS}
           data={data}
           tableControls={(table) => {
+            const onFilterChange = (value: string) => {
+              // 이전 필터 값 초기화
+              table.getColumn(filter.value)?.setFilterValue('');
+
+              const find = FILTER.find((r) => r.value === value) ?? FILTER[0];
+              setFilter(find);
+            };
             return (
               <div className={'flex w-full justify-between'}>
                 <div className={'flex gap-1'}>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger>
-                      <Button variant="outline" className="ml-auto" size={'sm'}>
-                        Tag
-                        <ChevronDown />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start">
-                      {table
-                        .getAllColumns()
-                        .filter((column) => column.getCanHide())
-                        .map((column) => {
-                          return (
-                            <DropdownMenuCheckboxItem
-                              key={column.id}
-                              className="capitalize"
-                              checked={column.getIsVisible()}
-                              onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                            >
-                              {column.id}
-                            </DropdownMenuCheckboxItem>
-                          );
-                        })}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                  <Input
-                    placeholder="Search Idx..."
-                    value={(table.getColumn('idx')?.getFilterValue() as string) ?? ''}
-                    onChange={(event) => {
-                      console.log(table.getColumn('idx'));
-                      return table.getColumn('idx')?.setFilterValue(event.target.value);
+                  <TagSelector
+                    value={(table.getColumn('tag')?.getFilterValue() as string) ?? ''}
+                    setValue={(tagName) => {
+                      const matched = tags.find((t) => t.name === tagName);
+                      const tagIdx = matched ? matched.idx : ''; // 없으면 필터 해제
+                      table.getColumn('tag')?.setFilterValue(tagIdx);
                     }}
-                    className="h-8 w-[130px]"
                   />
-                  <Input
-                    placeholder="Search Tag..."
-                    value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-                    onChange={(event) => {
-                      console.log(table.getColumn('name'));
-                      return table.getColumn('name')?.setFilterValue(event.target.value);
-                    }}
-                    className="h-8 w-[200px]"
-                  />
+                  <ButtonGroup>
+                    <ButtonGroup>
+                      <Select value={filter.value} onValueChange={onFilterChange}>
+                        <SelectTrigger className="font-mono" size={'sm'}>
+                          {filter.label}
+                        </SelectTrigger>
+                        <SelectContent className="min-w-18">
+                          {FILTER.map((currency) => (
+                            <SelectItem key={currency.value} value={currency.value}>
+                              <span className="text-muted-foreground">{currency.label}</span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Input
+                        value={(table.getColumn(filter.value)?.getFilterValue() as string) ?? ''}
+                        onChange={(event) => {
+                          return table.getColumn(filter.value)?.setFilterValue(event.target.value);
+                        }}
+                        className="h-8 w-[170px]"
+                      />
+                    </ButtonGroup>
+                  </ButtonGroup>
                 </div>
                 <div className={'flex gap-2'}>
                   {isEdit ? (
@@ -125,7 +126,7 @@ export default function ReferencePage() {
           }}
         />
       </div>
-      <AddReference />
+      <ReferenceSidePanel />
     </div>
   );
 }

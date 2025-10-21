@@ -20,7 +20,7 @@ type Action = {
   reset: () => void;
 };
 
-const useReferenceStore = create(
+const usePromptsStore = create(
   immer<State & Action>((set, get) => ({
     data: [],
     isChanged: false,
@@ -54,4 +54,4 @@ const useReferenceStore = create(
   }))
 );
 
-export default useReferenceStore;
+export default usePromptsStore;
