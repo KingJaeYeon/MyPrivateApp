@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom';
 import ThemeToggle from '@/components/ThemeToggle';
 import Navigator from '@/components/Navigator';
 import ModalRenderer from '@/components/ModalRenderer';
-import useHasFiles from '@/hooks/useHasFiles.tsx';
+import useHasFiles from '@/hooks/use-has-files.tsx';
 
 export default function App() {
   useHasFiles();

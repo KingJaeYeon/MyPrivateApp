@@ -96,7 +96,7 @@ export function Home() {
                 key={`home-${i}`}
                 className={'flex w-full flex-1 rounded-none border'}
                 variant={'secondary'}
-              >{`home-${i}`}</Button>
+              ></Button>
             ))}
           </div>
           <div className={'flex flex-1'}>

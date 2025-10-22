@@ -23,7 +23,7 @@ import useMeasure from 'react-use-measure';
 import useTableStore from '@/store/useTableStore.ts';
 import { cn, FontSize } from '@/lib/utils.ts';
 import { useSpring, animated } from '@react-spring/web';
-import useSyncScroll from '@/hooks/useSyncScroll.ts';
+import useSyncScroll from '@/hooks/use-sync-scroll.ts';
 
 type Props<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
