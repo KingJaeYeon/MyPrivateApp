@@ -12,7 +12,6 @@ const init: TagColumns[] = [
     name: '',
     usedChannels: 0,
     usedVideos: 0,
-    usedEnglish: 0,
     usedPrompts: 0,
     usedReference: 0,
     total: 0,
@@ -20,8 +19,9 @@ const init: TagColumns[] = [
 ];
 
 export function AddTag() {
-  const { push } = useTagStore();
+  const { push, data } = useTagStore();
   const [inputs, setInputs] = useState<TagColumns[]>(init);
+
   const pushInput = () => {
     if (confirm('추가하시겠습니까?\n(엑셀 갱신버튼은 따로 눌러야합니다.)')) {
       const result = push(inputs);
@@ -41,7 +41,6 @@ export function AddTag() {
         name: '',
         usedChannels: 0,
         usedVideos: 0,
-        usedEnglish: 0,
         usedPrompts: 0,
         usedReference: 0,
         total: 0,
@@ -66,11 +65,17 @@ export function AddTag() {
     );
   };
 
+  const autoIdxHandler = () => {
+    const lastIdx = !!data[data?.length - 1] ? +data[data.length - 1]?.idx + 1 : 1;
+    setInputs(inputs.map((v, i) => ({ ...v, idx: (lastIdx + i).toString() })));
+  };
+
   const isEmpty = inputs.every((e) => e.name !== '' && e.idx !== '');
 
   return (
     <div className={'flex flex-3 flex-col'}>
-      <div className={'mb-2 flex justify-end'}>
+      <div className={'mb-2 flex justify-end gap-2'}>
+        <Button onClick={autoIdxHandler}>Idx Auto</Button>
         <Button variant={'secondary'} disabled={!isEmpty} onClick={pushInput}>
           추가
         </Button>

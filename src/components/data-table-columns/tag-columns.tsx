@@ -11,7 +11,6 @@ export type TagColumns = {
   usedVideos: number;
   usedReference: number;
   usedPrompts: number;
-  usedEnglish: number;
   total: number;
 };
 
@@ -92,15 +91,6 @@ export const TAG_COLUMNS: ColumnDef<TagColumns>[] = [
     cell: ({ row }) => (
       <p className={'cursor-pointer text-xs break-words whitespace-normal'}>
         {row.original.usedPrompts}
-      </p>
-    ),
-  },
-  {
-    accessorKey: 'usedEnglish',
-    header: '영어',
-    cell: ({ row }) => (
-      <p className={'cursor-pointer text-xs break-words whitespace-normal'}>
-        {row.original.usedEnglish}
       </p>
     ),
   },
