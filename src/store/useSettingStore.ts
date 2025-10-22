@@ -7,6 +7,7 @@ import { FilterUI } from '@/store/useVideoSearchStore.ts';
 export type ExcelFiles =
   | 'tag'
   | 'channel'
+  | 'channelHistory'
   | 'result'
   | 'prompt'
   | 'reference'
@@ -19,7 +20,6 @@ export type ExcelColumn = {
   column: string;
   children?: any[];
 };
-
 export type SheetConfig = {
   /** essential 컬럼의 ‘정의’. 앱 코드/설정에서만 바뀜. UI 수정 불가 */
   essentialDefs: ExcelColumn[];
@@ -28,6 +28,24 @@ export type SheetConfig = {
 
   /** optional 컬럼은 자유롭게 추가/삭제/편집 */
   optional: ExcelColumn[];
+};
+
+export type SchedulerConfig = {
+  rule: SCHEDULES_RULE;
+  autoStart: boolean;
+  updatedAt: Date;
+};
+export type SCHEDULES_RULE = '0 9 * * *' | '0 0 * * *' | '0 9 * * 1';
+export const SCHEDULES = [
+  { label: '매일 오전 9시', value: '0 9 * * *' },
+  { label: '매일 자정', value: '0 0 * * *' },
+  { label: '매주 월요일 오전 9시', value: '0 9 * * 1' },
+];
+
+type YouTubeConfig = {
+  apiKey: string;
+  usedQuota: number;
+  quotaUpdatedAt: string;
 };
 
 // const orderedEssential = order
@@ -73,13 +91,10 @@ export type State = {
         fileStampMode: 'date' | 'datetime';
       };
     };
-    youtube: {
-      apiKey: string;
-      usedQuota: number;
-      quotaUpdatedAt: string;
-    };
+    youtube: YouTubeConfig;
     youtubeHistory: { data: FilterUI; result: VideoRow[]; searchedAt: number }[];
     hasFile?: boolean;
+    scheduler: SchedulerConfig;
   };
 };
 
@@ -88,7 +103,19 @@ type Action = {
   updateIn: <K extends keyof State['data']>(key: K, value: State['data'][K]) => Promise<void>;
 };
 
-export type ExcelConfig = Record<string, SheetConfig>;
+export type ExcelConfig = Record<ExcelFiles, SheetConfig>;
+
+export const seedChannelHistory = {
+  essentialDefs: [
+    { id: 1, label: '채널ID', column: 'channelId' },
+    { id: 2, label: '구독자 수', column: 'subscriberCount' },
+    { id: 3, label: '총 조회수', column: 'viewCount' },
+    { id: 4, label: '동영상 수', column: 'videoCount' },
+    { id: 5, label: '갱신날짜', column: 'fetchedAt' },
+  ],
+  order: [1, 2, 3, 4, 5],
+  optional: [],
+};
 
 const seed: State['data'] = {
   excel: {
@@ -105,6 +132,7 @@ const seed: State['data'] = {
       order: [1, 2, 3, 4, 5, 6, 7],
       optional: [],
     },
+    channelHistory: seedChannelHistory,
     channel: {
       essentialDefs: [
         { id: 1, label: '채널명', column: 'name' },
@@ -164,8 +192,9 @@ const seed: State['data'] = {
         { id: 2, label: '태그', column: 'tag' },
         { id: 3, label: 'Prompt', column: 'prompt' },
         { id: 4, label: '메모', column: 'memo' },
+        { id: 5, label: '갱신날짜', column: 'updatedAt' },
       ],
-      order: [1, 2, 3, 4],
+      order: [1, 2, 3, 4, 5],
       optional: [],
     },
     reference: {
@@ -201,6 +230,7 @@ const seed: State['data'] = {
       result: 'result',
       prompt: 'prompt.xlsx',
       reference: 'reference.xlsx',
+      channelHistory: 'channels-history.xlsx',
       english: 'english.xlsx',
       progress: 'progress.xlsx',
     },
@@ -211,6 +241,11 @@ const seed: State['data'] = {
   youtube: { apiKey: '', usedQuota: 0, quotaUpdatedAt: '' },
   youtubeHistory: [],
   hasFile: false,
+  scheduler: {
+    rule: '0 0 * * *',
+    autoStart: false,
+    updatedAt: new Date(),
+  },
 };
 
 const useSettingStore = create(
@@ -220,7 +255,6 @@ const useSettingStore = create(
     init: async () => {
       try {
         const stored = await window.pref.get('settings');
-        stored.excel = seed.excel;
         if (stored) {
           set({ data: stored }); // 저장된 값으로 state 덮어쓰기
         } else {

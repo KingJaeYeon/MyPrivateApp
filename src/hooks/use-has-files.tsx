@@ -22,6 +22,7 @@ export default function useHasFiles() {
           await initR(`${location}/${name.reference}`);
           await initP(`${location}/${name.prompt}`);
           await window.fsApi.listExcel(`${location}/${name.result.split('/')[0]}`);
+          await window.fsApi.exists(`${location}/${name.channelHistory}`);
           await updateIn('hasFile', true);
           console.log('API Store initialized');
         } catch (e) {

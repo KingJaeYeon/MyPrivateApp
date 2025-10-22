@@ -1,5 +1,4 @@
-import type { ScheduledTask } from 'node-cron';
-import cron from 'node-cron';
+import schedule, { Job } from 'node-schedule';
 import * as XLSX from 'xlsx';
 import * as fs from 'fs';
 import path from 'path';
@@ -10,28 +9,29 @@ import { ChannelColumns } from '@/components/data-table-columns/channel-columns.
 const configStore = new Store();
 
 type SchedulerJob = {
-  task: ScheduledTask;
-  schedule: string;
+  job: Job;
+  rule: string;
   lastRun?: Date;
+  nextRun?: Date | null; // Date | null로 변경
   isRunning: boolean;
 };
-
-class YoutubeScheduler {
+class YouTubeScheduler {
   private jobs: Map<string, SchedulerJob> = new Map();
   private baseURL: string = 'https://www.googleapis.com/youtube/v3';
 
   private getAPIKey(): string {
-    return configStore.get('youtubeApiKey', '') as string;
+    const settings = configStore.get('settings') as any;
+    return settings?.youtube?.apiKey || '';
   }
 
   // Excel 읽기 (xlsx 사용)
   private async readExcel(filePath: string): Promise<any[]> {
     try {
-      const workbook = XLSX.readFile(filePath);
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-      const data = XLSX.utils.sheet_to_json(worksheet);
-      return data;
+      const fileBuffer = fs.readFileSync(filePath);
+      // XLSX.read 로 워크북 파싱
+      const wb = XLSX.read(fileBuffer, { type: 'buffer' });
+      const sheet = wb.Sheets[wb.SheetNames[0]];
+      return XLSX.utils.sheet_to_json(sheet, { defval: '' });
     } catch (error) {
       console.error('Excel 읽기 실패:', error);
       return [];
@@ -39,12 +39,23 @@ class YoutubeScheduler {
   }
 
   // Excel 쓰기 (xlsx 사용)
-  private async writeExcel(filePath: string, data: any[]): Promise<void> {
+  private async overWriteExcel(filePath: string, data: any[]): Promise<void> {
     try {
-      const worksheet = XLSX.utils.json_to_sheet(data);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-      XLSX.writeFile(workbook, filePath);
+      const parsed = path.parse(filePath);
+
+      // 0) 상위 폴더 보장
+      if (!fs.existsSync(parsed.dir)) {
+        fs.mkdirSync(parsed.dir, { recursive: true });
+      }
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(data);
+      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+      const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'buffer' });
+      // 3) 원자적 저장 (tmp → rename)
+      const tmp = path.join(parsed.dir, `${parsed.name}.tmp${parsed.ext}`);
+      fs.writeFileSync(tmp, wbout);
+      fs.renameSync(tmp, filePath);
     } catch (error) {
       console.error('Excel 쓰기 실패:', error);
       throw error;
@@ -62,9 +73,10 @@ class YoutubeScheduler {
     const batchSize = 50;
     const results = [];
 
+    let usedQuota = 0;
     for (let i = 0; i < channelIds.length; i += batchSize) {
       const batch = channelIds.slice(i, i + batchSize);
-
+      usedQuota += 1;
       const params = new URLSearchParams({
         part: 'snippet,statistics',
         id: batch.join(','),
@@ -97,6 +109,9 @@ class YoutubeScheduler {
       }
     }
 
+    const quota = configStore.get('settings.youtube.usedQuota', 0);
+    configStore.set('settings.youtube.usedQuota', Number(quota) + usedQuota);
+
     return results;
   }
 
@@ -111,16 +126,19 @@ class YoutubeScheduler {
 
     try {
       // 1. 설정에서 경로 가져오기
-      const folderLocation = configStore.get('folder.location', '') as string;
-      const channelFileName = configStore.get('folder.name.channel', 'channels.xlsx') as string;
-      const channelsPath = path.join(folderLocation, channelFileName);
+      const folderLocation = configStore.get('settings.folder.location', '') as string;
+      const channelFileName = configStore.get(
+        'settings.folder.name.channel',
+        'channels.xlsx'
+      ) as string;
+      const channelsPath = `${folderLocation}/${channelFileName}`;
 
       if (!folderLocation) {
-        throw new Error('폴더 경로가 설정되지 않았습니다.');
+        new Error('폴더 경로가 설정되지 않았습니다.');
       }
 
       if (!fs.existsSync(channelsPath)) {
-        throw new Error('channels.xlsx 파일을 찾을 수 없습니다.');
+        new Error(`${channelFileName} 파일을 찾을 수 없습니다.`);
       }
 
       // 2. channels.xlsx에서 기존 데이터 읽기
@@ -179,14 +197,16 @@ class YoutubeScheduler {
       });
 
       // 6. channels.xlsx 덮어쓰기
-      await this.writeExcel(channelsPath, updatedChannels);
+      const channelsSheet: any = configStore.get('settings.excel.channel', seedChannelHistory);
+      const aoa = buildAoaFromObjects(updatedChannels, channelsSheet);
+      await this.overWriteExcel(channelsPath, aoa);
       console.log('💾 channels.xlsx 업데이트 완료');
 
       // 7. channels-history.xlsx에 추가
       const historyData = updatedChannels
         .filter((c) => apiDataMap.has(c.channelId))
         .map((c) => ({
-          timestamp,
+          fetchedAt: timestamp,
           channelId: c.channelId,
           name: c.name,
           subscriberCount: c.subscriberCount,
@@ -229,8 +249,12 @@ class YoutubeScheduler {
 
   // channels-history.xlsx에 히스토리 추가
   async appendToHistory(historyData: any[]): Promise<void> {
-    const folderLocation = configStore.get('folder.location', '') as string;
-    const historyPath = path.join(folderLocation, 'channels-history.xlsx');
+    const folderLocation = configStore.get('settings.folder.location', '') as string;
+    const historyFileName = configStore.get(
+      'settings.folder.name.channelHistory',
+      'channels-history.xlsx'
+    ) as string;
+    const historyPath = `${folderLocation}/${historyFileName}`;
 
     let existingHistory: any[] = [];
 
@@ -245,70 +269,74 @@ class YoutubeScheduler {
 
     const allHistory = [...existingHistory, ...historyData];
 
-    await this.writeExcel(historyPath, allHistory);
+    const historySheet: any = configStore.get('settings.excel.channelHistory', seedChannelHistory);
+    const aoa = buildAoaFromObjects(allHistory, historySheet);
+    await this.overWriteExcel(historyPath, aoa);
     console.log('📊 히스토리 추가:', historyData.length);
   }
 
   // 스케줄러 시작
-  startScheduler(schedule: string = '0 */6 * * *'): boolean {
+  startScheduler(rule: string | schedule.RecurrenceRule = '0 0 * * *'): boolean {
     if (this.jobs.has('channelSync')) {
       console.log('⚠️ 스케줄러가 이미 실행 중입니다.');
       return false;
     }
 
-    if (!cron.validate(schedule)) {
-      console.error('❌ 잘못된 cron 표현식:', schedule);
-      return false;
-    }
-
-    const task: ScheduledTask = cron.schedule(
-      schedule,
-      async () => {
-        const job = this.jobs.get('channelSync');
-        if (job) {
-          job.lastRun = new Date();
-          job.isRunning = true;
+    try {
+      const job = schedule.scheduleJob('channelSync', rule, async (fireDate) => {
+        const schedulerJob = this.jobs.get('channelSync');
+        if (schedulerJob) {
+          schedulerJob.lastRun = fireDate;
+          schedulerJob.isRunning = true;
+          schedulerJob.nextRun = job.nextInvocation(); // .toDate() 제거
         }
+
+        console.log(`⏰ 스케줄 실행: ${fireDate}`);
 
         try {
           await this.collectChannelData();
         } catch (error) {
           console.error('스케줄러 작업 실패:', error);
         } finally {
-          if (job) {
-            job.isRunning = false;
+          if (schedulerJob) {
+            schedulerJob.isRunning = false;
+            schedulerJob.nextRun = job.nextInvocation(); // .toDate() 제거
           }
         }
-      },
-      {
-        // scheduled: false,
+      });
+
+      if (!job) {
+        console.error('❌ 스케줄러 생성 실패');
+        return false;
       }
-    );
 
-    this.jobs.set('channelSync', {
-      task,
-      schedule,
-      isRunning: false,
-    });
+      this.jobs.set('channelSync', {
+        job,
+        rule: typeof rule === 'string' ? rule : 'RecurrenceRule',
+        isRunning: false,
+        nextRun: job.nextInvocation(), // .toDate() 제거
+      });
 
-    task.start();
-    console.log('✅ 스케줄러 시작:', schedule);
+      console.log('✅ 스케줄러 시작:', rule);
+      console.log('📅 다음 실행:', job.nextInvocation()); // .toDate() 제거
 
-    configStore.set('scheduler.schedule', schedule);
-    configStore.set('scheduler.enabled', true);
+      configStore.set('settings.scheduler.rule', rule);
 
-    return true;
+      return true;
+    } catch (error) {
+      console.error('❌ 스케줄러 시작 실패:', error);
+      return false;
+    }
   }
 
   // 스케줄러 중지
   stopScheduler(): boolean {
-    const job = this.jobs.get('channelSync');
-    if (job) {
-      job.task.stop();
+    const schedulerJob = this.jobs.get('channelSync');
+    if (schedulerJob) {
+      schedulerJob.job.cancel();
       this.jobs.delete('channelSync');
       console.log('⏹️ 스케줄러 중지');
 
-      configStore.set('scheduler.enabled', false);
       return true;
     }
     return false;
@@ -317,32 +345,84 @@ class YoutubeScheduler {
   // 즉시 실행
   async runNow(): Promise<any> {
     console.log('▶️ 수동 실행...');
-    return await this.collectChannelData();
+    await this.collectChannelData();
   }
 
   // 상태 조회
   getStatus(): any {
-    const job = this.jobs.get('channelSync');
-    const schedule = configStore.get('scheduler.schedule', '0 */6 * * *') as string;
-
+    const schedulerJob = this.jobs.get('channelSync');
+    const rule = configStore.get('settings.scheduler.rule', '0 0 * * *') as string;
     return {
-      isRunning: job?.isRunning || false,
-      isEnabled: !!job,
-      schedule: job?.schedule || schedule,
-      lastRun: job?.lastRun || null,
+      isRunning: schedulerJob?.isRunning || false,
+      isEnabled: !!schedulerJob,
+      rule: schedulerJob?.rule || rule,
+      lastRun: schedulerJob?.lastRun || null,
+      nextRun: schedulerJob?.nextRun || null, // 이미 Date | null
     };
   }
 
-  // API Key 설정
-  setAPIKey(apiKey: string): void {
-    configStore.set('youtubeApiKey', apiKey);
-    console.log('✅ YouTube API Key 저장됨');
-  }
-
-  getAPIKeyStatus(): boolean {
-    const apiKey = this.getAPIKey();
-    return !!apiKey && apiKey.length > 0;
+  // 모든 스케줄 정리
+  cancelAllJobs(): void {
+    this.jobs.forEach((schedulerJob, name) => {
+      schedulerJob.job.cancel();
+      console.log(`🗑️ 스케줄 취소: ${name}`);
+    });
+    this.jobs.clear();
   }
 }
 
-export const youtubeScheduler = new YoutubeScheduler();
+export const youtubeScheduler = new YouTubeScheduler();
+
+function buildAoaFromObjects(
+  rows: Record<string, any>[], // 앱 내부 column기반 데이터 배열
+  sheet: SheetConfig // 해당 시트 설정
+): any[][] {
+  // id → def
+  const defsMap = new Map([...sheet.essentialDefs, ...sheet.optional].map((d) => [d.id, d]));
+  // order 순서대로 defs
+  const orderedDefs = sheet.order.map((id) => defsMap.get(id)).filter((d): d is ExcelColumn => !!d);
+
+  // 헤더(label)
+  const header = orderedDefs.map((d) => d.column);
+
+  // 바디(column 키로 값 추출)
+  const body = rows.map((obj) => orderedDefs.map((d) => formatArrayValue(obj[d.column])));
+
+  return [header, ...body];
+}
+
+function formatArrayValue(value: any): string {
+  if (Array.isArray(value)) {
+    return value.join('_');
+  }
+  return value ?? '';
+}
+
+const seedChannelHistory = {
+  essentialDefs: [
+    { id: 1, label: '채널ID', column: 'channelId' },
+    { id: 2, label: '구독자 수', column: 'subscriberCount' },
+    { id: 3, label: '총 조회수', column: 'viewCount' },
+    { id: 4, label: '동영상 수', column: 'videoCount' },
+    { id: 5, label: '갱신날짜', column: 'fetchedAt' },
+  ],
+  order: [1, 2, 3, 4, 5],
+  optional: [],
+};
+
+type ExcelColumn = {
+  id: number;
+  label: string;
+  column: string;
+  children?: any[];
+};
+
+type SheetConfig = {
+  /** essential 컬럼의 ‘정의’. 앱 코드/설정에서만 바뀜. UI 수정 불가 */
+  essentialDefs: ExcelColumn[];
+  /** essential 컬럼의 ‘순서’. UI에서 드래그 등으로 바꾸는 대상 */
+  order: number[]; // = essentialDefs의 id 배열
+
+  /** optional 컬럼은 자유롭게 추가/삭제/편집 */
+  optional: ExcelColumn[];
+};

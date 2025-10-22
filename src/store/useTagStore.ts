@@ -8,9 +8,8 @@ import useChannelStore from '@/store/useChannelStore.ts';
 import useReferenceStore from '@/store/useReferenceStore.ts';
 import { useVideoSearchStore } from '@/store/useVideoSearchStore.ts';
 import usePromptsStore from '@/store/usePromptsStore';
-import useEnglishStore from '@/store/useEnglishStore.ts';
 
-type TagsKey = 'channel' | 'reference' | 'prompt' | 'english';
+type TagsKey = 'channel' | 'reference' | 'prompt';
 
 /** 전체 앱 설정 */
 export type State = {
@@ -76,64 +75,35 @@ const useTagStore = create(
         const channels = useChannelStore.getState().data;
         const references = useReferenceStore.getState().data;
         const prompts = usePromptsStore.getState().data;
-        const englishes = useEnglishStore.getState().data;
 
         countTagsFromStore(channels, 'usedChannels');
         countTagsFromStore(references, 'usedReference');
         countTagsFromStore(prompts, 'usedPrompts');
-        countTagsFromStore(englishes, 'usedEnglish');
 
         // total 계산
         tags.forEach((tag) => {
-          tag.total =
-            (tag.usedChannels || 0) +
-            (tag.usedReference || 0) +
-            (tag.usedPrompts || 0) +
-            (tag.usedEnglish || 0);
+          tag.total = (tag.usedChannels || 0) + (tag.usedReference || 0) + (tag.usedPrompts || 0);
         });
       } else if (type === 'channel') {
         const channels = useChannelStore.getState().data;
         countTagsFromStore(channels, 'usedChannels');
 
         tags.forEach((tag) => {
-          tag.total =
-            (tag.usedChannels || 0) +
-            (tag.usedReference || 0) +
-            (tag.usedPrompts || 0) +
-            (tag.usedEnglish || 0);
+          tag.total = (tag.usedChannels || 0) + (tag.usedReference || 0) + (tag.usedPrompts || 0);
         });
       } else if (type === 'reference') {
         const references = useReferenceStore.getState().data;
         countTagsFromStore(references, 'usedReference');
 
         tags.forEach((tag) => {
-          tag.total =
-            (tag.usedChannels || 0) +
-            (tag.usedReference || 0) +
-            (tag.usedPrompts || 0) +
-            (tag.usedEnglish || 0);
+          tag.total = (tag.usedChannels || 0) + (tag.usedReference || 0) + (tag.usedPrompts || 0);
         });
       } else if (type === 'prompt') {
         const prompts = usePromptsStore.getState().data;
         countTagsFromStore(prompts, 'usedPrompts');
 
         tags.forEach((tag) => {
-          tag.total =
-            (tag.usedChannels || 0) +
-            (tag.usedReference || 0) +
-            (tag.usedPrompts || 0) +
-            (tag.usedEnglish || 0);
-        });
-      } else if (type === 'english') {
-        const englishes = useEnglishStore.getState().data;
-        countTagsFromStore(englishes, 'usedEnglish');
-
-        tags.forEach((tag) => {
-          tag.total =
-            (tag.usedChannels || 0) +
-            (tag.usedReference || 0) +
-            (tag.usedPrompts || 0) +
-            (tag.usedEnglish || 0);
+          tag.total = (tag.usedChannels || 0) + (tag.usedReference || 0) + (tag.usedPrompts || 0);
         });
       }
 

@@ -6,13 +6,13 @@ import {
   setupAppHandlers,
   setupFsHandlers,
   setupExcelHandlers,
-  // registerSchedulerHandlers,
+  registerSchedulerHandlers,
 } from './handlers';
-// import { youtubeScheduler } from './services/youtube.scheduler.ts';
 import Store from 'electron-store';
+import { youtubeScheduler } from './services/youtube.scheduler.ts';
 
 const configStore = new Store();
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+export const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // The built directory structure
 //
 // ├─┬─┬ dist
@@ -107,16 +107,14 @@ app.whenReady().then(() => {
   setupAppHandlers();
   setupFsHandlers();
   setupExcelHandlers();
-  // add
+  // IPC 핸들러 등록
   registerSchedulerHandlers();
-
   // 앱 시작 시 저장된 설정으로 스케줄러 자동 시작 (선택사항)
-  const schedulerEnabled = configStore.get('scheduler.enabled', false) as boolean;
-  const schedule = configStore.get('scheduler.schedule', '0 */6 * * *') as string;
-
+  const schedulerEnabled = configStore.get('settings.scheduler.autoStart', false) as boolean;
+  console.log(schedulerEnabled ? 'dd' : 'ss');
+  const rule = configStore.get('settings.scheduler.rule', '0 9 * * *') as string;
   if (schedulerEnabled) {
-    console.log('🔄 스케줄러 자동 시작');
-    youtubeScheduler.startScheduler(schedule);
+    youtubeScheduler.startScheduler(rule);
   }
 });
 

@@ -5,7 +5,9 @@ import { Badge } from '@/components/ui/badge.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import Tip from '@/components/Tip.tsx';
 import useTagStore from '@/store/useTagStore.ts';
-import { Youtube } from '@/assets/svg';
+import { IconOutLink, Youtube } from '@/assets/svg';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
 
 const nf = new Intl.NumberFormat();
 
@@ -146,7 +148,11 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     accessorKey: 'fetchedAt',
     header: '갱신날짜',
     size: 120,
-    cell: ({ row }) => <span className="text-xs tabular-nums">{row.original.fetchedAt}</span>,
+    cell: ({ row }) => (
+      <span className="text-xs tabular-nums">
+        {format(row.original.fetchedAt, 'yyyy.MM.dd', { locale: ko })}
+      </span>
+    ),
   },
   {
     accessorKey: 'link',
@@ -155,11 +161,11 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     enableSorting: false,
     cell: ({ row }) => (
       <Button
-        size="sm"
+        size="icon-sm"
         variant="secondary"
         onClick={() => window.electronAPI.openExternal(row.original.link)}
       >
-        열기
+        <IconOutLink />
       </Button>
     ),
   },

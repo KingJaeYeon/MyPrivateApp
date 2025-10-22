@@ -64,6 +64,23 @@ declare global {
       delete: (filePath: string) => Promise<boolean>;
     };
     ipcRenderer: import('electron').IpcRenderer;
+
+    schedulerApi: {
+      start: (rule?: string) => Promise<{ success: boolean; error?: string }>;
+      stop: () => Promise<{ success: boolean }>;
+      runNow: () => Promise<{ success: boolean; count?: number; total?: number; message?: string }>;
+      getStatus: () => Promise<{
+        isRunning: boolean;
+        isEnabled: boolean;
+        rule: string;
+        lastRun: Date | null;
+        nextRun: Date | null;
+      }>;
+      onChannelsUpdated: (
+        callback: (data: { count: number; total: number; timestamp: string }) => void
+      ) => () => void;
+      onChannelsError: (callback: (error: { message: string }) => void) => () => void;
+    };
   }
 }
 

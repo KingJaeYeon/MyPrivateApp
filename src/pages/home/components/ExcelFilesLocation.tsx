@@ -60,6 +60,7 @@ export function ExcelFilesLocation() {
       const path = {
         tag: `${location}/${name.tag}`,
         channel: `${location}/${name.channel}`,
+        channelHistory: `${location}/${name.channelHistory}`,
         english: `${location}/${name.english}`,
         prompt: `${location}/${name.prompt}`,
         reference: `${location}/${name.reference}`,
@@ -69,6 +70,7 @@ export function ExcelFilesLocation() {
 
       const hasTag = await window.fsApi.exists(path.tag);
       const hasChannel = await window.fsApi.exists(path.channel);
+      const hasChannelHistory = await window.fsApi.exists(path.channelHistory);
       const hasEnglish = await window.fsApi.exists(path.english);
       const hasPrompt = await window.fsApi.exists(path.prompt);
       const hasReference = await window.fsApi.exists(path.reference);
@@ -80,6 +82,10 @@ export function ExcelFilesLocation() {
       if (!hasChannel) {
         const arr = getOrderedColumns(excel, 'channel', 'column');
         await window.excelApi.create(path.channel, [arr]);
+      }
+      if (!hasChannelHistory) {
+        const arr = getOrderedColumns(excel, 'channelHistory', 'column');
+        await window.excelApi.create(path.channelHistory, [arr]);
       }
       if (!hasEnglish) {
         const arr = getOrderedColumns(excel, 'english', 'column');

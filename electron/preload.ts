@@ -73,3 +73,21 @@ contextBridge.exposeInMainWorld('excelApi', {
     ipcRenderer.invoke('excel:append', filePath, rows, sheetName),
   delete: async (filePath: string) => await ipcRenderer.invoke('excel:delete', filePath),
 });
+
+contextBridge.exposeInMainWorld('schedulerApi', {
+  start: (rule?: string) => ipcRenderer.invoke('scheduler:start', rule),
+  stop: () => ipcRenderer.invoke('scheduler:stop'),
+  runNow: () => ipcRenderer.invoke('scheduler:runNow'),
+  getStatus: () => ipcRenderer.invoke('scheduler:getStatus'),
+
+  onChannelsUpdated: (callback: (data: any) => void) => {
+    const listener = (_: any, data: any) => callback(data);
+    ipcRenderer.on('channels:updated', listener);
+    return () => ipcRenderer.removeListener('channels:updated', listener);
+  },
+  onChannelsError: (callback: (error: any) => void) => {
+    const listener = (_: any, error: any) => callback(error);
+    ipcRenderer.on('channels:error', listener);
+    return () => ipcRenderer.removeListener('channels:error', listener);
+  },
+});

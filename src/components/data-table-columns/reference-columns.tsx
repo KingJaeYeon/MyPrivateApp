@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button.tsx';
 import Tip from '@/components/Tip.tsx';
 import useTagStore from '@/store/useTagStore.ts';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
+import { IconOutLink } from '@/assets/svg';
 
 export type ReferenceColumns = {
   idx: string;
@@ -92,11 +93,11 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
     enableSorting: false,
     cell: ({ row }) => (
       <Button
-        size="sm"
+        size="icon-sm"
         variant="secondary"
         onClick={() => window.electronAPI.openExternal(row.original.link)}
       >
-        열기
+        <IconOutLink />
       </Button>
     ),
   },

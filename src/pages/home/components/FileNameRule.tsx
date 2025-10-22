@@ -46,6 +46,7 @@ export function FileNameRule() {
       !!editValues?.prompt &&
       !!editValues?.reference &&
       !!editValues?.result &&
+      !!editValues.channelHistory &&
       !!editFileDate;
 
     if (!isAllFill) {
@@ -143,6 +144,18 @@ export function FileNameRule() {
                 className={cn(names.channel !== editValues?.channel && 'text-green-600')}
                 onChange={(e) => editHandler('channel', e.target.value)}
                 value={editValues?.channel}
+              />
+            </div>
+            <div className={'flex flex-col gap-1'}>
+              <Label htmlFor="mode" className={'text-xs text-green-500'}>
+                CHANNEL HISTORY
+              </Label>
+              <Input
+                className={cn(
+                  names.channelHistory !== editValues?.channelHistory && 'text-green-600'
+                )}
+                onChange={(e) => editHandler('channelHistory', e.target.value)}
+                value={editValues?.channelHistory}
               />
             </div>
             <div className={'flex flex-col gap-1'}>

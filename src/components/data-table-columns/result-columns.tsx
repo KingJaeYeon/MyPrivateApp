@@ -7,6 +7,7 @@ import Tip from '@/components/Tip.tsx';
 import { cn, formatCompactNumber } from '@/lib/utils.ts';
 import { Badge } from '@/components/ui/badge.tsx';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
+import { IconOutLink } from '@/assets/svg';
 
 const nf = new Intl.NumberFormat();
 
@@ -273,11 +274,11 @@ export const RESULT_COLUMNS = (isEdit: boolean, channelIds: string[]): ColumnDef
       maxSize: 65,
       cell: ({ row }) => (
         <Button
-          size="sm"
+          size="icon-sm"
           variant="secondary"
           onClick={() => window.electronAPI.openExternal(row.original.link)}
         >
-          열기
+          <IconOutLink />
         </Button>
       ),
       enableSorting: false,
@@ -466,11 +467,11 @@ export const RESULT_COLUMNS1: ColumnDef<VideoRow>[] = [
     maxSize: 65,
     cell: ({ row }) => (
       <Button
-        size="sm"
+        size="icon-sm"
         variant="secondary"
         onClick={() => window.electronAPI.openExternal(row.original.link)}
       >
-        열기
+        <IconOutLink />
       </Button>
     ),
     enableSorting: false,
