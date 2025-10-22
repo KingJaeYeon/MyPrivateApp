@@ -25,7 +25,12 @@ export default function QuotaReset() {
     // 2️⃣ quotaUpdatedAt이 오늘 오후 4시 이후에 갱신되었는지
     const isQuotaUpdatedAfter4PM =
       quotaTime !== null && isSameDay(curTime, quotaTime) && isAfter(quotaTime, today4PM);
+    console.log(isAfter4PM, isQuotaUpdatedAfter4PM);
     // 최종 판단 (오늘 4시 지남 + 아직 갱신 안됨)
+    if (!isQuotaUpdatedAfter4PM) {
+      return true;
+    }
+
     return isAfter4PM && !isQuotaUpdatedAfter4PM;
   };
 

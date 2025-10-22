@@ -1,6 +1,6 @@
 /// <reference types="vite-plugin-electron/electron-env" />
 
-import { AppPathKey } from './handlers/app-handlers.ts';
+import { AppPathKey } from './handlers/app.handler.ts';
 
 interface Config {
   settings: State['data'];

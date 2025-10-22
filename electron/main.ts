@@ -6,8 +6,12 @@ import {
   setupAppHandlers,
   setupFsHandlers,
   setupExcelHandlers,
+  // registerSchedulerHandlers,
 } from './handlers';
+// import { youtubeScheduler } from './services/youtube.scheduler.ts';
+import Store from 'electron-store';
 
+const configStore = new Store();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // The built directory structure
 //
@@ -103,4 +107,20 @@ app.whenReady().then(() => {
   setupAppHandlers();
   setupFsHandlers();
   setupExcelHandlers();
+  // add
+  registerSchedulerHandlers();
+
+  // 앱 시작 시 저장된 설정으로 스케줄러 자동 시작 (선택사항)
+  const schedulerEnabled = configStore.get('scheduler.enabled', false) as boolean;
+  const schedule = configStore.get('scheduler.schedule', '0 */6 * * *') as string;
+
+  if (schedulerEnabled) {
+    console.log('🔄 스케줄러 자동 시작');
+    youtubeScheduler.startScheduler(schedule);
+  }
+});
+
+// 앱 종료 시 스케줄러 정리
+app.on('before-quit', () => {
+  youtubeScheduler.stopScheduler();
 });
