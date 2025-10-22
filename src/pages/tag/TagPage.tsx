@@ -1,12 +1,5 @@
 import { DataTable } from '@/components/data-table.tsx';
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button.tsx';
-import { ChevronDown } from 'lucide-react';
 import { TAG_COLUMNS, TagColumns } from '@/components/data-table-columns/tag-columns.tsx';
 import { Input } from '@/components/ui/input.tsx';
 import useTagStore from '@/store/useTagStore.ts';
@@ -34,31 +27,6 @@ export default function TagPage() {
             return (
               <div className={'flex w-full justify-between'}>
                 <div className={'flex gap-1'}>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger>
-                      <Button variant="outline" className="ml-auto" size={'sm'}>
-                        Tag
-                        <ChevronDown />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start">
-                      {table
-                        .getAllColumns()
-                        .filter((column) => column.getCanHide())
-                        .map((column) => {
-                          return (
-                            <DropdownMenuCheckboxItem
-                              key={column.id}
-                              className="capitalize"
-                              checked={column.getIsVisible()}
-                              onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                            >
-                              {column.id}
-                            </DropdownMenuCheckboxItem>
-                          );
-                        })}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
                   <Input
                     placeholder="Search Idx..."
                     value={(table.getColumn('idx')?.getFilterValue() as string) ?? ''}

@@ -1,11 +1,12 @@
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
-
-import { setupConfigHandlers } from './config-service.ts';
-import { setupAppHandlers } from './app-service.ts';
-import { setupFsHandlers } from './fs-service.ts';
-import { setupExcelHandlers } from './excel-service.ts';
+import {
+  setupConfigHandlers,
+  setupAppHandlers,
+  setupFsHandlers,
+  setupExcelHandlers,
+} from './handlers';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // The built directory structure

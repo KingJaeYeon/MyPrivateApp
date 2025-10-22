@@ -1,4 +1,3 @@
-// main/services/config-service.ts
 import { ipcMain } from 'electron';
 
 const storePromise = import('electron-store').then((m) => new m.default({ name: 'config' }));

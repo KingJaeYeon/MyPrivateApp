@@ -1,4 +1,3 @@
-// main/services/fs-service.ts
 import { ipcMain } from 'electron';
 import path from 'node:path';
 import { promises as fsp } from 'node:fs';
