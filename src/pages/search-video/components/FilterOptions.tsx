@@ -19,6 +19,14 @@ import { useChannelPair, useCommonPair, useKeywordPair } from '@/hooks/useVideoS
 import { cn } from '@/lib/utils.ts';
 import { ButtonGroup } from '@/components/ui/button-group.tsx';
 import flag from '../../../../public/flag.json';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from '@/components/ui/input-group.tsx';
+import { IconCheck, IconLinearCopy } from '@/assets/svg';
+import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard.ts';
 
 export function FilterOptions() {
   const flags = Object.keys(flag) as (keyof typeof flag)[];
@@ -32,7 +40,7 @@ export function FilterOptions() {
     days: publishedAfterK,
   } = useKeywordPair();
   const { isPopularVideosOnly, maxChannels, days: publishedAfterC } = useChannelPair();
-
+  const { isCopied, copyToClipboard } = useCopyToClipboard();
   const days = mode === 'channels' ? publishedAfterC : publishedAfterK;
 
   return (
@@ -64,14 +72,25 @@ export function FilterOptions() {
                   <IconMoreInfo />
                 </Tip>
               </Label>
-              <Input
-                id="keyword"
-                value={keyword}
-                placeholder="입력해주세요."
-                onChange={(e) => setKeyword('keyword', e.target.value)}
-                className="h-8 w-[250px]"
-                aria-invalid={fieldErrorsKeys.includes('keyword')}
-              />
+              <InputGroup className="h-8 w-[270px]">
+                <InputGroupInput
+                  id="keyword"
+                  value={keyword}
+                  placeholder="입력해주세요."
+                  onChange={(e) => setKeyword('keyword', e.target.value)}
+                  aria-invalid={fieldErrorsKeys.includes('keyword')}
+                />
+                <InputGroupAddon align="inline-end">
+                  <InputGroupButton
+                    aria-label="Copy"
+                    title="Copy"
+                    size="icon-xs"
+                    onClick={() => copyToClipboard(keyword)}
+                  >
+                    {isCopied ? <IconCheck /> : <IconLinearCopy />}
+                  </InputGroupButton>
+                </InputGroupAddon>
+              </InputGroup>
             </div>
           </div>
         </div>
