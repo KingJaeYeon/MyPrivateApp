@@ -40,7 +40,7 @@ export default function MemoryBadge() {
       <PopoverTrigger>
         <Badge
           variant="secondary"
-          className="h-5 cursor-pointer gap-1 text-[10px] font-normal"
+          className="text-2xs h-5 cursor-pointer gap-1 font-normal"
           title={`CPU ${stats.cpu.toFixed(1)}% / App ${appPct}%`}
         >
           <span className={`inline-block h-2 w-2 rounded-full ${tone}`} />

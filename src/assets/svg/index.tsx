@@ -10,3 +10,4 @@ export * from './IconProvider';
 export * from './IconFolder';
 export * from './IconClose';
 export * from './IconCopy';
+export * from './IconEllipsis';

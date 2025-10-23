@@ -2,12 +2,12 @@ import { toast } from 'sonner';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
-import { Button } from '@/components/ui/button.tsx';
 import Tip from '@/components/Tip.tsx';
 import useTagStore from '@/store/useTagStore.ts';
-import { IconOutLink, Youtube } from '@/assets/svg';
+import { Youtube } from '@/assets/svg';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import ColumnMenu from '@/components/data-table-columns/ColumnMenu.tsx';
 
 const nf = new Intl.NumberFormat();
 
@@ -26,6 +26,7 @@ export type ChannelColumns = {
   fetchedAt: string;
   platform: string;
   videoCount: number;
+  menu: any;
 };
 
 const formatNumber = (num: number) => (
@@ -147,7 +148,7 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
   {
     accessorKey: 'fetchedAt',
     header: '갱신날짜',
-    size: 120,
+
     cell: ({ row }) => (
       <span className="text-xs tabular-nums">
         {format(row.original.fetchedAt, 'yyyy.MM.dd', { locale: ko })}
@@ -155,18 +156,10 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     ),
   },
   {
-    accessorKey: 'link',
-    header: '링크',
-    size: 120,
+    accessorKey: 'menu',
+    header: '',
+    size: 50,
     enableSorting: false,
-    cell: ({ row }) => (
-      <Button
-        size="icon-sm"
-        variant="secondary"
-        onClick={() => window.electronAPI.openExternal(row.original.link)}
-      >
-        <IconOutLink />
-      </Button>
-    ),
+    cell: (cell: any) => <ColumnMenu data={cell.row.original} />,
   },
 ];

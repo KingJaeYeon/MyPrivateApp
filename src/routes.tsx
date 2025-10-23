@@ -7,6 +7,8 @@ import TagPage from '@/pages/tag/TagPage';
 import ChannelsPage from '@/pages/channels/ChannelsPage';
 import ReferencePage from '@/pages/reference/ReferencePage.tsx';
 import PromptsPage from '@/pages/prompts/PromptsPage.tsx';
+import ChannelDetailPage from '@/pages/channel-detail/ChannelDetailPage.tsx';
+import NotFound from '@/pages/NotFound.tsx';
 
 export const navigationRoutes = [
   { path: '/', label: 'Home' },
@@ -44,6 +46,10 @@ export const routes: RouteObject[] = [
         element: <ChannelsPage />,
       },
       {
+        path: 'channels/:channelId',
+        element: <ChannelDetailPage />,
+      },
+      {
         path: 'reference',
         element: <ReferencePage />,
       },
@@ -53,7 +59,7 @@ export const routes: RouteObject[] = [
       },
       {
         path: '*',
-        element: <div>Not Found</div>,
+        element: <NotFound />,
       },
     ],
   },
