@@ -43,6 +43,7 @@
     "lucide-react": "^0.544.0",
     "node-cron": "^4.2.1",
     "node-schedule": "^2.1.1",
+    "pidusage": "^4.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^7.9.1",
@@ -59,6 +60,7 @@
   "devDependencies": {
     "@types/node": "^24.5.2",
     "@types/node-schedule": "^2.1.8",
+    "@types/pidusage": "^2.0.5",
     "@types/react": "^18.2.64",
     "@types/react-dom": "^18.2.21",
     "@typescript-eslint/eslint-plugin": "^7.1.1",

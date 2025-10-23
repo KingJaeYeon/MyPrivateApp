@@ -46,6 +46,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     return p as string;
   },
   openFolder: async (path: string) => await ipcRenderer.invoke('app:openFolder', path), // ✅ 새로 추가
+  getMemoryInfo: async () => await ipcRenderer.invoke('app:getMemoryInfo'), // ✅ 새로 추가
 });
 
 contextBridge.exposeInMainWorld('fsApi', {

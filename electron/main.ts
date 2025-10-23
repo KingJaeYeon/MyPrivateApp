@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, shell } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 import {
@@ -91,14 +91,6 @@ app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow();
   }
-});
-
-ipcMain.handle('app:openExternal', async (_e, url: string) => {
-  if (!/^https?:\/\//i.test(url) && !/^mailto:|^file:\/\//i.test(url)) {
-    throw new Error('Invalid URL scheme');
-  }
-  await shell.openExternal(url);
-  return true;
 });
 
 app.whenReady().then(() => {

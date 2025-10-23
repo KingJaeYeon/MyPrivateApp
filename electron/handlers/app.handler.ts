@@ -1,6 +1,8 @@
 // main/main.ts
 import { app, dialog, ipcMain, shell } from 'electron';
 import OpenDialogOptions = Electron.OpenDialogOptions;
+import * as os from 'node:os';
+import pidusage from 'pidusage';
 
 export type AppPathKey =
   | 'home'
@@ -57,5 +59,26 @@ export function setupAppHandlers() {
     if (!folderPath) return false;
     await shell.openPath(folderPath); // mac은 Finder, win은 Explorer에서 열림
     return true;
+  });
+
+  ipcMain.handle('app:openExternal', async (_e, url: string) => {
+    if (!/^https?:\/\//i.test(url) && !/^mailto:|^file:\/\//i.test(url)) {
+      throw new Error('Invalid URL scheme');
+    }
+    await shell.openExternal(url);
+    return true;
+  });
+
+  ipcMain.handle('app:getMemoryInfo', async (_e) => {
+    const totalMem = os.totalmem();
+    const freeMem = os.freemem();
+    const { cpu, memory, pid } = await pidusage(process.pid);
+    return {
+      totalMem,
+      freeMem,
+      appMem: memory, // bytes
+      cpu, // percent (0–100)
+      pid,
+    };
   });
 }

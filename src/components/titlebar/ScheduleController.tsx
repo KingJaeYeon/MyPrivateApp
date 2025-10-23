@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button.tsx';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/components/ui/select.tsx';
 import { Calendar, Clock, Play, RefreshCw, Square } from 'lucide-react';
 import useSettingStore, { SCHEDULES, SCHEDULES_RULE } from '@/store/useSettingStore.ts';
 import { format } from 'date-fns';

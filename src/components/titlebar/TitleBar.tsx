@@ -1,9 +1,10 @@
-import ThemeToggle from '@/components/ThemeToggle.tsx';
-import { ScheduleController } from '@/components/ScheduleController.tsx';
-import { Badge } from '@/components/ui/badge';
+import ThemeToggle from '@/components/titlebar/ThemeToggle.tsx';
+import { ScheduleController } from '@/components/titlebar/ScheduleController.tsx';
+import { Badge } from '@/components/ui/badge.tsx';
 import { Wifi } from 'lucide-react';
-import useSettingStore from '@/store/useSettingStore';
+import useSettingStore from '@/store/useSettingStore.ts';
 import { Youtube } from '@/assets/svg';
+import MemoryBadge from '@/components/titlebar/MemoryBadge.tsx';
 
 export default function TitleBar() {
   const hasApiKey = useSettingStore((s) => !!s.data.youtube.apiKey);
@@ -38,6 +39,7 @@ export default function TitleBar() {
 
       {/* 오른쪽: 컨트롤들 */}
       <div className="no-drag flex items-center gap-2">
+        <MemoryBadge />
         <ScheduleController />
         <div className="bg-border h-4 w-px" />
         <ThemeToggle />

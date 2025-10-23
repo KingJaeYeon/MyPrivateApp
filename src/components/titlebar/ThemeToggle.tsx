@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { Switch } from '@/components/ui/switch';
+import { Switch } from '@/components/ui/switch.tsx';
 import { useTheme } from '@/providers/theme-provider.tsx';
 
 function ThemeToggle() {

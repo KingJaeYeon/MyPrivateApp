@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom';
 import Navigator from '@/components/Navigator';
 import ModalRenderer from '@/components/ModalRenderer';
 import useInitializeStores from '@/hooks/use-initialize-stores.tsx';
-import TitleBar from '@/components/TitleBar.tsx';
+import TitleBar from '@/components/titlebar/TitleBar.tsx';
 
 export default function App() {
   useInitializeStores();

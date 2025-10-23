@@ -18,6 +18,13 @@ declare global {
       pickFolder: (opts?: { defaultPath?: string }) => Promise<string | null>;
       getAppPath: (key: AppPathKey) => Promise<string>;
       openFolder: (path: string) => Promise<boolean>;
+      getMemoryInfo: () => Promise<{
+        totalMem: number;
+        freeMem: number;
+        appMem: number; // bytes
+        cpu: number; // percent (0–100)
+        pid: number;
+      }>;
     };
     fsApi: {
       // existence & directory
