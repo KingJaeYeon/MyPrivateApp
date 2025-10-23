@@ -8,8 +8,7 @@ import { Youtube } from '@/assets/svg';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import ColumnMenu from '@/components/data-table-columns/ColumnMenu.tsx';
-
-const nf = new Intl.NumberFormat();
+import { formatNumber } from '@/lib/utils';
 
 export type ChannelColumns = {
   channelId: string;
@@ -28,10 +27,6 @@ export type ChannelColumns = {
   videoCount: number;
   menu: any;
 };
-
-const formatNumber = (num: number) => (
-  <span className="text-xs tabular-nums">{nf.format(num)}</span>
-);
 
 const copyToClipboard = (text: string) => {
   navigator.clipboard.writeText(text);
@@ -101,18 +96,24 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     accessorKey: 'subscriberCount',
     header: '구독자 수',
     size: 50,
-    cell: ({ row }) => formatNumber(row.original.subscriberCount),
+    cell: ({ row }) => (
+      <span className="text-xs tabular-nums">{formatNumber(row.original.subscriberCount)}</span>
+    ),
   },
   {
     accessorKey: 'viewCount',
     header: '총 조회수',
     size: 120,
-    cell: ({ row }) => formatNumber(row.original.viewCount),
+    cell: ({ row }) => (
+      <span className="text-xs tabular-nums">{formatNumber(row.original.viewCount)}</span>
+    ),
   },
   {
     accessorKey: 'videoCount',
     header: '동영상 수',
-    cell: ({ row }) => formatNumber(row.original.videoCount),
+    cell: ({ row }) => (
+      <span className="text-xs tabular-nums">{formatNumber(row.original.videoCount)}</span>
+    ),
   },
   {
     accessorKey: 'memo',

@@ -21,19 +21,19 @@ export default function ColumnMenu({ data }: { data: any }) {
         <div className="flex h-full w-full flex-col justify-between text-sm">
           <button
             className="hover:bg-muted flex w-full cursor-pointer items-center justify-center rounded-md py-2 select-none"
-            onClick={() => window.electronAPI.openExternal(data.link)}
-          >
-            링크 이동
-          </button>
-          <div
-            className="hover:bg-muted flex w-full cursor-pointer items-center justify-center rounded-md py-2 select-none"
             onClick={(e) => {
               e.stopPropagation();
               navigate(`${data.channelId}`);
             }}
           >
             상세 보기
-          </div>
+          </button>
+          <button
+            className="hover:bg-muted flex w-full cursor-pointer items-center justify-center rounded-md py-2 select-none"
+            onClick={() => window.electronAPI.openExternal(data.link)}
+          >
+            링크 이동
+          </button>
         </div>
       </PopoverContent>
     </Popover>

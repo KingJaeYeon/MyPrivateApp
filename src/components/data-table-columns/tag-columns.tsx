@@ -1,8 +1,7 @@
 import { toast } from 'sonner';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
-
-const nf = new Intl.NumberFormat();
+import { formatNumber } from '@/lib/utils.ts';
 
 export type TagColumns = {
   idx: string;
@@ -99,7 +98,7 @@ export const TAG_COLUMNS: ColumnDef<TagColumns>[] = [
     header: '전체수',
     size: 120,
     cell: ({ row }) => (
-      <span className="text-xs tabular-nums">{nf.format(row.original.total)}</span>
+      <span className="text-xs tabular-nums">{formatNumber(row.original.total)}</span>
     ),
   },
 ];

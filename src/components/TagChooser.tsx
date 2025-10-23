@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import useTagStore from '@/store/useTagStore.ts';
 import { Label } from '@/components/ui/label.tsx';
 import { Button } from '@/components/ui/button.tsx';
-import { IconArrowDown, IconArrowUp } from '@/assets/svg';
 import { Badge } from '@/components/ui/badge.tsx';
 import { cn } from '@/lib/utils.ts';
 import { toast } from 'sonner';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 /**
  * @param select join(',')로 이어진 문자열
@@ -54,7 +54,7 @@ function TypeInput({
           disabled={disabled}
           onClick={() => setIsOpen(!isOpen)}
         >
-          {isOpen ? <IconArrowDown /> : <IconArrowUp />}
+          {isOpen ? <ChevronDown /> : <ChevronUp />}
         </Button>
       </div>
       <div
@@ -223,42 +223,42 @@ function Floating(props: FloatingInputProps) {
           }}
         />
       </div>
-      <div className={'scrollWidth3 h-[80px] overflow-auto'}>
-        <div className={'mt-1 flex flex-wrap gap-1'}>
-          {disabled
-            ? null
-            : tags.map((tag, i) => {
-                const isSelected = select?.toString().split(',').includes(tag.idx.toString());
-                return (
-                  <Badge
-                    key={i}
-                    variant={isSelected ? 'green' : 'secondary'}
-                    className={'cursor-pointer'}
-                    onClick={() => {
-                      const currentTags = select !== '' ? select.toString().split(',') : [];
+      {disabled ? null : (
+        <div className={'scrollWidth3 h-[80px] overflow-auto'}>
+          <div className={'mt-1 flex flex-wrap gap-1'}>
+            {tags.map((tag, i) => {
+              const isSelected = select?.toString().split(',').includes(tag.idx.toString());
+              return (
+                <Badge
+                  key={i}
+                  variant={isSelected ? 'green' : 'secondary'}
+                  className={'cursor-pointer'}
+                  onClick={() => {
+                    const currentTags = select !== '' ? select.toString().split(',') : [];
 
-                      if (currentTags.length >= 5) {
-                        toast.error('최대 5개까지 선택가능합니다.');
-                        return;
-                      }
+                    if (currentTags.length >= 5) {
+                      toast.error('최대 5개까지 선택가능합니다.');
+                      return;
+                    }
 
-                      if (currentTags.includes(tag.idx.toString())) {
-                        // 이미 있으면 제거
-                        const newTags = currentTags.filter((t) => t !== tag.idx.toString());
-                        setSelect(newTags.join(','));
-                      } else {
-                        // 없으면 추가
-                        currentTags.push(tag.idx.toString());
-                        setSelect(currentTags.join(','));
-                      }
-                    }}
-                  >
-                    {tag.name}
-                  </Badge>
-                );
-              })}
+                    if (currentTags.includes(tag.idx.toString())) {
+                      // 이미 있으면 제거
+                      const newTags = currentTags.filter((t) => t !== tag.idx.toString());
+                      setSelect(newTags.join(','));
+                    } else {
+                      // 없으면 추가
+                      currentTags.push(tag.idx.toString());
+                      setSelect(currentTags.join(','));
+                    }
+                  }}
+                >
+                  {tag.name}
+                </Badge>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

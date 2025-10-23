@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input.tsx';
 import { Textarea } from '@/components/ui/textarea.tsx';
 import { TagChooser } from '@/components/TagChooser.tsx';
 import React from 'react';
+import { formatNumber } from '@/lib/utils.ts';
 
 export function ChannelEditPanel({
   select,
@@ -16,7 +17,6 @@ export function ChannelEditPanel({
   setSelect: React.Dispatch<React.SetStateAction<ChannelColumns | null>>;
 }) {
   if (!select) return null;
-  const nf = new Intl.NumberFormat();
   const { data, update } = useChannelStore();
 
   const onChangeHandler = (key: keyof ChannelColumns, value: string) => {
@@ -68,13 +68,13 @@ export function ChannelEditPanel({
           <div className={'flex'}>
             <Label>조회수:</Label>
             <span className="pl-2 text-sm font-bold tabular-nums">
-              {nf.format(select.viewCount)}
+              {formatNumber(select.viewCount)}
             </span>
           </div>
           <div className={'flex'}>
             <Label>구독자 수:</Label>
             <span className="pl-2 text-sm font-bold tabular-nums">
-              {nf.format(select.subscriberCount)}
+              {formatNumber(select.subscriberCount)}
             </span>
           </div>
           <div className={'flex'}>
@@ -106,11 +106,7 @@ export function ChannelEditPanel({
                 onChange={(e) => onChangeHandler('platform', e.target.value)}
               />
             </div>
-            <TagChooser
-              select={select.tag}
-              setSelect={(tags) => onChangeHandler('tag', tags)}
-              disabled={true}
-            />
+            <TagChooser select={select.tag} setSelect={(tags) => onChangeHandler('tag', tags)} />
             <div className={'flex flex-col gap-2'}>
               <Label>메모</Label>
               <Textarea

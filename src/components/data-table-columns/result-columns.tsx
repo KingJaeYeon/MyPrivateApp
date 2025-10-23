@@ -4,12 +4,10 @@ import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import Tip from '@/components/Tip.tsx';
-import { cn, formatCompactNumber } from '@/lib/utils.ts';
+import { cn, formatCompactNumber, formatNumber } from '@/lib/utils.ts';
 import { Badge } from '@/components/ui/badge.tsx';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
 import { IconOutLink } from '@/assets/svg';
-
-const nf = new Intl.NumberFormat();
 
 export type VideoRow = {
   no: number;
@@ -174,7 +172,9 @@ export const RESULT_COLUMNS = (isEdit: boolean, channelIds: string[]): ColumnDef
       accessorKey: 'viewCount',
       header: '조회수',
       maxSize: 120,
-      cell: ({ row }) => <span className="tabular-nums">{nf.format(row.original.viewCount)}</span>,
+      cell: ({ row }) => (
+        <span className="tabular-nums">{formatNumber(row.original.viewCount)}</span>
+      ),
     },
     {
       accessorKey: 'viewsPerHour',
@@ -186,7 +186,7 @@ export const RESULT_COLUMNS = (isEdit: boolean, channelIds: string[]): ColumnDef
         </Tip>
       ),
       cell: ({ row }) => (
-        <span className="tabular-nums">{nf.format(Math.round(row.original.viewsPerHour))}</span>
+        <span className="tabular-nums">{formatNumber(Math.round(row.original.viewsPerHour))}</span>
       ),
     },
     {
@@ -369,7 +369,7 @@ export const RESULT_COLUMNS1: ColumnDef<VideoRow>[] = [
     accessorKey: 'viewCount',
     header: '조회수',
     maxSize: 120,
-    cell: ({ row }) => <span className="tabular-nums">{nf.format(row.original.viewCount)}</span>,
+    cell: ({ row }) => <span className="tabular-nums">{formatNumber(row.original.viewCount)}</span>,
   },
   {
     accessorKey: 'viewsPerHour',
@@ -381,7 +381,7 @@ export const RESULT_COLUMNS1: ColumnDef<VideoRow>[] = [
       </Tip>
     ),
     cell: ({ row }) => (
-      <span className="tabular-nums">{nf.format(Math.round(row.original.viewsPerHour))}</span>
+      <span className="tabular-nums">{formatNumber(Math.round(row.original.viewsPerHour))}</span>
     ),
   },
   {

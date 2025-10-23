@@ -104,7 +104,7 @@ function formatCompactNumber(num: number): string {
   if (absNum >= 1_000_000_000) return `${sign}${(absNum / 1_000_000_000).toFixed(1)}B`;
   if (absNum >= 1_000_000) return `${sign}${(absNum / 1_000_000).toFixed(1)}M`;
   if (absNum >= 1_000) return `${sign}${(absNum / 1_000).toFixed(1)}K`;
-
+  console.log({ sign }, { absNum });
   return `${sign}${absNum.toString()}`;
 }
 
@@ -219,6 +219,11 @@ function formatBytes(bytes: number) {
   return `${v.toFixed(1)} ${units[i]}`;
 }
 
+const nf = new Intl.NumberFormat();
+function formatNumber(num: number) {
+  return nf.format(num);
+}
+
 export {
   getOrderedColumns,
   buildAoaFromObjects,
@@ -227,4 +232,5 @@ export {
   parsedExcelFileName,
   createCid,
   formatBytes,
+  formatNumber,
 };

@@ -1,8 +1,10 @@
 import { useTheme } from '@/providers/theme-provider.tsx';
 import { Button } from '@/components/ui/button.tsx';
+import { useNavigate } from 'react-router-dom';
 
 export default function NotFound() {
   const { theme } = useTheme();
+  const navigate = useNavigate();
   return (
     <div className={'no-drag flex flex-1 items-center justify-center select-none'}>
       <div className={'mb-20 flex flex-col items-center gap-4'}>
@@ -20,11 +22,11 @@ export default function NotFound() {
             <p>{`확인 후에도 버그가 발생하면 문의는 개발자에게 해주세요.`}</p>
           </div>
           <div className={'mt-2 flex gap-4'}>
-            <Button variant={'secondary'} size={'lg'}>
+            <Button variant={'secondary'} size={'lg'} onClick={() => navigate('/')}>
               메인으로
               <span className={'h-1.5 w-1.5 animate-pulse rounded-full bg-green-500'} />
             </Button>
-            <Button size={'lg'}>
+            <Button size={'lg'} onClick={() => navigate(-1)}>
               이전으로
               <span className={'bg-background h-1.5 w-1.5 animate-pulse rounded-full'} />
             </Button>
