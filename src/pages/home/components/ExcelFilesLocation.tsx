@@ -4,6 +4,8 @@ import { Label } from '@/components/ui/label.tsx';
 import { Input } from '@/components/ui/input.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { getOrderedColumns } from '@/lib/utils.ts';
+import useInitializeStores from '@/hooks/use-initialize-stores.tsx';
+import useChannelsSchedule from '@/hooks/use-channels-schedule.ts';
 
 export function ExcelFilesLocation() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -12,15 +14,18 @@ export function ExcelFilesLocation() {
     data: { excel, folder, hasFile },
     updateIn,
   } = useSettingStore();
+  const { reload } = useInitializeStores();
+  const { handleStop } = useChannelsSchedule();
 
   async function handleClick() {
     const result = await window.electronAPI.pickFolder();
     if (!result) return;
-
+    await reload();
     await updateIn('folder', {
       ...folder,
       location: result,
     });
+    handleStop();
   }
 
   async function generateFiles() {

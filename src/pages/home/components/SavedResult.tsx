@@ -20,6 +20,7 @@ import { useModalStore } from '@/store/modalStore.ts';
 
 export function SavedResult() {
   const { name, location } = useSettingStore((r) => r.data.folder);
+  const { hasFile } = useSettingStore((r) => r.data);
   const [savedFiles, setSavedFiles] = useState<string[]>([]);
   const [select, setSelect] = useState<string>('');
 
@@ -27,7 +28,9 @@ export function SavedResult() {
     try {
       const result = await window.fsApi.listExcel(`${location}/${name.result.split('/')[0]}`);
       setSavedFiles(result);
-    } catch (_) {}
+    } catch (_) {
+      setSavedFiles([]);
+    }
   }
 
   useEffect(() => {
@@ -35,6 +38,10 @@ export function SavedResult() {
       getFiles();
     }
   }, [location]);
+
+  useEffect(() => {
+    getFiles();
+  }, [hasFile]);
 
   return (
     <div className={'flex w-full max-w-[1100px] flex-col gap-2'}>

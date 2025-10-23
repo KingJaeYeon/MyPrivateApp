@@ -11,8 +11,6 @@ const configStore = new Store();
 type SchedulerJob = {
   job: Job;
   rule: string;
-  lastRun?: Date;
-  nextRun?: Date | null; // Date | null로 변경
   isRunning: boolean;
 };
 class YouTubeScheduler {
@@ -286,9 +284,7 @@ class YouTubeScheduler {
       const job = schedule.scheduleJob('channelSync', rule, async (fireDate) => {
         const schedulerJob = this.jobs.get('channelSync');
         if (schedulerJob) {
-          schedulerJob.lastRun = fireDate;
           schedulerJob.isRunning = true;
-          schedulerJob.nextRun = job.nextInvocation(); // .toDate() 제거
         }
 
         console.log(`⏰ 스케줄 실행: ${fireDate}`);
@@ -300,7 +296,6 @@ class YouTubeScheduler {
         } finally {
           if (schedulerJob) {
             schedulerJob.isRunning = false;
-            schedulerJob.nextRun = job.nextInvocation(); // .toDate() 제거
           }
         }
       });
@@ -314,7 +309,6 @@ class YouTubeScheduler {
         job,
         rule: typeof rule === 'string' ? rule : 'RecurrenceRule',
         isRunning: false,
-        nextRun: job.nextInvocation(), // .toDate() 제거
       });
 
       console.log('✅ 스케줄러 시작:', rule);
@@ -356,8 +350,6 @@ class YouTubeScheduler {
       isRunning: schedulerJob?.isRunning || false,
       isEnabled: !!schedulerJob,
       rule: schedulerJob?.rule || rule,
-      lastRun: schedulerJob?.lastRun || null,
-      nextRun: schedulerJob?.nextRun || null, // 이미 Date | null
     };
   }
 

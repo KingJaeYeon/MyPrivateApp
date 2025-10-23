@@ -68,9 +68,9 @@ export default function useInitializeStores(type?: ExcelFiles) {
       try {
         await initOne(key);
       } catch (error) {
-        console.error(`Failed during initAll at ${key}`);
         // 실패한 것만 reset
         resetHandlers[key]?.();
+        throw error;
       }
     }
   }
@@ -89,7 +89,6 @@ export default function useInitializeStores(type?: ExcelFiles) {
         await updateIn('hasFile', true);
       }
     } catch (error) {
-      console.error('Initialization failed:', error);
       await updateIn('hasFile', false);
     }
   }

@@ -5,14 +5,17 @@ import type { ApiType } from '@/pages/home/Home.tsx';
 import { useMutation } from '@tanstack/react-query';
 import { pingTest } from '@/service/pingtest.ts';
 import React from 'react';
+import useChannelsSchedule from '@/hooks/use-channels-schedule.ts';
 
 export function DeleteButton() {
   const { updateIn } = useSettingStore();
+  const { handleStop } = useChannelsSchedule();
 
   const deleteKey = async () => {
     const isDelete = confirm('정말 삭제하시겠습니까?');
     if (isDelete) {
       await updateIn('youtube', { usedQuota: 0, apiKey: '', quotaUpdatedAt: '' });
+      await handleStop();
       alert('삭제되었습니다. 다시 입력해주세요.');
     }
   };

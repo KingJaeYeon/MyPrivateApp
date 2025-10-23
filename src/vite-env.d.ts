@@ -73,8 +73,6 @@ declare global {
         isRunning: boolean;
         isEnabled: boolean;
         rule: string;
-        lastRun: Date | null;
-        nextRun: Date | null;
       }>;
       onChannelsUpdated: (
         callback: (data: { count: number; total: number; timestamp: string }) => void

@@ -33,7 +33,7 @@ export type SheetConfig = {
 export type SchedulerConfig = {
   rule: SCHEDULES_RULE;
   autoStart: boolean;
-  updatedAt: Date;
+  updatedAt: Date | null;
 };
 export type SCHEDULES_RULE = '0 9 * * *' | '0 0 * * *' | '0 9 * * 1' | '32 12 * * *';
 export const SCHEDULES = [
@@ -245,7 +245,7 @@ const seed: State['data'] = {
   scheduler: {
     rule: '0 0 * * *',
     autoStart: false,
-    updatedAt: new Date(),
+    updatedAt: null,
   },
 };
 

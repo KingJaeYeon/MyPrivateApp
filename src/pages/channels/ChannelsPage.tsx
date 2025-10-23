@@ -8,7 +8,6 @@ import {
 import useTagStore from '@/store/useTagStore.ts';
 import { useModalStore } from '@/store/modalStore.ts';
 import TagSelector from '@/components/TagSelector.tsx';
-import { SchedulerControl } from '@/components/SchedulerControl.tsx';
 
 export default function ChannelsPage() {
   const { data, isChanged, saved } = useChannelStore();
@@ -24,7 +23,6 @@ export default function ChannelsPage() {
 
   return (
     <div className="flex w-full flex-1 gap-5 px-4">
-      <SchedulerControl />
       <DataTable<ChannelColumns, unknown>
         columns={CHANNELS_COLUMNS}
         data={data}
