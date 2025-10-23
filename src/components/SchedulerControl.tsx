@@ -12,17 +12,16 @@ import { toast } from 'sonner';
 import { Play, Square, RefreshCw } from 'lucide-react';
 import useSettingStore, { SCHEDULES, SCHEDULES_RULE } from '@/store/useSettingStore.ts';
 import { format } from 'date-fns';
+import useInitializeStores from '@/hooks/use-initialize-stores.tsx';
+
 export function SchedulerControl() {
   const { data, updateIn } = useSettingStore();
   const [status, setStatus] = useState<any>(null);
-  const [rule, setRule] = useState<SCHEDULES_RULE>('0 0 * * *');
   const [loading, setLoading] = useState(false);
+  const { initOne } = useInitializeStores();
 
   useEffect(() => {
-    console.log(status);
     loadStatus();
-    // ✅ Store에서 API Key 상태 확인
-    setRule(data.scheduler.rule);
 
     // 이벤트 리스너
     const unsubscribeUpdated = window.schedulerApi.onChannelsUpdated((result) => {
@@ -33,6 +32,7 @@ export function SchedulerControl() {
         autoStart: false,
         updatedAt: new Date(),
       });
+      initOne('channel');
     });
 
     const unsubscribeError = window.schedulerApi.onChannelsError((error) => {
@@ -60,11 +60,16 @@ export function SchedulerControl() {
     }
 
     setLoading(true);
-    const result = await window.schedulerApi.start(rule);
+    const result = await window.schedulerApi.start(data.scheduler.rule);
 
     if (result.success) {
       toast.success('스케줄러 시작');
       loadStatus();
+      // ✅ autoStart false로 저장
+      await updateIn('scheduler', {
+        ...data.scheduler,
+        autoStart: true,
+      });
     } else {
       toast.error(result.error || '시작 실패');
     }
@@ -91,6 +96,9 @@ export function SchedulerControl() {
     setLoading(false);
   };
   const handleRunNow = async () => {
+    const txt = `마지막 갱신일: ${format(data.scheduler.updatedAt, 'yyyy-MM-dd hh:mm')}\n 정말 갱신하시겠습니까?`;
+    if (!confirm(txt)) return;
+
     if (!data.youtube.apiKey) {
       toast.error('먼저 YouTube API Key를 설정하세요');
       return;
@@ -109,6 +117,7 @@ export function SchedulerControl() {
           autoStart: false,
           updatedAt: new Date(),
         });
+        initOne('channel');
       } else {
         toast.error(result.message || '수집 실패');
       }
@@ -127,8 +136,10 @@ export function SchedulerControl() {
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-2">
             <Select
-              value={rule}
-              onValueChange={(v) => setRule(v as SCHEDULES_RULE)}
+              value={data.scheduler.rule}
+              onValueChange={(v) =>
+                updateIn('scheduler', { ...data.scheduler, rule: v as SCHEDULES_RULE })
+              }
               disabled={status?.isEnabled || loading}
             >
               <SelectTrigger className="w-[200px]">
@@ -178,7 +189,7 @@ export function SchedulerControl() {
               <div className="border-t pt-2 text-xs">
                 자동 시작: {data?.scheduler?.autoStart ? '✅ 켜짐' : '❌ 꺼짐'}
               </div>
-              {format(data.scheduler.updatedAt, 'yyyy.MM.dd')}
+              {format(data.scheduler.updatedAt, 'yyyy.MM.dd hh:mm')}
             </div>
           )}
         </div>

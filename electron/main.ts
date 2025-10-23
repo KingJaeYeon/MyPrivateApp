@@ -111,8 +111,8 @@ app.whenReady().then(() => {
   registerSchedulerHandlers();
   // 앱 시작 시 저장된 설정으로 스케줄러 자동 시작 (선택사항)
   const schedulerEnabled = configStore.get('settings.scheduler.autoStart', false) as boolean;
-  console.log(schedulerEnabled ? 'dd' : 'ss');
   const rule = configStore.get('settings.scheduler.rule', '0 9 * * *') as string;
+
   if (schedulerEnabled) {
     youtubeScheduler.startScheduler(rule);
   }

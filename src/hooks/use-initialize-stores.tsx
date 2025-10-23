@@ -1,0 +1,105 @@
+import { useEffect } from 'react';
+import useSettingStore, { ExcelFiles } from '@/store/useSettingStore.ts';
+import useTagStore from '@/store/useTagStore.ts';
+import useChannelStore from '@/store/useChannelStore.ts';
+import useReferenceStore from '@/store/useReferenceStore.ts';
+import usePromptsStore from '@/store/usePromptsStore.ts';
+
+export default function useInitializeStores(type?: ExcelFiles) {
+  const { location, name } = useSettingStore((s) => s.data.folder);
+  const { updateIn } = useSettingStore();
+
+  const { init: initTag, reset: resetTag } = useTagStore();
+  const { init: initChannel, reset: resetChannel } = useChannelStore();
+  const { init: initRef, reset: resetRef } = useReferenceStore();
+  const { init: initPrompt, reset: resetPrompt } = usePromptsStore();
+
+  // ✅ 각 타입별 초기화 로직
+  const initHandlers: Record<ExcelFiles, () => Promise<void>> = {
+    tag: async () => await initTag(`${location}/${name.tag}`),
+    channel: async () => await initChannel(`${location}/${name.channel}`),
+    reference: async () => await initRef(`${location}/${name.reference}`),
+    prompt: async () => await initPrompt(`${location}/${name.prompt}`),
+    result: async () => {
+      await window.fsApi.listExcel(`${location}/${name.result.split('/')[0]}`);
+    },
+    channelHistory: async () => {
+      await window.fsApi.exists(`${location}/${name.channelHistory}`);
+    },
+    english: async () => {
+      // TODO
+    },
+    progress: async () => {
+      // TODO
+    },
+  };
+
+  // ✅ 리셋 핸들러
+  const resetHandlers: Partial<Record<ExcelFiles, () => void>> = {
+    tag: resetTag,
+    channel: resetChannel,
+    reference: resetRef,
+    prompt: resetPrompt,
+  };
+
+  // ✅ 단일 초기화
+  async function initOne(key: ExcelFiles) {
+    try {
+      await initHandlers[key]?.();
+    } catch (error) {
+      console.error(`Failed to init ${key}:`, error);
+      resetHandlers[key]?.();
+      throw error;
+    }
+  }
+
+  // ✅ 전체 초기화
+  async function initAll() {
+    const keys: ExcelFiles[] = [
+      'channel',
+      'tag',
+      'reference',
+      'prompt',
+      'result',
+      'channelHistory',
+    ];
+
+    for (const key of keys) {
+      try {
+        await initOne(key);
+      } catch (error) {
+        console.error(`Failed during initAll at ${key}`);
+        // 실패한 것만 reset
+        resetHandlers[key]?.();
+      }
+    }
+  }
+
+  // ✅ 메인 시작 로직
+  async function start() {
+    if (!location) return;
+
+    try {
+      if (type) {
+        // 특정 타입만 초기화
+        await initOne(type);
+      } else {
+        // 전체 초기화
+        await initAll();
+        await updateIn('hasFile', true);
+      }
+    } catch (error) {
+      console.error('Initialization failed:', error);
+      await updateIn('hasFile', false);
+    }
+  }
+
+  useEffect(() => {
+    start();
+  }, [location, name]);
+
+  return {
+    reload: start,
+    initOne,
+  };
+}
