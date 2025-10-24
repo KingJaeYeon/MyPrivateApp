@@ -21,6 +21,7 @@ import { HandleSearchForm } from '@/pages/channels/components/HandleSearchForm.t
 import { ChannelEditPanel } from '@/pages/channels/components/ChannelEditPanel.tsx';
 import { useModalStore } from '@/store/modalStore.ts';
 import { Button } from '@/components/ui/button.tsx';
+import useChannelHistoryStore, { ChannelHistory } from '@/store/useChannelHistoryStore.ts';
 
 interface ModalProps {
   onClose: () => void;
@@ -29,7 +30,8 @@ interface ModalProps {
 
 export function AddChannelModal({ onClose, data }: ModalProps) {
   const usedQuota = useSettingStore((r) => r.data.youtube.usedQuota);
-  const { data: curChannels, update } = useChannelStore();
+  const { data: curChannels, update: channelUpdate } = useChannelStore();
+  const { data: curHistory, update: historyUpdate } = useChannelHistoryStore();
   const [select, setSelect] = useState<ChannelColumns | null>(null);
   const youtubeApiKey = useSettingStore((r) => r.data.youtube.apiKey);
   const { reOpenModal } = useModalStore();
@@ -56,8 +58,15 @@ export function AddChannelModal({ onClose, data }: ModalProps) {
       const existingIds = curChannels.map((d) => d.channelId);
       const addArr = result.filter((channel) => !existingIds.includes(channel.channelId));
       const duplicates = result.filter((channel) => existingIds.includes(channel.channelId));
-      update([...curChannels, ...addArr]);
-
+      const history: ChannelHistory[] = addArr.map((ch) => ({
+        channelId: ch.channelId,
+        fetchedAt: ch.fetchedAt,
+        subscriberCount: ch.subscriberCount,
+        videoCount: ch.videoCount,
+        viewCount: ch.viewCount,
+      }));
+      historyUpdate([...curHistory, ...history]);
+      channelUpdate([...curChannels, ...addArr]);
       if (duplicates.length > 0) {
         const txt = `중복된 채널은 추가되지 않았습니다.\n채널정보를 갱신해주세요: ${duplicates.map((d) => d.handle).join(', ')}`;
         toast.error(txt);
@@ -73,8 +82,16 @@ export function AddChannelModal({ onClose, data }: ModalProps) {
     if (data?.data && data.data.length >= 1) {
       const curIds = curChannels.map((r) => r.channelId);
 
-      const filtered = data.data.filter((v) => !curIds.includes(v.channelId));
-      update([...curChannels, ...filtered]);
+      const filtered: ChannelColumns[] = data.data.filter((v) => !curIds.includes(v.channelId));
+      const history: ChannelHistory[] = filtered.map((ch) => ({
+        channelId: ch.channelId,
+        fetchedAt: ch.fetchedAt,
+        subscriberCount: ch.subscriberCount,
+        videoCount: ch.videoCount,
+        viewCount: ch.viewCount,
+      }));
+      channelUpdate([...curChannels, ...filtered]);
+      historyUpdate([...curHistory, ...history]);
     }
   }, [data]);
 
@@ -93,9 +110,11 @@ export function AddChannelModal({ onClose, data }: ModalProps) {
             <HandleSearchForm onSearch={(handles) => mutate({ handles })} isPending={isPending} />
             <div className={'mt-2 flex flex-1 gap-2'}>
               <DataTable<ChannelColumns, unknown>
+                initialSorting={[{ id: 'createdAt', desc: true }]}
                 columns={CHANNELS_COLUMNS}
                 onSelectedRow={setSelect}
                 data={curChannels}
+                name={'addChannelModal'}
                 enableMultiRowSelection={false}
                 enableRowClickSelection={true}
               />

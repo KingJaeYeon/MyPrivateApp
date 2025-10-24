@@ -65,7 +65,7 @@ export function setupExcelHandlers() {
         if (fs.existsSync(filePath)) {
           const stamp = format(new Date(), 'yyyy-MM-dd'); // 파일명에 들어갈 날짜
           // 예: tags[2025-10-03].bak.xlsx
-          backupPath = path.join(parsed.dir, `${parsed.name}[${stamp}].bak${parsed.ext}`);
+          backupPath = path.join(parsed.dir, `${parsed.name}[${stamp}].back${parsed.ext}`);
           fs.copyFileSync(filePath, backupPath);
         }
 

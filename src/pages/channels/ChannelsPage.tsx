@@ -8,15 +8,18 @@ import {
 import useTagStore from '@/store/useTagStore.ts';
 import { useModalStore } from '@/store/modalStore.ts';
 import TagSelector from '@/components/TagSelector.tsx';
+import useChannelHistoryStore from '@/store/useChannelHistoryStore.ts';
 
 export default function ChannelsPage() {
-  const { data, isChanged, saved } = useChannelStore();
+  const { data, isChanged, saved: savedC } = useChannelStore();
+  const { saved: savedH } = useChannelHistoryStore();
   const { data: tags } = useTagStore();
   const { openModal } = useModalStore();
 
   const onSavedHandler = async () => {
     if (confirm('저장하시겠습니까?')) {
-      await saved();
+      await savedH();
+      await savedC();
       alert('저장되었습니다.');
     }
   };
@@ -27,6 +30,7 @@ export default function ChannelsPage() {
         columns={CHANNELS_COLUMNS}
         data={data}
         isFixHeader={true}
+        initialSorting={[{ id: 'createdAt', desc: true }]}
         tableControls={(table) => {
           return (
             <div className={'flex w-full justify-between'}>

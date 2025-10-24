@@ -4,6 +4,7 @@ import useTagStore from '@/store/useTagStore.ts';
 import useChannelStore from '@/store/useChannelStore.ts';
 import useReferenceStore from '@/store/useReferenceStore.ts';
 import usePromptsStore from '@/store/usePromptsStore.ts';
+import useChannelHistoryStore from '@/store/useChannelHistoryStore.ts';
 
 export default function useInitializeStores(type?: ExcelFiles) {
   const { location, name } = useSettingStore((s) => s.data.folder);
@@ -11,6 +12,7 @@ export default function useInitializeStores(type?: ExcelFiles) {
 
   const { init: initTag, reset: resetTag } = useTagStore();
   const { init: initChannel, reset: resetChannel } = useChannelStore();
+  const { init: initHistory, reset: resetHistory } = useChannelHistoryStore();
   const { init: initRef, reset: resetRef } = useReferenceStore();
   const { init: initPrompt, reset: resetPrompt } = usePromptsStore();
 
@@ -18,13 +20,11 @@ export default function useInitializeStores(type?: ExcelFiles) {
   const initHandlers: Record<ExcelFiles, () => Promise<void>> = {
     tag: async () => await initTag(`${location}/${name.tag}`),
     channel: async () => await initChannel(`${location}/${name.channel}`),
+    channelHistory: async () => await initHistory(`${location}/${name.channelHistory}`),
     reference: async () => await initRef(`${location}/${name.reference}`),
     prompt: async () => await initPrompt(`${location}/${name.prompt}`),
     result: async () => {
       await window.fsApi.listExcel(`${location}/${name.result.split('/')[0]}`);
-    },
-    channelHistory: async () => {
-      await window.fsApi.exists(`${location}/${name.channelHistory}`);
     },
     english: async () => {
       // TODO
@@ -38,6 +38,7 @@ export default function useInitializeStores(type?: ExcelFiles) {
   const resetHandlers: Partial<Record<ExcelFiles, () => void>> = {
     tag: resetTag,
     channel: resetChannel,
+    channelHistory: resetHistory,
     reference: resetRef,
     prompt: resetPrompt,
   };
