@@ -11,7 +11,7 @@ export const textareaVariants = cva(
         default:
           'placeholder:text-muted-foreground dark:bg-input/30 field-sizing-content w-full rounded-md focus:border-[3px] border-2 bg-transparent px-3 py-2 outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus:border-input',
         blockquote:
-          'rounded-none placeholder:leading-7 py-1 relative max-w-[40rem] mx-auto leading-7 bg-transparent border-l-4 border-r-none focus:border-input',
+          'rounded-none placeholder:leading-7 py-1 relative max-w-[40rem] mx-auto leading-7 bg-transparent border-l-4 border-r-none focus:border-[#0b57b0]',
       },
       error: {
         true: 'border-destructive hover:border-destructive focus:border-destructive',
@@ -64,6 +64,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
               variant,
               error: !!errorMessage,
               hasMaxLength: showMaxLength,
+              className: !!value && 'border-[#0b57b0]',
             }),
             className
           )}

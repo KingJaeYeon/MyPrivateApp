@@ -15,6 +15,8 @@ import useTagStore from '@/store/useTagStore.ts';
 import { ButtonGroup } from '@/components/ui/button-group';
 
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
+import { Toggle } from '@/components/ui/toggle.tsx';
+import { SortDesc } from 'lucide-react';
 
 const FILTER = [
   { label: '참조', value: 'name' },
@@ -27,6 +29,7 @@ export default function ReferencePage() {
   const [isEdit, setEdit] = useState(false);
   const [filter, setFilter] = React.useState(FILTER[0]);
   const [selectedRow, setSelectedRow] = useState<ReferenceColumns | null>(null);
+  const [subSorting, setSubSorting] = useState<boolean>(false);
 
   const onSavedHandler = async () => {
     if (confirm('저장하시겠습니까?')) {
@@ -42,6 +45,7 @@ export default function ReferencePage() {
           columns={REFERENCE_COLUMNS}
           data={data}
           isEdit={isEdit}
+          initialSorting={subSorting ? [{ id: 'parentIdx', desc: false }] : []}
           enableRowClickSelection={true}
           enableMultiRowSelection={isEdit}
           onSelectedRow={setSelectedRow}
@@ -49,7 +53,6 @@ export default function ReferencePage() {
             const onFilterChange = (value: string) => {
               // 이전 필터 값 초기화
               table.getColumn(filter.value)?.setFilterValue('');
-
               const find = FILTER.find((r) => r.value === value) ?? FILTER[0];
               setFilter(find);
             };
@@ -87,6 +90,17 @@ export default function ReferencePage() {
                       />
                     </ButtonGroup>
                   </ButtonGroup>
+                  <Toggle
+                    pressed={subSorting}
+                    onPressedChange={setSubSorting}
+                    aria-label="Toggle bookmark"
+                    size="sm"
+                    variant="outline"
+                    className="data-[state=on]:bg-transparent data-[state=on]:*:[svg]:fill-blue-500 data-[state=on]:*:[svg]:stroke-blue-500"
+                  >
+                    <SortDesc />
+                    기본정렬(하위항목)
+                  </Toggle>
                 </div>
                 <div className={'flex gap-2'}>
                   {isEdit ? (

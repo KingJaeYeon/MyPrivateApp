@@ -7,7 +7,8 @@ import { Checkbox } from '@/components/ui/checkbox.tsx';
 import { IconOutLink } from '@/assets/svg';
 
 export type ReferenceColumns = {
-  idx: string;
+  parentIdx: number;
+  idx: number;
   name: string;
   tag: string;
   link: string;
@@ -101,5 +102,14 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
         <IconOutLink />
       </Button>
     ),
+  },
+  {
+    accessorKey: 'parentIdx',
+    header: 'parentIdx',
+    sortingFn: (a, b) => {
+      const da = a.getValue('parentIdx') as number;
+      const db = b.getValue('parentIdx') as number;
+      return da - db;
+    },
   },
 ];

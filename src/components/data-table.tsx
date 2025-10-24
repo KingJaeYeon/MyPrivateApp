@@ -71,6 +71,7 @@ export function DataTable<TData, TValue>({
       sorting: sorting.length === 0 && initialSorting ? initialSorting : sorting,
       columnVisibility: {
         createdAt: false,
+        parentIdx: false,
       },
     },
     onSortingChange: setSorting,

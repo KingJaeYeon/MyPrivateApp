@@ -8,7 +8,8 @@ import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 
 export type PromptsColumns = {
-  idx: string;
+  parentIdx: number;
+  idx: number;
   tag: string;
   prompt: string;
   memo: string;
