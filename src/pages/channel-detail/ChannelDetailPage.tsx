@@ -11,8 +11,7 @@ import { Badge } from '@/components/ui/badge.tsx';
 import { format } from 'date-fns';
 import { TagChooser } from '@/components/TagChooser.tsx';
 import ChartRender from '@/pages/channel-detail/components/ChartRender.tsx';
-import { Textarea } from '@/components/ui/textarea.tsx';
-import { Label } from '@/components/ui/label.tsx';
+import { RelatedChannels } from '@/pages/channel-detail/components/RelatedChannels.tsx';
 
 export default function ChannelDetailPage() {
   const params = useParams();
@@ -91,10 +90,9 @@ export default function ChannelDetailPage() {
           </section>
         </main>
         <aside className={'flex w-[25%] flex-col gap-2'}>
-          <Label>연관 채널</Label>
           <div className={'relative h-full w-full overflow-auto'}>
             <div className={'absolute bottom-0 h-full w-full'}>
-              <Textarea variant={'default'} className={'h-full w-full'} value={channel.memo} />
+              <RelatedChannels />
             </div>
           </div>
         </aside>
