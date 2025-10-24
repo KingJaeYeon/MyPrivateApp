@@ -57,8 +57,8 @@ export function GrowthChart({ data }: Props) {
   );
 
   return (
-    <div className={'flex flex-wrap'}>
-      <ChartContainer config={videoConfig} className="aspect-auto h-[200px] w-[50%]">
+    <div className={'flex flex-wrap gap-y-5'}>
+      <ChartContainer config={videoConfig} className="aspect-auto h-[300px] w-[50%]">
         <AreaChart data={chartData.videoCount}>
           <defs>
             <linearGradient id="fillValue" x1="0" y1="0" x2="0" y2="1">
@@ -67,10 +67,11 @@ export function GrowthChart({ data }: Props) {
             </linearGradient>
           </defs>
           <CartesianGrid vertical={false} />
-          <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} minTickGap={32} />
+          <XAxis dataKey="date" tickMargin={8} minTickGap={32} />
           <YAxis
             orientation="right"
             tickLine={false}
+            axisLine={false}
             tickFormatter={(value) => formatCompactNumber(value)}
           />
           <ChartTooltip

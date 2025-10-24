@@ -4,6 +4,8 @@ import Tip from '@/components/Tip.tsx';
 import useTagStore from '@/store/useTagStore.ts';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
 import { toast } from 'sonner';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
 
 export type PromptsColumns = {
   idx: string;
@@ -97,6 +99,10 @@ export const PROMPTS_COLUMNS: ColumnDef<PromptsColumns>[] = [
     accessorKey: 'updatedAt',
     header: '갱신일',
     minSize: 80,
-    cell: ({ row }) => <span className="text-xs tabular-nums">{row.original.updatedAt}</span>,
+    cell: ({ row }) => (
+      <span className="text-xs tabular-nums">
+        {format(row.original.updatedAt, 'yyyy.MM.dd', { locale: ko })}
+      </span>
+    ),
   },
 ];

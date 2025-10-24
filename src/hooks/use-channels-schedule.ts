@@ -3,12 +3,14 @@ import { toast } from 'sonner';
 import { format } from 'date-fns';
 import useSettingStore from '@/store/useSettingStore.ts';
 import useInitializeStores from '@/hooks/use-initialize-stores.tsx';
+import useChannelHistoryStore from '@/store/useChannelHistoryStore.ts';
 
 export default function useChannelsSchedule() {
   const { data, updateIn } = useSettingStore();
   const [status, setStatus] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const { initOne } = useInitializeStores();
+  const { init: reload } = useChannelHistoryStore();
 
   useEffect(() => {
     loadStatus();
@@ -23,6 +25,7 @@ export default function useChannelsSchedule() {
         updatedAt: new Date(),
       });
       initOne('channel');
+      reload(`${data.folder.location}/${data.folder.name.channelHistory}`);
     });
 
     const unsubscribeError = window.schedulerApi.onChannelsError((error) => {

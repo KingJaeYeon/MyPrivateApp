@@ -11,6 +11,8 @@ import { Badge } from '@/components/ui/badge.tsx';
 import { format } from 'date-fns';
 import { TagChooser } from '@/components/TagChooser.tsx';
 import ChartRender from '@/pages/channel-detail/components/ChartRender.tsx';
+import { Textarea } from '@/components/ui/textarea.tsx';
+import { Label } from '@/components/ui/label.tsx';
 
 export default function ChannelDetailPage() {
   const params = useParams();
@@ -28,7 +30,7 @@ export default function ChannelDetailPage() {
     <div className="flex w-full flex-1 flex-col gap-5 px-4 pb-4">
       <Header channel={channel} />
       <div className={'flex flex-1 gap-5 px-6'}>
-        <main className={'scrollWidth3 relative flex w-[75%] overflow-auto'}>
+        <main className={'scrollNone relative flex w-[75%] overflow-auto'}>
           <section className={'absolute h-full w-full pr-2'}>
             <div className={'flex flex-col gap-4'}>
               <div className={'flex w-full items-end justify-between'}>
@@ -88,10 +90,13 @@ export default function ChannelDetailPage() {
             </div>
           </section>
         </main>
-        <aside className={'relative flex w-[25%] overflow-auto'}>
-          {/*dd*/}
-          <div className={'absolute h-full w-full bg-blue-400'}>d</div>
-          {/*  <Textarea variant={'default'} className={'h-full'} value={channel.memo} />*/}
+        <aside className={'flex w-[25%] flex-col gap-2'}>
+          <Label>연관 채널</Label>
+          <div className={'relative h-full w-full overflow-auto'}>
+            <div className={'absolute bottom-0 h-full w-full'}>
+              <Textarea variant={'default'} className={'h-full w-full'} value={channel.memo} />
+            </div>
+          </div>
         </aside>
       </div>
     </div>

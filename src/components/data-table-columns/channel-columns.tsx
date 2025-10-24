@@ -111,7 +111,7 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
   },
   {
     accessorKey: 'videoCount',
-    header: '동영상 수',
+    header: '영상 수',
     cell: ({ row }) => (
       <span className="text-xs tabular-nums">{formatNumber(row.original.videoCount)}</span>
     ),
@@ -120,7 +120,7 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     accessorKey: 'memo',
     header: '메모',
     maxSize: 400,
-    minSize: 200,
+    minSize: 180,
     cell: ({ row }) => (
       <Tip txt={row.original.memo} className="max-w-[400px]">
         <span className="ellipsisLine2 max-w-[300px] min-w-[100px] cursor-pointer text-xs break-words whitespace-normal">

@@ -31,11 +31,11 @@ const useChannelHistoryStore = create(
       const result = await window.excelApi.read(filePath);
 
       // 시간순 정렬
-      // const sorted = result.sort(
-      //   (a, b) => new Date(a.fetchedAt).getTime() - new Date(b.fetchedAt).getTime()
-      // );
+      const sorted = result.sort(
+        (a, b) => new Date(a.fetchedAt).getTime() - new Date(b.fetchedAt).getTime()
+      );
 
-      set({ data: result });
+      set({ data: sorted });
     },
     getByChannelId: (channelId: string) => {
       return get().data.filter((h) => h.channelId === channelId);

@@ -1,4 +1,4 @@
-import { ChannelHistory } from './types.ts';
+import { ChannelHistory } from '@/store/useChannelHistoryStore.ts';
 
 export type ChannelMetrics = {
   fetchedAt: string;
