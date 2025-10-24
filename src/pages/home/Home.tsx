@@ -18,6 +18,7 @@ export type ApiType = 'youtubeApiKey';
 
 export function Home() {
   const youtubeApiKey = useSettingStore((r) => r.data.youtube.apiKey);
+  const { reset } = useSettingStore();
   const [editValues, setEditValues] = useState({ youtubeApiKey: '' });
   const [isEditing, setIsEditing] = useState({ youtubeApiKey: false });
   const hasYoutubeApiKey = Boolean(youtubeApiKey);
@@ -61,6 +62,11 @@ export function Home() {
     return <ConnectButton type={type} editValues={editValues} setIsEditing={setIsEditing} />;
   };
 
+  const resetSetting = async () => {
+    if (!confirm('설정 초기화를 진행하시겠습니까?')) return;
+    reset();
+  };
+
   return (
     <div className={'flex w-full flex-1 flex-col gap-6 p-4'}>
       <div className={'flex w-full max-w-[800px] flex-col gap-3'}>
@@ -91,7 +97,14 @@ export function Home() {
           <div className={'flex flex-1'}>
             <FileNameRule />
             <QuotaReset />
-            {Array.from({ length: 6 }, (_, i) => (
+            <Button
+              onClick={resetSetting}
+              className={'flex w-full flex-1 rounded-none border'}
+              variant={'secondary'}
+            >
+              설정리셋
+            </Button>
+            {Array.from({ length: 5 }, (_, i) => (
               <Button
                 key={`home-${i}`}
                 className={'flex w-full flex-1 rounded-none border'}

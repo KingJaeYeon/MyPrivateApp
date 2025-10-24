@@ -41,7 +41,8 @@ export async function fetchChannelsByHandle({
     viewCount: parseInt(item.statistics.viewCount) || 0,
     subscriberCount: parseInt(item.statistics.subscriberCount) || 0, // ✅ 구독자 수
     memo: '',
-    fetchedAt: format(new Date().toISOString(), 'yyyy.MM.dd'),
+    fetchedAt: new Date().toISOString(),
+    createdAt: new Date().getTime(),
     platform: 'youtube', //TODO: 하드코딩 임시 처리 && Enum 처리
   }));
 

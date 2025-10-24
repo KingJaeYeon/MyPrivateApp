@@ -146,8 +146,9 @@ const fetchChannelStats = async ({
           viewCount: parseInt(ch.statistics.viewCount),
           videoCount: parseInt(ch.statistics.videoCount),
           link: `https://www.youtube.com/channel/${cid}`,
-          fetchedAt: format(new Date().toISOString(), 'yyyy.MM.dd'),
           regionCode: ch.snippet.country,
+          fetchedAt: new Date().toISOString(),
+          createdAt: new Date().getTime(),
         };
       }
     }

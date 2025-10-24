@@ -58,6 +58,7 @@ export default function FileResultModal({ onClose, data = [] }: ModalProps) {
           tag: '',
           memo: '',
           platform: 'youtube',
+          createdAt: new Date().getTime(),
         });
       }
 

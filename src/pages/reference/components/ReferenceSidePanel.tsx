@@ -11,11 +11,12 @@ import { Badge } from '@/components/ui/badge.tsx';
 
 const init: ReferenceColumns = {
   idx: '',
-  updatedAt: format(new Date().toISOString(), 'yyyy.MM.dd'),
   name: '',
   link: '',
   tag: '',
   memo: '',
+  updatedAt: format(new Date().toISOString(), 'yyyy.MM.dd'),
+  createdAt: new Date().getTime(),
 };
 
 export function ReferenceSidePanel({
@@ -84,7 +85,7 @@ export function ReferenceSidePanel({
         />
         <FloatingOutlinedInput
           id={'updatedAt'}
-          label={'갱신날짜'}
+          label={'갱신일'}
           value={input.updatedAt}
           onChangeValue={(value: string) => setInput((prev) => ({ ...prev, updatedAt: value }))}
           disabled={true}

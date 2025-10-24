@@ -39,6 +39,7 @@ type Props<TData, TValue> = {
   name?: string;
   // select checkBox 해제용
   isEdit?: boolean;
+  initialSorting?: SortingState;
 };
 /*** 테스트
  **/
@@ -54,6 +55,7 @@ export function DataTable<TData, TValue>({
   hasNo,
   fontSize,
   isEdit,
+  initialSorting,
 }: Props<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [ref, { y, height }] = useMeasure();
@@ -65,7 +67,12 @@ export function DataTable<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
-    state: { sorting },
+    state: {
+      sorting: sorting.length === 0 && initialSorting ? initialSorting : sorting,
+      columnVisibility: {
+        createdAt: false,
+      },
+    },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),

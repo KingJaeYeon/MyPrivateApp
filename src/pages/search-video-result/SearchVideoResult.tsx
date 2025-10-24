@@ -47,6 +47,7 @@ export default function SearchVideoResult() {
       tag: '',
       memo: '',
       platform: 'youtube',
+      createdAt: new Date().getTime(),
     });
 
     // 중복 제거하며 필터링

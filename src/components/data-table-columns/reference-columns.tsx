@@ -13,6 +13,7 @@ export type ReferenceColumns = {
   link: string;
   memo: string;
   updatedAt: string;
+  createdAt: number;
 };
 export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
   {
@@ -82,7 +83,7 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
   },
   {
     accessorKey: 'updatedAt',
-    header: '갱신날짜',
+    header: '갱신일',
     minSize: 120,
     cell: ({ row }) => <span className="text-xs tabular-nums">{row.original.updatedAt}</span>,
   },

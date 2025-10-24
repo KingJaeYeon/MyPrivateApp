@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { format } from 'date-fns';
 import { Textarea } from '@/components/ui/textarea.tsx';
 import { FloatingOutlinedInput } from '@/components/FloatingOutlinedInput.tsx';
 import { Label } from '@/components/ui/label.tsx';
@@ -11,10 +10,11 @@ import usePromptsStore from '@/store/usePromptsStore.ts';
 
 const init: PromptsColumns = {
   idx: '',
-  updatedAt: format(new Date().toISOString(), 'yyyy.MM.dd'),
   prompt: '',
   tag: '',
   memo: '',
+  updatedAt: new Date().toISOString(),
+  createdAt: new Date().getTime(),
 };
 
 export function PromptSidePanel({
@@ -68,7 +68,7 @@ export function PromptSidePanel({
       <div className={'flex flex-col gap-3'}>
         <FloatingOutlinedInput
           id={'updatedAt'}
-          label={'갱신날짜'}
+          label={'갱신일'}
           value={input.updatedAt}
           onChangeValue={(value: string) => setInput((prev) => ({ ...prev, updatedAt: value }))}
           disabled={true}

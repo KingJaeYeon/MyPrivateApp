@@ -396,7 +396,7 @@ const seedChannelHistory = {
     { id: 2, label: '구독자 수', column: 'subscriberCount' },
     { id: 3, label: '총 조회수', column: 'viewCount' },
     { id: 4, label: '동영상 수', column: 'videoCount' },
-    { id: 5, label: '갱신날짜', column: 'fetchedAt' },
+    { id: 5, label: '갱신일', column: 'fetchedAt' },
   ],
   order: [1, 2, 3, 4, 5],
   optional: [],

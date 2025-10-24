@@ -1,5 +1,5 @@
 /// <reference types="vite/client" />
-import { AppPathKey } from '../electron/handlers/app.handler.ts';
+import { AppPathKey } from '../electron/handlers';
 
 interface Config {
   settings: State['data'];

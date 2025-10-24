@@ -102,6 +102,7 @@ export type State = {
 type Action = {
   init: () => Promise<void>;
   updateIn: <K extends keyof State['data']>(key: K, value: State['data'][K]) => Promise<void>;
+  reset: () => Promise<void>;
 };
 
 export type ExcelConfig = Record<ExcelFiles, SheetConfig>;
@@ -112,7 +113,7 @@ export const seedChannelHistory = {
     { id: 2, label: '구독자 수', column: 'subscriberCount' },
     { id: 3, label: '총 조회수', column: 'viewCount' },
     { id: 4, label: '동영상 수', column: 'videoCount' },
-    { id: 5, label: '갱신날짜', column: 'fetchedAt' },
+    { id: 5, label: '갱신일', column: 'fetchedAt' },
   ],
   order: [1, 2, 3, 4, 5],
   optional: [],
@@ -145,12 +146,13 @@ const seed: State['data'] = {
         { id: 7, label: '총 조회수', column: 'viewCount' },
         { id: 8, label: '동영상 수', column: 'videoCount' },
         { id: 9, label: '메모', column: 'memo' },
-        { id: 10, label: '생성일', column: 'publishedAt' },
+        { id: 10, label: '개설일', column: 'publishedAt' },
         { id: 12, label: '링크', column: 'link' },
-        { id: 13, label: '갱신날짜', column: 'fetchedAt' },
+        { id: 13, label: '갱신일', column: 'fetchedAt' },
         { id: 14, label: 'avatar', column: 'icon' },
+        { id: 15, label: '생성일', column: 'createdAt' },
       ],
-      order: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+      order: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
       optional: [{ id: 11, label: '플렛폼', column: 'platform' }],
     },
     result: {
@@ -193,9 +195,10 @@ const seed: State['data'] = {
         { id: 2, label: '태그', column: 'tag' },
         { id: 3, label: 'Prompt', column: 'prompt' },
         { id: 4, label: '메모', column: 'memo' },
-        { id: 5, label: '갱신날짜', column: 'updatedAt' },
+        { id: 5, label: '갱신일', column: 'updatedAt' },
+        { id: 6, label: '생성일', column: 'createdAt' },
       ],
-      order: [1, 2, 3, 4, 5],
+      order: [1, 2, 3, 4, 5, 6, 7],
       optional: [],
     },
     reference: {
@@ -206,8 +209,9 @@ const seed: State['data'] = {
         { id: 4, label: '링크', column: 'link' },
         { id: 5, label: '메모', column: 'memo' },
         { id: 6, label: '갱신일', column: 'updatedAt' },
+        { id: 7, label: '생성일', column: 'createdAt' },
       ],
-      order: [1, 2, 3, 4, 5, 6],
+      order: [1, 2, 3, 4, 5, 6, 7],
       optional: [],
     },
     english: {
@@ -272,6 +276,10 @@ const useSettingStore = create(
         draft.data[key] = value as State['data'][typeof key];
       });
       await window.pref.set('settings', get().data);
+    },
+    reset: async () => {
+      await window.pref.clear();
+      set({ data: seed });
     },
   }))
 );

@@ -11,6 +11,7 @@ export type PromptsColumns = {
   prompt: string;
   memo: string;
   updatedAt: string;
+  createdAt: number;
 };
 
 const copyToClipboard = (text: string) => {
@@ -94,7 +95,7 @@ export const PROMPTS_COLUMNS: ColumnDef<PromptsColumns>[] = [
   },
   {
     accessorKey: 'updatedAt',
-    header: '갱신날짜',
+    header: '갱신일',
     minSize: 80,
     cell: ({ row }) => <span className="text-xs tabular-nums">{row.original.updatedAt}</span>,
   },

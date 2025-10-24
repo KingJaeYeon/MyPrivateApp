@@ -25,7 +25,8 @@ export type ChannelColumns = {
   fetchedAt: string;
   platform: string;
   videoCount: number;
-  menu: any;
+  createdAt: number;
+  menu?: any;
 };
 
 const copyToClipboard = (text: string) => {
@@ -130,7 +131,7 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
   },
   {
     accessorKey: 'publishedAt',
-    header: '생성일',
+    header: '개설일',
     size: 120,
     cell: ({ row }) => <span className="text-xs tabular-nums">{row.original.publishedAt}</span>,
   },
@@ -148,7 +149,7 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
   },
   {
     accessorKey: 'fetchedAt',
-    header: '갱신날짜',
+    header: '갱신일',
 
     cell: ({ row }) => (
       <span className="text-xs tabular-nums">
@@ -162,5 +163,14 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     size: 50,
     enableSorting: false,
     cell: (cell: any) => <ColumnMenu data={cell.row.original} />,
+  },
+  {
+    accessorKey: 'createdAt',
+    header: '생성일',
+    sortingFn: (a, b) => {
+      const da = new Date(a.getValue('createdAt')).getTime();
+      const db = new Date(b.getValue('createdAt')).getTime();
+      return da - db;
+    },
   },
 ];
