@@ -5,8 +5,8 @@ import { Textarea } from '@/components/ui/textarea.tsx';
 import { FloatingOutlinedInput } from '@/components/FloatingOutlinedInput.tsx';
 import { Label } from '@/components/ui/label.tsx';
 import { TagChooser } from '@/components/TagChooser.tsx';
-import { Button } from '@/components/ui/button.tsx';
-import { Badge } from '@/components/ui/badge.tsx';
+import { ButtonRenderer } from '@/pages/reference/components/ButtonRenderer.tsx';
+import { BadgeRenderer } from '@/pages/reference/components/BadgeRenderer.tsx';
 
 const init: ReferenceColumns = {
   parentIdx: 0,
@@ -17,6 +17,19 @@ const init: ReferenceColumns = {
   memo: '',
   updatedAt: new Date().toISOString(),
   createdAt: new Date().getTime(),
+};
+
+const getNextIdx = (data: ReferenceColumns[]) => {
+  return data.length > 0 ? Number(data[data.length - 1].idx) + 1 : 1;
+};
+
+const createNewInput = (data: ReferenceColumns[], parentIdx?: number): ReferenceColumns => {
+  const idx = getNextIdx(data);
+  return {
+    ...init,
+    idx,
+    parentIdx: parentIdx ?? idx,
+  };
 };
 
 export function ReferenceSidePanel({
@@ -33,62 +46,40 @@ export function ReferenceSidePanel({
   const [isSub, setIsSub] = useState<boolean>(false);
 
   useEffect(() => {
-    function setState() {
-      if (isDeleting) {
-        setInput(init);
-        setSelect(null);
-        setIsSub(false);
-        return;
-      }
-      if (select) {
-        setInput(select);
-      } else {
-        const idx = !!data[data?.length - 1] ? +data[data.length - 1]?.idx + 1 : 1;
-        setInput({ ...init, idx, parentIdx: idx });
-      }
+    if (isDeleting) {
+      setInput(init);
+      setSelect(null);
       setIsSub(false);
+      return;
     }
-    setState();
-  }, [select, isDeleting]);
+    // Sub 모드
+    if (isSub) {
+      setInput(createNewInput(data, Number(select?.idx)));
+      return;
+    }
+
+    // 선택된 항목 있음
+    if (select) {
+      setInput(select);
+      return;
+    }
+
+    // 새 항목
+    setInput(createNewInput(data));
+    setIsSub(false);
+  }, [select, isDeleting, isSub]);
 
   const pushInput = () => {
-    if (confirm('추가하시겠습니까?\n(엑셀 갱신버튼은 따로 눌러야합니다.)')) {
-      const result = push(input);
-      if (!result) {
-        return;
-      }
-
-      const idx = !!data[data?.length - 1] ? +data[data.length - 1]?.idx + 2 : 1;
-      setInput({ ...init, idx });
-      setIsSub(false);
+    if (!confirm('추가하시겠습니까?\n(엑셀 갱신버튼은 따로 눌러야합니다.)')) {
+      return;
     }
+
+    const result = push(input);
+    if (!result) return;
+
+    setInput(createNewInput(data));
+    setIsSub(false);
   };
-
-  const updated = () => {
-    update(input);
-  };
-
-  useEffect(() => {
-    const onStartSubAdd = () => {
-      if (isSub) {
-        const idx = Number(data[data.length - 1]?.idx) + 1;
-        setInput({
-          ...init,
-          idx: idx,
-          parentIdx: Number(select?.idx!),
-        });
-        return;
-      }
-      if (select) {
-        setInput(select);
-      } else {
-        const idx = !!data[data?.length - 1] ? +data[data.length - 1]?.idx + 1 : 1;
-        setInput({ ...init, idx, parentIdx: idx });
-      }
-    };
-
-    onStartSubAdd();
-  }, [isSub]);
 
   return (
     <div className={'mt-2 flex flex-1/6 flex-col'}>
@@ -143,93 +134,10 @@ export function ReferenceSidePanel({
             setIsSub={setIsSub}
             isDeleting={isDeleting}
             isSelect={!!select}
-            updated={updated}
+            updated={() => update(input)}
           />
         </div>
       </div>
     </div>
   );
-}
-
-function BadgeRenderer({
-  isDeleting,
-  isSub,
-  pId,
-  id,
-}: {
-  isDeleting: boolean;
-  isSub: boolean;
-  pId: number;
-  id: number;
-}) {
-  if (isDeleting) {
-    return <Badge>{`Idx:0`}</Badge>;
-  }
-
-  if (isSub || pId !== id) {
-    return (
-      <>
-        <Badge>{`pIdx:${pId}`}</Badge>
-        <Badge>{`Idx:${id}`}</Badge>
-      </>
-    );
-  }
-
-  return <Badge>{`Idx:${id}`}</Badge>;
-}
-
-function ButtonRenderer({
-  isDeleting,
-  isSelect,
-  isSub,
-  disabled,
-  setIsSub,
-  pushInput,
-  updated,
-}: {
-  isDeleting: boolean;
-  isSelect: boolean;
-  isSub: boolean;
-  disabled: boolean;
-  setIsSub: (b: boolean) => void;
-  pushInput: () => void;
-  updated: () => void;
-}) {
-  if (isDeleting) {
-    return null;
-  }
-
-  if (!isSelect) {
-    return (
-      <Button disabled={disabled} onClick={pushInput}>
-        저장
-      </Button>
-    );
-  }
-
-  if (isSelect && isSub) {
-    return (
-      <>
-        <Button variant={'secondary'} onClick={() => setIsSub(false)}>
-          취소
-        </Button>
-        <Button disabled={disabled} onClick={pushInput}>
-          저장
-        </Button>
-      </>
-    );
-  }
-
-  if (isSelect && !isSub) {
-    return (
-      <>
-        <Button variant={'secondary'} onClick={() => setIsSub(true)}>
-          하위 항목 추가
-        </Button>
-        <Button disabled={disabled} onClick={updated}>
-          갱신
-        </Button>
-      </>
-    );
-  }
 }

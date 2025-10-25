@@ -5,6 +5,8 @@ import Tip from '@/components/Tip.tsx';
 import useTagStore from '@/store/useTagStore.ts';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
 import { IconOutLink } from '@/assets/svg';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
 
 export type ReferenceColumns = {
   parentIdx: number;
@@ -86,7 +88,11 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
     accessorKey: 'updatedAt',
     header: '갱신일',
     minSize: 120,
-    cell: ({ row }) => <span className="text-xs tabular-nums">{row.original.updatedAt}</span>,
+    cell: ({ row }) => (
+      <span className="text-xs tabular-nums">
+        {format(row.original.updatedAt, 'yyyy.MM.dd', { locale: ko })}
+      </span>
+    ),
   },
   {
     accessorKey: 'link',
