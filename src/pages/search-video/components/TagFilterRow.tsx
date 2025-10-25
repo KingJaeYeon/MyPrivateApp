@@ -143,8 +143,8 @@ function TagSelector({
               ))}
         </Button>
       </SheetTrigger>
-      <SheetContent side={'left'} className={'flex min-w-[400px] flex-1 flex-col'}>
-        <SheetHeader>
+      <SheetContent side={'left'} className={'flex min-w-[400px] flex-1 flex-col px-6 pt-10'}>
+        <SheetHeader className={'p-0'}>
           <SheetTitle>태그 필터</SheetTitle>
           <SheetDescription hidden />
         </SheetHeader>
@@ -218,7 +218,7 @@ function TagSelector({
             </div>
           </div>
         </div>
-        <SheetFooter>
+        <SheetFooter className={'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2'}>
           <Button
             onClick={() => {
               setSelectedTags(tempTags);

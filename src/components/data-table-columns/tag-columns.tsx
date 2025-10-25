@@ -66,15 +66,15 @@ export const TAG_COLUMNS: ColumnDef<TagColumns>[] = [
       </p>
     ),
   },
-  {
-    accessorKey: 'usedVideos',
-    header: '동영상',
-    cell: ({ row }) => (
-      <p className={'cursor-pointer text-xs break-words whitespace-normal'}>
-        {row.original.usedVideos}
-      </p>
-    ),
-  },
+  // {
+  //   accessorKey: 'usedVideos',
+  //   header: '동영상',
+  //   cell: ({ row }) => (
+  //     <p className={'cursor-pointer text-xs break-words whitespace-normal'}>
+  //       {row.original.usedVideos}
+  //     </p>
+  //   ),
+  // },
   {
     accessorKey: 'usedReference',
     header: '레퍼런스',

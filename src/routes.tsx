@@ -9,6 +9,7 @@ import ReferencePage from '@/pages/reference/ReferencePage.tsx';
 import PromptsPage from '@/pages/prompts/PromptsPage.tsx';
 import ChannelDetailPage from '@/pages/channel-detail/ChannelDetailPage.tsx';
 import NotFound from '@/pages/NotFound.tsx';
+import EnglishPage from '@/pages/english/EnglishPage.tsx';
 
 export const navigationRoutes = [
   { path: '/', label: 'Home' },
@@ -18,6 +19,7 @@ export const navigationRoutes = [
   { path: '/search-videos/result', label: 'Result' },
   { path: '/reference', label: 'Reference' },
   { path: '/prompts', label: 'Prompts' },
+  { path: '/english', label: 'English' },
 ];
 
 export const routes: RouteObject[] = [
@@ -56,6 +58,10 @@ export const routes: RouteObject[] = [
       {
         path: 'prompts',
         element: <PromptsPage />,
+      },
+      {
+        path: 'english',
+        element: <EnglishPage />,
       },
       {
         path: '*',

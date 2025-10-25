@@ -5,20 +5,19 @@ import { useMemo } from 'react';
 import NotFound from '@/pages/NotFound.tsx';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
 import { formatCompactNumber } from '@/lib/utils.ts';
-import { Header } from '@/pages/channel-detail/components/Header.tsx';
 import ChannelStat from '@/pages/channel-detail/components/ChannelStat.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
 import { format } from 'date-fns';
 import { TagChooser } from '@/components/TagChooser.tsx';
 import ChartRender from '@/pages/channel-detail/components/ChartRender.tsx';
-import { RelatedChannels } from '@/pages/channel-detail/components/RelatedChannels.tsx';
+import { SidePanel } from '@/pages/english/components/SidePanel.tsx';
 
-export default function ChannelDetailPage() {
+export default function EnglishPage() {
   const params = useParams();
   const { data } = useChannelStore();
 
   const channel = useMemo(() => {
-    return data.find((ch) => ch.channelId === params.channelId);
+    return data.find((ch) => ch.channelId === 'UCXV22aG3XQBEWQdMWnhM-OQ');
   }, [params.channelId]);
 
   if (!channel) {
@@ -27,8 +26,14 @@ export default function ChannelDetailPage() {
 
   return (
     <div className="flex w-full flex-1 flex-col gap-5 px-4 pb-4">
-      <Header channel={channel} />
-      <div className={'flex flex-1 gap-5 px-6'}>
+      <div className={'flex flex-1 gap-1'}>
+        <aside className={'w-[20%]'}>
+          <div className={'relative h-full w-full overflow-auto'}>
+            <div className={'absolute bottom-0 h-full w-full'}>
+              <SidePanel channel={channel} />
+            </div>
+          </div>
+        </aside>
         <main className={'scrollNone relative flex w-[75%] overflow-auto'}>
           <section className={'absolute h-full w-full pr-2'}>
             <div className={'flex flex-col gap-4'}>
@@ -89,13 +94,6 @@ export default function ChannelDetailPage() {
             </div>
           </section>
         </main>
-        <aside className={'w-[25%]'}>
-          <div className={'relative h-full w-full overflow-auto'}>
-            <div className={'absolute bottom-0 h-full w-full'}>
-              <RelatedChannels channel={channel} />
-            </div>
-          </div>
-        </aside>
       </div>
     </div>
   );
