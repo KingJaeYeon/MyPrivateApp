@@ -92,7 +92,7 @@ export default function ChannelDetailPage() {
         <aside className={'flex w-[25%] flex-col gap-2'}>
           <div className={'relative h-full w-full overflow-auto'}>
             <div className={'absolute bottom-0 h-full w-full'}>
-              <RelatedChannels />
+              <RelatedChannels channel={channel} />
             </div>
           </div>
         </aside>
