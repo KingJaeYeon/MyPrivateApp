@@ -4,10 +4,10 @@ import { Button } from '@/components/ui/button.tsx';
 import Tip from '@/components/Tip.tsx';
 import useTagStore from '@/store/useTagStore.ts';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
-import { IconOutLink } from '@/assets/svg';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { ReactNode } from 'react';
+import IconMoreInfo from '@/assets/svg/IconMoreInfo.tsx';
 
 export type ReferenceColumns = {
   path: string;
@@ -45,17 +45,28 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
   },
   {
     accessorKey: 'name',
-    header: '참조명',
-    minSize: 150,
+    header: () => (
+      <span>
+        <span className={'mr-1'}>참조명</span>
+        <Tip txt={'클릭시 링크이동'} triggerClssName={'translate-y-0.5'}>
+          <IconMoreInfo />
+        </Tip>
+      </span>
+    ),
+    minSize: 170,
     cell: ({ row }) => {
       type DepthKey = 'one' | 'two' | 'three' | 'four' | 'other';
 
       const renderDepth: Record<DepthKey, ReactNode> = {
-        one: <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />,
-        two: <span className="ml-1 h-1.5 w-1.5 animate-pulse rounded-full bg-yellow-500" />,
-        three: <span className="bg-destructive ml-2 h-1.5 w-1.5 animate-pulse rounded-full" />,
-        four: <span className="ml-3 h-1.5 w-1.5 animate-pulse rounded-full bg-purple-600" />,
-        other: <span className="ml-4 h-1.5 w-1.5 animate-pulse rounded-full bg-blue-400" />,
+        one: <span className="min-h-1.5 min-w-1.5 animate-pulse rounded-full bg-green-500" />,
+        two: <span className="ml-1 min-h-1.5 min-w-1.5 animate-pulse rounded-full bg-yellow-500" />,
+        three: (
+          <span className="bg-destructive ml-2 min-h-1.5 min-w-1.5 animate-pulse rounded-full" />
+        ),
+        four: (
+          <span className="ml-3 min-h-1.5 min-w-1.5 animate-pulse rounded-full bg-purple-600" />
+        ),
+        other: <span className="ml-4 min-h-1.5 min-w-1.5 animate-pulse rounded-full bg-blue-400" />,
       };
 
       const depthCount = row.original.path.split('/').length;
@@ -74,7 +85,14 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
       return (
         <div className="flex items-center gap-2">
           {renderDepth[depthKey]}
-          <p className="font-bold whitespace-break-spaces">{row.original.name}</p>
+          <Button
+            size={'sm'}
+            variant={'link'}
+            className={'shrink px-0 text-start text-xs font-semibold whitespace-normal'}
+            onClick={() => window.electronAPI.openExternal(row.original.link)}
+          >
+            {row.original.name}
+          </Button>
         </div>
       );
     },
@@ -82,7 +100,7 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
   {
     accessorKey: 'tag',
     header: '태그',
-    minSize: 200,
+    minSize: 220,
     cell: ({ row }) => {
       const tagsJSON = useTagStore.getState().jsonData;
       const cur = row?.original?.tag?.toString().split(',');
@@ -108,7 +126,7 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
     header: '메모',
     minSize: 400,
     cell: ({ row }) => (
-      <Tip txt={row.original.memo} className="max-w-[600px]" side={'left'}>
+      <Tip txt={row.original.memo} className="max-w-[600px]" side={'right'}>
         <span className="ellipsisLine2 min-w-[100px] cursor-pointer text-xs break-words whitespace-normal">
           {row.original.memo}
         </span>
@@ -123,21 +141,6 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
       <span className="text-xs tabular-nums">
         {format(row.original.updatedAt, 'yyyy.MM.dd', { locale: ko })}
       </span>
-    ),
-  },
-  {
-    accessorKey: 'link',
-    header: '링크',
-    maxSize: 80,
-    enableSorting: false,
-    cell: ({ row }) => (
-      <Button
-        size="icon-sm"
-        variant="secondary"
-        onClick={() => window.electronAPI.openExternal(row.original.link)}
-      >
-        <IconOutLink />
-      </Button>
     ),
   },
 ];

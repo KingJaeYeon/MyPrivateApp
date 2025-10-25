@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils.ts';
 export default function Tip({
   children,
   className,
+  triggerClssName,
   txt,
   asChild = false,
   color,
@@ -15,6 +16,7 @@ export default function Tip({
 }: {
   children: React.ReactNode;
   className?: string;
+  triggerClssName?: string;
   txt: string;
   asChild?: boolean;
   color?: 'green' | 'red';
@@ -28,7 +30,8 @@ export default function Tip({
         className={cn(
           'text-start',
           color === 'green' && 'text-green-600',
-          color === 'red' && 'text-destructive'
+          color === 'red' && 'text-destructive',
+          triggerClssName
         )}
       >
         {children}
