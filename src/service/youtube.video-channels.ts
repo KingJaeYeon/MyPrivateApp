@@ -7,6 +7,7 @@ import { VideoRow } from '@/components/data-table-columns/result-columns.tsx';
 import { ChannelPayload } from '@/schemas/filter.schema.ts';
 import useChannelStore from '@/store/useChannelStore.ts';
 import { incrementQuota, logApiRequest } from '@/lib/log.ts';
+import { chunk } from '@/lib/utils.ts';
 
 // ── 필터링 헬퍼 함수들 ──
 function filterByVph(items: any[], minVph: number) {
@@ -49,16 +50,28 @@ const isVideoValid = (video: any, minViews: number, videoDuration: string): bool
 };
 
 async function fetchPlaylistIds({ apiKey, channelIds }: { apiKey: string; channelIds: string[] }) {
-  const { data } = await request_youtube.get('channels', {
-    params: {
+  const batches = chunk(channelIds, 50);
+  const result = [];
+
+  for (const batch of batches) {
+    const searchParams: Record<string, any> = {
       key: apiKey,
       part: 'contentDetails',
-      id: channelIds.join(','),
-    },
-  });
+      id: batch.join(','),
+    };
 
-  const channels = data?.items ?? [];
-  return channels.map((channel: any) => channel.contentDetails.relatedPlaylists.uploads);
+    const url = `${request_youtube.defaults.baseURL}/playlistItems?${new URLSearchParams(searchParams).toString()}`;
+    logApiRequest(url);
+
+    const { data } = await request_youtube.get('channels', {
+      params: searchParams,
+    });
+    await incrementQuota(1);
+    const channels = data?.items ?? [];
+    result.push(...channels.map((channel: any) => channel.contentDetails.relatedPlaylists.uploads));
+  }
+
+  return result;
 }
 
 async function fetchVideoIds({
