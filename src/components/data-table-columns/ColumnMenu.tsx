@@ -28,12 +28,6 @@ export default function ColumnMenu({ data }: { data: any }) {
           >
             상세 보기
           </button>
-          <button
-            className="hover:bg-muted flex w-full cursor-pointer items-center justify-center rounded-md py-2 select-none"
-            onClick={() => window.electronAPI.openExternal(data.link)}
-          >
-            링크 이동
-          </button>
         </div>
       </PopoverContent>
     </Popover>

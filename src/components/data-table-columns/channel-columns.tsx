@@ -140,7 +140,12 @@ export const CHANNELS_MODAL_COLUMNS: ColumnDef<ChannelColumns>[] = [
     cell: ({ row }) =>
       row.original.platform === 'youtube' ? (
         <div className="flex items-center justify-center">
-          <Youtube className="text-red-600" />
+          <button
+            className={'cursor-pointer'}
+            onClick={() => window.electronAPI.openExternal(row.original.link)}
+          >
+            <Youtube className="text-red-600" />
+          </button>
         </div>
       ) : (
         <Badge variant="destructive">{row.original.platform}</Badge>
@@ -264,8 +269,13 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     header: '플랫폼',
     cell: ({ row }) =>
       row.original.platform === 'youtube' ? (
-        <div className="flex items-center justify-center">
-          <Youtube className="text-red-600" />
+        <div className="items-center justify-center">
+          <button
+            className={'cursor-pointer'}
+            onClick={() => window.electronAPI.openExternal(row.original.link)}
+          >
+            <Youtube className="text-red-600" />
+          </button>
         </div>
       ) : (
         <Badge variant="destructive">{row.original.platform}</Badge>
