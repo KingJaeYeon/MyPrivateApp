@@ -66,7 +66,7 @@ export function WatchLog() {
         value={logs.join('\n')}
         readOnly
         className={
-          'scrollWidth3 bg-secondary/50 flex-1 resize-none overflow-y-auto rounded p-2 text-xs'
+          'scrollWidth3 bg-secondary/50 h-[200px] flex-1 resize-none overflow-y-auto rounded p-2 text-xs'
         }
       />
     </div>

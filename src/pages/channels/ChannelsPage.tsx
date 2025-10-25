@@ -9,6 +9,7 @@ import useTagStore from '@/store/useTagStore.ts';
 import { useModalStore } from '@/store/modalStore.ts';
 import TagSelector from '@/components/TagSelector.tsx';
 import useChannelHistoryStore from '@/store/useChannelHistoryStore.ts';
+import { Badge } from '@/components/ui/badge.tsx';
 
 export default function ChannelsPage() {
   const { data, isChanged, saved: savedC } = useChannelStore();
@@ -25,7 +26,7 @@ export default function ChannelsPage() {
   };
 
   return (
-    <div className="flex w-full flex-1 gap-5 px-4">
+    <div className="flex w-full flex-1 gap-5 px-4 pb-4">
       <DataTable<ChannelColumns, unknown>
         columns={CHANNELS_COLUMNS}
         data={data}
@@ -34,7 +35,7 @@ export default function ChannelsPage() {
         tableControls={(table) => {
           return (
             <div className={'flex w-full justify-between'}>
-              <div className={'flex gap-1'}>
+              <div className={'flex items-center gap-4'}>
                 <TagSelector
                   value={(table.getColumn('tag')?.getFilterValue() as string) ?? ''}
                   setValue={(tagName) => {
@@ -43,9 +44,7 @@ export default function ChannelsPage() {
                     table.getColumn('tag')?.setFilterValue(tagIdx);
                   }}
                 />
-                <Button size={'sm'} variant={'outline'} onClick={onSavedHandler}>
-                  갱신
-                </Button>
+                <Badge>{`채널: ${table.getFilteredRowModel().rows.length}/${data.length}`}</Badge>
               </div>
               <div className={'flex gap-2'}>
                 <Button size={'sm'} variant={'secondary'} onClick={() => openModal('channel')}>

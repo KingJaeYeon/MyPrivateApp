@@ -3,7 +3,7 @@ import useChannelStore from '@/store/useChannelStore.ts';
 import { useEffect, useState } from 'react';
 import {
   ChannelColumns,
-  CHANNELS_COLUMNS,
+  CHANNELS_MODAL_COLUMNS,
 } from '@/components/data-table-columns/channel-columns.tsx';
 import { useMutation } from '@tanstack/react-query';
 import { fetchChannelsByHandle } from '@/service/youtube.channels.ts';
@@ -111,7 +111,7 @@ export function AddChannelModal({ onClose, data }: ModalProps) {
             <div className={'mt-2 flex flex-1 gap-2'}>
               <DataTable<ChannelColumns, unknown>
                 initialSorting={[{ id: 'createdAt', desc: true }]}
-                columns={CHANNELS_COLUMNS}
+                columns={CHANNELS_MODAL_COLUMNS}
                 onSelectedRow={setSelect}
                 data={curChannels}
                 name={'addChannelModal'}
