@@ -14,6 +14,7 @@ import TagSelector from '@/components/TagSelector.tsx';
 import useTagStore from '@/store/useTagStore.ts';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
+
 const FILTER = [
   { label: '참조', value: 'name' },
   { label: '메모', value: 'memo' },
@@ -117,11 +118,10 @@ export default function ReferencePage() {
                             toast.error('삭제할 항목을 선택하세요.');
                             return;
                           }
-                          if (
-                            !confirm('정말 삭제하시겠습니까?\n(엑셀 갱신버튼은 따로 눌러야합니다.)')
-                          ) {
-                            return;
-                          }
+                          const txt =
+                            '정말 삭제하시겠습니까?\n(엑셀 갱신버튼은 따로 눌러야합니다.)';
+                          if (!confirm(txt)) return;
+
                           remove(selected);
                         }}
                       >

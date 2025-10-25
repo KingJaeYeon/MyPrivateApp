@@ -3,22 +3,22 @@ import { Badge } from '@/components/ui/badge.tsx';
 export function BadgeRenderer({
   isDeleting,
   isSub,
-  pId,
+  isKids,
   id,
 }: {
   isDeleting: boolean;
   isSub: boolean;
-  pId: number;
-  id: number;
+  id: string;
+  isKids: boolean;
 }) {
   if (isDeleting) {
     return <Badge>{`Idx:0`}</Badge>;
   }
 
-  if (isSub || pId !== id) {
+  if (isSub || isKids) {
     return (
       <>
-        <Badge>{`pIdx:${pId}`}</Badge>
+        <Badge variant={'blue'}>{`하위 참조`}</Badge>
         <Badge>{`Idx:${id}`}</Badge>
       </>
     );

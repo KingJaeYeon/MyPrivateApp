@@ -13,6 +13,7 @@ export function ButtonRenderer({
   updated: () => void;
 }) {
   const { panelState, setPanelState } = useReferenceStore();
+
   if (isDeleting) {
     return null;
   }

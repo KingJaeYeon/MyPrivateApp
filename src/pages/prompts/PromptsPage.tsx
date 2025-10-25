@@ -1,6 +1,6 @@
 import { DataTable } from '@/components/data-table.tsx';
 import { Button } from '@/components/ui/button.tsx';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Input } from '@/components/ui/input.tsx';
 import { toast } from 'sonner';
 import TagSelector from '@/components/TagSelector.tsx';
@@ -13,8 +13,6 @@ import {
   PromptsColumns,
 } from '@/components/data-table-columns/prompts-columns.tsx';
 import { PromptSidePanel } from '@/pages/prompts/components/PromptSidePanel.tsx';
-import { Toggle } from '@/components/ui/toggle.tsx';
-import { SortDesc } from 'lucide-react';
 
 const FILTER = [
   { label: '프롬프트', value: 'prompt' },
@@ -22,12 +20,10 @@ const FILTER = [
 ];
 
 export default function PromptsPage() {
-  const { data, saved, isChanged, remove } = usePromptsStore();
+  const { getData, saved, isChanged, remove, data, setEdit, setPanelState } = usePromptsStore();
   const { data: tags } = useTagStore();
-  const [isEdit, setEdit] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [filter, setFilter] = React.useState(FILTER[0]);
-  const [selectedRow, setSelectedRow] = useState<PromptsColumns | null>(null);
-  const [subSorting, setSubSorting] = useState<boolean>(false);
 
   const onSavedHandler = async () => {
     if (confirm('저장하시겠습니까?')) {
@@ -36,22 +32,41 @@ export default function PromptsPage() {
     }
   };
 
+  const prompt = useMemo(() => {
+    return getData();
+  }, [data]);
+
+  const onEditHandler = () => {
+    setIsDeleting(true);
+    setEdit('initialize');
+  };
+
+  const onSelectHandler = (row: PromptsColumns | null) => {
+    if (isDeleting) return;
+
+    if (row === null) {
+      setEdit('initialize');
+      return;
+    }
+
+    setEdit(row);
+    setPanelState('isNew', false);
+  };
+
   return (
     <div className="flex w-full flex-1 gap-5 px-4">
       <div className={'flex flex-7'}>
         <DataTable<PromptsColumns, unknown>
           columns={PROMPTS_COLUMNS}
-          data={data}
-          isEdit={isEdit}
-          initialSorting={subSorting ? [{ id: 'parentIdx', desc: false }] : []}
+          data={prompt}
+          isEdit={isDeleting}
           enableRowClickSelection={true}
-          enableMultiRowSelection={isEdit}
-          onSelectedRow={setSelectedRow}
+          enableMultiRowSelection={isDeleting}
+          onSelectedRow={onSelectHandler}
           tableControls={(table) => {
             const onFilterChange = (value: string) => {
               // 이전 필터 값 초기화
               table.getColumn(filter.value)?.setFilterValue('');
-
               const find = FILTER.find((r) => r.value === value) ?? FILTER[0];
               setFilter(find);
             };
@@ -89,20 +104,9 @@ export default function PromptsPage() {
                       />
                     </ButtonGroup>
                   </ButtonGroup>
-                  <Toggle
-                    pressed={subSorting}
-                    onPressedChange={setSubSorting}
-                    aria-label="Toggle bookmark"
-                    size="sm"
-                    variant="outline"
-                    className="data-[state=on]:bg-transparent data-[state=on]:*:[svg]:fill-blue-500 data-[state=on]:*:[svg]:stroke-blue-500"
-                  >
-                    <SortDesc />
-                    기본정렬(하위항목)
-                  </Toggle>
                 </div>
                 <div className={'flex gap-2'}>
-                  {isEdit ? (
+                  {isDeleting ? (
                     <React.Fragment>
                       <Button
                         size={'sm'}
@@ -113,17 +117,20 @@ export default function PromptsPage() {
                             toast.error('삭제할 항목을 선택하세요.');
                             return;
                           }
-                          if (
-                            !confirm('정말 삭제하시겠습니까?\n(엑셀 갱신버튼은 따로 눌러야합니다.)')
-                          ) {
-                            return;
-                          }
+                          const txt =
+                            '정말 삭제하시겠습니까?\n(엑셀 갱신버튼은 따로 눌러야합니다.)';
+                          if (!confirm(txt)) return;
+
                           remove(selected);
                         }}
                       >
                         삭제
                       </Button>
-                      <Button variant={'secondary'} size={'sm'} onClick={() => setEdit(false)}>
+                      <Button
+                        variant={'secondary'}
+                        size={'sm'}
+                        onClick={() => setIsDeleting(false)}
+                      >
                         취소
                       </Button>
                     </React.Fragment>
@@ -136,7 +143,7 @@ export default function PromptsPage() {
                       >
                         저장
                       </Button>
-                      <Button size={'sm'} variant={'secondary'} onClick={() => setEdit(true)}>
+                      <Button size={'sm'} variant={'secondary'} onClick={onEditHandler}>
                         수정
                       </Button>
                     </React.Fragment>
@@ -147,7 +154,7 @@ export default function PromptsPage() {
           }}
         />
       </div>
-      <PromptSidePanel select={selectedRow} isDeleting={isEdit} setSelect={setSelectedRow} />
+      <PromptSidePanel isDeleting={isDeleting} />
     </div>
   );
 }

@@ -1,27 +1,24 @@
 import { Button } from '@/components/ui/button.tsx';
+import usePromptsStore from '@/store/usePromptsStore.ts';
 
 export function ButtonRenderer({
   isDeleting,
-  isSelect,
-  isSub,
   disabled,
-  setIsSub,
   pushInput,
   updated,
 }: {
   isDeleting: boolean;
-  isSelect: boolean;
-  isSub: boolean;
   disabled: boolean;
-  setIsSub: (b: boolean) => void;
   pushInput: () => void;
   updated: () => void;
 }) {
+  const { panelState, setPanelState } = usePromptsStore();
+
   if (isDeleting) {
     return null;
   }
 
-  if (!isSelect) {
+  if (panelState.isNew) {
     return (
       <Button disabled={disabled} onClick={pushInput}>
         저장
@@ -29,10 +26,10 @@ export function ButtonRenderer({
     );
   }
 
-  if (isSelect && isSub) {
+  if (!panelState.isNew && panelState.isSub) {
     return (
       <>
-        <Button variant={'secondary'} onClick={() => setIsSub(false)}>
+        <Button variant={'secondary'} onClick={() => setPanelState('isSub', false)}>
           취소
         </Button>
         <Button disabled={disabled} onClick={pushInput}>
@@ -42,10 +39,10 @@ export function ButtonRenderer({
     );
   }
 
-  if (isSelect && !isSub) {
+  if (!panelState.isNew && !panelState.isSub) {
     return (
       <>
-        <Button variant={'secondary'} onClick={() => setIsSub(true)}>
+        <Button variant={'secondary'} onClick={() => setPanelState('isSub', true)}>
           하위 항목 추가
         </Button>
         <Button disabled={disabled} onClick={updated}>
