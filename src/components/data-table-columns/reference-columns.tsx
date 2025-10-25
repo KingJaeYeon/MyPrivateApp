@@ -7,10 +7,11 @@ import { Checkbox } from '@/components/ui/checkbox.tsx';
 import { IconOutLink } from '@/assets/svg';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import { ReactNode } from 'react';
 
 export type ReferenceColumns = {
-  parentIdx: number;
-  idx: number;
+  path: string;
+  idx: string;
   name: string;
   tag: string;
   link: string;
@@ -46,7 +47,37 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
     accessorKey: 'name',
     header: '참조명',
     minSize: 150,
-    cell: ({ row }) => <p className="font-bold whitespace-break-spaces">{row.original.name}</p>,
+    cell: ({ row }) => {
+      type DepthKey = 'one' | 'two' | 'three' | 'four' | 'other';
+
+      const renderDepth: Record<DepthKey, ReactNode> = {
+        one: <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />,
+        two: <span className="ml-1 h-1.5 w-1.5 animate-pulse rounded-full bg-yellow-500" />,
+        three: <span className="bg-destructive ml-2 h-1.5 w-1.5 animate-pulse rounded-full" />,
+        four: <span className="ml-3 h-1.5 w-1.5 animate-pulse rounded-full bg-purple-600" />,
+        other: <span className="ml-4 h-1.5 w-1.5 animate-pulse rounded-full bg-blue-400" />,
+      };
+
+      const depthCount = row.original.path.split('/').length;
+
+      const depthKey: DepthKey =
+        depthCount === 1
+          ? 'one'
+          : depthCount === 2
+            ? 'two'
+            : depthCount === 3
+              ? 'three'
+              : depthCount === 4
+                ? 'four'
+                : 'other';
+
+      return (
+        <div className="flex items-center gap-2">
+          {renderDepth[depthKey]}
+          <p className="font-bold whitespace-break-spaces">{row.original.name}</p>
+        </div>
+      );
+    },
   },
   {
     accessorKey: 'tag',
@@ -108,14 +139,5 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
         <IconOutLink />
       </Button>
     ),
-  },
-  {
-    accessorKey: 'parentIdx',
-    header: 'parentIdx',
-    sortingFn: (a, b) => {
-      const da = a.getValue('parentIdx') as number;
-      const db = b.getValue('parentIdx') as number;
-      return da - db;
-    },
   },
 ];

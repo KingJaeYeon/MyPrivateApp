@@ -192,7 +192,7 @@ const seed: State['data'] = {
     prompt: {
       essentialDefs: [
         { id: 1, label: 'idx', column: 'idx' },
-        { id: 2, label: 'parentIdx', column: 'parentIdx' },
+        { id: 2, label: 'path', column: 'path' },
         { id: 3, label: '태그', column: 'tag' },
         { id: 4, label: 'Prompt', column: 'prompt' },
         { id: 5, label: '메모', column: 'memo' },
@@ -205,7 +205,7 @@ const seed: State['data'] = {
     reference: {
       essentialDefs: [
         { id: 1, label: 'idx', column: 'idx' },
-        { id: 2, label: 'parentIdx', column: 'parentIdx' },
+        { id: 2, label: 'path', column: 'path' },
         { id: 3, label: '참조명', column: 'name' },
         { id: 4, label: '태그', column: 'tag' },
         { id: 5, label: '링크', column: 'link' },
@@ -219,7 +219,7 @@ const seed: State['data'] = {
     english: {
       essentialDefs: [
         { id: 1, label: 'idx', column: 'idx' },
-        { id: 2, label: 'parentIdx', column: 'parentIdx' },
+        { id: 2, label: 'path', column: 'path' },
         { id: 3, label: '패턴', column: 'patten' },
         { id: 4, label: '예문', column: 'example' },
         { id: 5, label: '메모(해석)', column: 'memo' },

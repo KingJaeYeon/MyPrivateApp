@@ -1,6 +1,6 @@
 import { DataTable } from '@/components/data-table.tsx';
 import { Button } from '@/components/ui/button.tsx';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Input } from '@/components/ui/input.tsx';
 import { toast } from 'sonner';
 import {
@@ -13,23 +13,17 @@ import { ReferenceSidePanel } from '@/pages/reference/components/ReferenceSidePa
 import TagSelector from '@/components/TagSelector.tsx';
 import useTagStore from '@/store/useTagStore.ts';
 import { ButtonGroup } from '@/components/ui/button-group';
-
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
-import { Toggle } from '@/components/ui/toggle.tsx';
-import { SortDesc } from 'lucide-react';
-
 const FILTER = [
   { label: '참조', value: 'name' },
   { label: '메모', value: 'memo' },
 ];
 
 export default function ReferencePage() {
-  const { data, saved, isChanged, remove } = useReferenceStore();
+  const { getData, saved, isChanged, remove, data, setEdit, setPanelState } = useReferenceStore();
   const { data: tags } = useTagStore();
-  const [isEdit, setEdit] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [filter, setFilter] = React.useState(FILTER[0]);
-  const [selectedRow, setSelectedRow] = useState<ReferenceColumns | null>(null);
-  const [subSorting, setSubSorting] = useState<boolean>(false);
 
   const onSavedHandler = async () => {
     if (confirm('저장하시겠습니까?')) {
@@ -38,17 +32,37 @@ export default function ReferencePage() {
     }
   };
 
+  const reference = useMemo(() => {
+    return getData();
+  }, [data]);
+
+  const onEditHandler = () => {
+    setIsDeleting(true);
+    setEdit('initialize');
+  };
+
+  const onSelectHandler = (row: ReferenceColumns | null) => {
+    if (isDeleting) return;
+
+    if (row === null) {
+      setEdit('initialize');
+      return;
+    }
+
+    setEdit(row);
+    setPanelState('isNew', false);
+  };
+
   return (
     <div className="flex w-full flex-1 gap-5 px-4">
       <div className={'flex flex-7'}>
         <DataTable<ReferenceColumns, unknown>
           columns={REFERENCE_COLUMNS}
-          data={data}
-          isEdit={isEdit}
-          initialSorting={subSorting ? [{ id: 'parentIdx', desc: false }] : []}
+          data={reference}
+          isEdit={isDeleting}
           enableRowClickSelection={true}
-          enableMultiRowSelection={isEdit}
-          onSelectedRow={setSelectedRow}
+          enableMultiRowSelection={isDeleting}
+          onSelectedRow={onSelectHandler}
           tableControls={(table) => {
             const onFilterChange = (value: string) => {
               // 이전 필터 값 초기화
@@ -90,20 +104,9 @@ export default function ReferencePage() {
                       />
                     </ButtonGroup>
                   </ButtonGroup>
-                  <Toggle
-                    pressed={subSorting}
-                    onPressedChange={setSubSorting}
-                    aria-label="Toggle bookmark"
-                    size="sm"
-                    variant="outline"
-                    className="data-[state=on]:bg-transparent data-[state=on]:*:[svg]:fill-blue-500 data-[state=on]:*:[svg]:stroke-blue-500"
-                  >
-                    <SortDesc />
-                    기본정렬(하위항목)
-                  </Toggle>
                 </div>
                 <div className={'flex gap-2'}>
-                  {isEdit ? (
+                  {isDeleting ? (
                     <React.Fragment>
                       <Button
                         size={'sm'}
@@ -124,7 +127,11 @@ export default function ReferencePage() {
                       >
                         삭제
                       </Button>
-                      <Button variant={'secondary'} size={'sm'} onClick={() => setEdit(false)}>
+                      <Button
+                        variant={'secondary'}
+                        size={'sm'}
+                        onClick={() => setIsDeleting(false)}
+                      >
                         취소
                       </Button>
                     </React.Fragment>
@@ -137,7 +144,7 @@ export default function ReferencePage() {
                       >
                         저장
                       </Button>
-                      <Button size={'sm'} variant={'secondary'} onClick={() => setEdit(true)}>
+                      <Button size={'sm'} variant={'secondary'} onClick={onEditHandler}>
                         수정
                       </Button>
                     </React.Fragment>
@@ -148,7 +155,7 @@ export default function ReferencePage() {
           }}
         />
       </div>
-      <ReferenceSidePanel select={selectedRow} isDeleting={isEdit} setSelect={setSelectedRow} />
+      <ReferenceSidePanel isDeleting={isDeleting} />
     </div>
   );
 }

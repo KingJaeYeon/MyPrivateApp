@@ -7,29 +7,113 @@ import useTagStore from '@/store/useTagStore.ts';
 import { ReferenceColumns } from '@/components/data-table-columns/reference-columns.tsx';
 import { format } from 'date-fns';
 
+export const referenceSeed: ReferenceColumns = {
+  idx: '',
+  path: '',
+  name: '',
+  link: '',
+  tag: '',
+  memo: '',
+  updatedAt: new Date().toISOString(),
+  createdAt: new Date().getTime(),
+};
+
+const getNextIdx = (data: ReferenceColumns[]) => {
+  return data.length > 0 ? Number(data[data.length - 1].idx) + 1 : 1;
+};
+
+export const createNewInput = (data: ReferenceColumns[], path?: string): ReferenceColumns => {
+  const idx = getNextIdx(data);
+  const temp = path ? `${path}/${idx}` : idx.toString();
+  return {
+    ...referenceSeed,
+    idx: idx.toString(),
+    path: temp,
+  };
+};
+
 /** 전체 앱 설정 */
 export type State = {
   data: ReferenceColumns[];
   isChanged?: boolean;
+
+  // side panel
+
+  edit: ReferenceColumns;
+  snapShot: ReferenceColumns;
+  panelState: {
+    isSub: boolean;
+    isNew: boolean;
+  };
 };
 
 type Action = {
   init: (filePath: string) => Promise<void>;
-  push: (obj: ReferenceColumns) => boolean;
+  push: (obj: ReferenceColumns) => void;
+  getData: () => ReferenceColumns[];
   saved: () => Promise<void>;
   update: (row: ReferenceColumns) => void;
   remove: (rows: ReferenceColumns[]) => void;
   reset: () => void;
+
+  // side panel
+  setEdit: (edit: ReferenceColumns | 'initialize') => void;
+  setPanelState: (key: 'isSub' | 'isNew', bool: boolean) => void;
 };
 
 const useReferenceStore = create(
   immer<State & Action>((set, get) => ({
     data: [],
     isChanged: false,
+
+    // side panel
+    edit: referenceSeed,
+    snapShot: referenceSeed,
+    setEdit: (edit) => {
+      if (edit === 'initialize') {
+        set({
+          edit: createNewInput(get().data),
+          snapShot: createNewInput(get().data),
+          panelState: { isSub: false, isNew: true },
+        });
+        return;
+      }
+      set({ edit, snapShot: edit });
+    },
+    panelState: { isSub: false, isNew: false },
+    setPanelState: (key, bool) => {
+      const cur = get().edit;
+      const snap = get().snapShot;
+      if (key === 'isSub' && bool) {
+        set({ snapShot: cur, edit: createNewInput(get().data, cur.path) });
+      }
+      if (key === 'isSub' && !bool) {
+        set({ edit: snap, snapShot: createNewInput(get().data) });
+      }
+
+      set({ panelState: { ...get().panelState, [key]: bool } });
+    },
     /** 앱 시작 시 호출: electron-store에서 값 불러와 zustand state 세팅 */
     init: async (filePath) => {
       const result = await window.excelApi.read(filePath);
       set({ data: result });
+    },
+    getData: () => {
+      const copy = [...get().data];
+      return copy.sort((a, b) => {
+        const aParts = a.path.split('/').map(Number);
+        const bParts = b.path.split('/').map(Number);
+
+        // 각 계층의 숫자 비교
+        for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+          const aVal = aParts[i] ?? -1;
+          const bVal = bParts[i] ?? -1;
+          if (aVal !== bVal) return aVal - bVal;
+        }
+
+        // 완전히 동일하면 길이순 (상위가 먼저)
+        return aParts.length - bParts.length;
+      });
     },
     update: (row) => {
       const cur = get().data;
@@ -48,12 +132,13 @@ const useReferenceStore = create(
       const filtered = cur.filter((r) => !removeIds.includes(r.idx));
 
       set({ data: filtered, isChanged: true });
+      get().setEdit('initialize');
     },
     push: (obj) => {
       const temp = get().data;
       const newArr = [...temp, obj];
       set({ data: newArr, isChanged: true });
-      return true;
+      get().setEdit('initialize');
     },
     /** 특정 key만 부분 업데이트 + electron-store 반영 */
     saved: async () => {
