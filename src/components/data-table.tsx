@@ -71,7 +71,6 @@ export function DataTable<TData, TValue>({
       sorting: sorting.length === 0 && initialSorting ? initialSorting : sorting,
       columnVisibility: {
         createdAt: false,
-        parentIdx: false,
       },
     },
     onSortingChange: setSorting,
@@ -172,7 +171,7 @@ export function DataTable<TData, TValue>({
         )}
       </div>
       <div
-        className={'scrollWidth3 relative flex w-full flex-1 overflow-x-auto rounded-md border'}
+        className={'scrollNone relative flex w-full flex-1 overflow-x-auto rounded-md border'}
         ref={ref1}
       >
         <div className={'w-full'} ref={tableMeasure[0]}>
