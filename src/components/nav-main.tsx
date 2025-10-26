@@ -21,6 +21,7 @@ export type NavMainType = {
   items?: {
     title: string;
     url: string;
+    hidden?: boolean;
   }[];
 }[];
 
@@ -47,15 +48,17 @@ export function NavMain({ items }: { items: NavMainType }) {
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <SidebarMenuSub>
-                  {item.items?.map((subItem) => (
-                    <SidebarMenuSubItem key={subItem.title}>
-                      <SidebarMenuSubButton asChild>
-                        <span className={'cursor-pointer'} onClick={() => navigate(subItem.url)}>
-                          {subItem.title}
-                        </span>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
+                  {item.items
+                    ?.filter((v) => !v.hidden)
+                    .map((subItem) => (
+                      <SidebarMenuSubItem key={subItem.title}>
+                        <SidebarMenuSubButton asChild>
+                          <span className={'cursor-pointer'} onClick={() => navigate(subItem.url)}>
+                            {subItem.title}
+                          </span>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    ))}
                 </SidebarMenuSub>
               </CollapsibleContent>
             </SidebarMenuItem>

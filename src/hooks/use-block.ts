@@ -1,13 +1,11 @@
-import { Link, useLocation, useBlocker } from 'react-router-dom';
 import useTagStore from '@/store/useTagStore.ts';
 import useChannelStore from '@/store/useChannelStore.ts';
-import { navigationRoutes } from '@/routes';
-import useSettingStore from '@/store/useSettingStore.ts';
 import useReferenceStore from '@/store/useReferenceStore.ts';
 import usePromptsStore from '@/store/usePromptsStore.ts';
+import useSettingStore from '@/store/useSettingStore.ts';
+import { useBlocker } from 'react-router-dom';
 
-export default function Navigator() {
-  const { pathname } = useLocation();
+export default function UseBlock() {
   const { isChanged: isChangedT } = useTagStore();
   const { isChanged: isChangedC } = useChannelStore();
   const { isChanged: isChangedR } = useReferenceStore();
@@ -28,20 +26,4 @@ export default function Navigator() {
     }
     return false;
   });
-
-  return (
-    <div className={'flex w-full justify-start gap-4 px-4 py-3 text-lg'}>
-      {navigationRoutes.map((route) => (
-        <Link
-          key={route.path}
-          to={route.path}
-          className={
-            pathname === route.path ? 'text-blue-500' : 'cursor-pointer hover:text-gray-400'
-          }
-        >
-          {route.label}
-        </Link>
-      ))}
-    </div>
-  );
 }

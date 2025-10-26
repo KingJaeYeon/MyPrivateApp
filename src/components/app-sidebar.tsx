@@ -1,9 +1,6 @@
-'use client';
-
 import * as React from 'react';
-import { BookOpen, Database, Languages, Settings2 } from 'lucide-react';
 
-import { NavMain, NavMainType } from '@/components/nav-main';
+import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import {
   Sidebar,
@@ -16,106 +13,7 @@ import {
 import useSettingStore from '@/store/useSettingStore.ts';
 import { Youtube } from '@/assets/svg';
 import { useNavigate } from 'react-router-dom';
-
-// This is sample data.
-const data: NavMainType = [
-  {
-    title: 'YouTube',
-    url: '/search-videos',
-    icon: Youtube,
-    isActive: true,
-    items: [
-      {
-        title: 'Search Videos',
-        url: '/search-videos',
-      },
-      {
-        title: 'Result',
-        url: '/search-videos/result',
-      },
-      {
-        title: 'Saved Results...',
-        url: '/saved-results',
-      },
-    ],
-  },
-  {
-    title: 'Management',
-    url: '/channels',
-    icon: Database,
-    items: [
-      {
-        title: 'Channels',
-        url: '/channels',
-      },
-      {
-        title: 'Tags',
-        url: '/tags',
-      },
-    ],
-  },
-  {
-    title: 'Library',
-    url: '/prompts',
-    icon: BookOpen,
-    items: [
-      {
-        title: 'Prompts',
-        url: '/prompts',
-      },
-      {
-        title: 'Reference',
-        url: '/reference',
-      },
-    ],
-  },
-  {
-    title: 'English',
-    url: '/english',
-    icon: Languages,
-    items: [
-      {
-        title: 'Patterns',
-        url: '/english/patterns',
-      },
-      {
-        title: 'Vocabulary',
-        url: '/english/vocabulary',
-      },
-      {
-        title: 'Conversations',
-        url: '/english/conversations',
-      },
-      {
-        title: 'Journal',
-        url: '/english/journal',
-      },
-    ],
-  },
-  {
-    title: 'Settings',
-    url: '/settings',
-    icon: Settings2,
-    items: [
-      {
-        title: 'General',
-        url: '/settings',
-      },
-      {
-        title: 'YouTube API',
-        url: '/settings/youtube',
-      },
-      {
-        title: 'Files & Folders',
-        url: '/settings/files',
-      },
-      {
-        title: 'Buttons',
-        url: '/settings/buttons',
-      },
-    ],
-  },
-];
+import { navigationRoutes } from '@/routes.tsx';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const hasApiKey = useSettingStore((s) => !!s.data.youtube.apiKey);
@@ -146,7 +44,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenuButton>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data} />
+        <NavMain items={navigationRoutes} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser
