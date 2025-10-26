@@ -1,7 +1,7 @@
 import { toast } from 'sonner';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
-import { formatNumber } from '@/lib/utils.ts';
+import { cn, formatNumber } from '@/lib/utils.ts';
 
 export type TagColumns = {
   idx: string;
@@ -51,7 +51,10 @@ export const TAG_COLUMNS: ColumnDef<TagColumns>[] = [
           navigator.clipboard.writeText(row.original.name);
           toast.success('복사완료');
         }}
-        className={'cursor-pointer text-xs break-words whitespace-normal text-green-500'}
+        className={cn(
+          'cursor-pointer text-xs break-words whitespace-normal text-green-500',
+          row.original.total === 0 && 'text-destructive'
+        )}
       >
         {row.original.name}
       </div>
@@ -98,7 +101,9 @@ export const TAG_COLUMNS: ColumnDef<TagColumns>[] = [
     header: '전체수',
     size: 120,
     cell: ({ row }) => (
-      <span className="text-xs tabular-nums">{formatNumber(row.original.total)}</span>
+      <span className={cn('text-xs tabular-nums', row.original.total === 0 && 'text-destructive')}>
+        {formatNumber(row.original.total)}
+      </span>
     ),
   },
 ];
