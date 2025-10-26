@@ -37,17 +37,19 @@ export default function MemoryBadge() {
 
   return (
     <Popover>
-      <PopoverTrigger>
-        <Badge
-          variant="secondary"
-          className="text-2xs h-5 cursor-pointer gap-1 font-normal"
-          title={`CPU ${stats.cpu.toFixed(1)}% / App ${appPct}%`}
-        >
-          <span className={`inline-block h-2 w-2 rounded-full ${tone}`} />
-          <span className="tabular-nums">
-            {appPct}% · {formatBytes(stats.appMem)}
-          </span>
-        </Badge>
+      <PopoverTrigger asChild>
+        <button className={'flex'}>
+          <Badge
+            variant="secondary"
+            className="text-2xs h-5 cursor-pointer gap-1 font-normal"
+            title={`CPU ${stats.cpu.toFixed(1)}% / App ${appPct}%`}
+          >
+            <span className={`inline-block h-2 w-2 rounded-full ${tone}`} />
+            <span className="tabular-nums">
+              {appPct}% · {formatBytes(stats.appMem)}
+            </span>
+          </Badge>
+        </button>
       </PopoverTrigger>
 
       <PopoverContent align="end" className="w-64 text-xs">

@@ -100,7 +100,8 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
   {
     accessorKey: 'tag',
     header: '태그',
-    minSize: 220,
+    minSize: 170,
+    maxSize: 220,
     cell: ({ row }) => {
       const tagsJSON = useTagStore.getState().jsonData;
       const cur = row?.original?.tag?.toString().split(',');
@@ -124,7 +125,8 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
   {
     accessorKey: 'memo',
     header: '메모',
-    minSize: 400,
+    minSize: 300,
+    maxSize: 400,
     cell: ({ row }) => (
       <Tip txt={row.original.memo} className="max-w-[600px]" side={'right'}>
         <span className="ellipsisLine2 min-w-[100px] cursor-pointer text-xs break-words whitespace-normal">
@@ -136,7 +138,7 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
   {
     accessorKey: 'updatedAt',
     header: '갱신일',
-    minSize: 120,
+    maxSize: 120,
     cell: ({ row }) => (
       <span className="text-xs tabular-nums">
         {format(row.original.updatedAt, 'yyyy.MM.dd', { locale: ko })}

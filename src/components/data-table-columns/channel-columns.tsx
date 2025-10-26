@@ -166,7 +166,8 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
   {
     accessorKey: 'name',
     header: '채널명',
-    minSize: 200,
+    maxSize: 200,
+    minSize: 170,
     cell: ({ row }) => (
       <div className="flex items-center gap-2 py-2 text-xs">
         <Avatar className="h-6 w-6">
@@ -192,8 +193,8 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
   {
     accessorKey: 'tag',
     header: '태그',
-    maxSize: 1000,
-    minSize: 200,
+    maxSize: 200,
+    minSize: 170,
     cell: ({ row }) => {
       const tags = useTagStore.getState().jsonData;
       const cur = row.original.tag.split(',');
@@ -217,7 +218,7 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
   {
     accessorKey: 'regionCode',
     header: '국가',
-    size: 50,
+    maxSize: 50,
     cell: ({ row }) => (
       <p className="text-xs">{row.original.regionCode === '' ? '-' : row.original.regionCode}</p>
     ),

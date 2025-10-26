@@ -1,14 +1,15 @@
 // src/components/data-table.tsx
 import * as React from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import {
+  type ColumnDef,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getSortedRowModel,
   type SortingState,
-  useReactTable,
-  type ColumnDef,
   type Table as typeTable,
-  getFilteredRowModel,
+  useReactTable,
 } from '@tanstack/react-table';
 import {
   Table,
@@ -18,11 +19,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { ReactNode, useEffect, useRef, useState } from 'react';
 import useMeasure from 'react-use-measure';
 import useTableStore from '@/store/useTableStore.ts';
 import { cn, FontSize } from '@/lib/utils.ts';
-import { useSpring, animated } from '@react-spring/web';
+import { animated, useSpring } from '@react-spring/web';
 import useSyncScroll from '@/hooks/use-sync-scroll.ts';
 
 type Props<TData, TValue> = {
@@ -106,12 +106,6 @@ export function DataTable<TData, TValue>({
   }, [getTriggerHeight, isFixHeader, name, ref1, setTriggerHeight, y]);
 
   // TableHeader의 위치 측정
-  useEffect(() => {
-    if (!headerRef.current) return;
-
-    const top = headerRef.current.getBoundingClientRect().top + window.scrollY;
-    setHeaderTop(top);
-  }, []);
 
   useEffect(() => {
     const scrollContainer = ref1.current;
@@ -143,6 +137,21 @@ export function DataTable<TData, TValue>({
   useEffect(() => {
     table.setRowSelection({});
   }, [isEdit]);
+
+  function getAbsoluteTop(element: HTMLElement | null): number {
+    let offset = 0;
+    while (element) {
+      offset += element.offsetTop;
+      element = element.offsetParent as HTMLElement;
+    }
+    return offset;
+  }
+
+  const top1 = getAbsoluteTop(headerRef.current);
+
+  useEffect(() => {
+    setHeaderTop(top1);
+  }, [top1]);
 
   return (
     <div className="flex flex-1 flex-col space-y-2">

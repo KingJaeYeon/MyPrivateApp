@@ -13,24 +13,22 @@ import {
 } from '@/components/ui/sidebar';
 import { useNavigate } from 'react-router-dom';
 
-export function NavMain({
-  items,
-}: {
-  items: {
+export type NavMainType = {
+  title: string;
+  url: string;
+  icon?: LucideIcon;
+  isActive?: boolean;
+  items?: {
     title: string;
     url: string;
-    icon?: LucideIcon;
-    isActive?: boolean;
-    items?: {
-      title: string;
-      url: string;
-    }[];
   }[];
-}) {
+}[];
+
+export function NavMain({ items }: { items: NavMainType }) {
   const navigate = useNavigate();
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      <SidebarGroupLabel>Private App</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible
@@ -52,7 +50,7 @@ export function NavMain({
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
                       <SidebarMenuSubButton asChild>
-                        <span className={'cursor-pointer'} onClick={() => navigate('channels')}>
+                        <span className={'cursor-pointer'} onClick={() => navigate(subItem.url)}>
                           {subItem.title}
                         </span>
                       </SidebarMenuSubButton>
