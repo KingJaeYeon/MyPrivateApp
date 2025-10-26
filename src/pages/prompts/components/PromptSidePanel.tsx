@@ -25,7 +25,7 @@ export function PromptSidePanel({ isDeleting }: { isDeleting: boolean }) {
   };
 
   return (
-    <div className={'mt-2 flex flex-1/4 flex-col'}>
+    <div className={'mt-2 flex flex-1/4 flex-col h-full'}>
       <div className={'flex gap-2 pb-2'}>
         <BadgeRenderer
           isSub={panelState.isSub}

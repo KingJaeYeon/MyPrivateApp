@@ -17,7 +17,7 @@ export default function TagPage() {
   };
 
   return (
-    <div className="flex w-full flex-1 gap-5 px-4">
+    <div className="flex w-full flex-1 gap-5 px-4 h-full">
       <div className={'flex flex-7'}>
         <DataTable<TagColumns, unknown>
           columns={TAG_COLUMNS}

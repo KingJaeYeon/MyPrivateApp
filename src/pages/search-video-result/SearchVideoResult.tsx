@@ -71,7 +71,7 @@ export default function SearchVideoResult() {
   };
   const dataInfo = `Total ${data.length}/ ${mode === 'keywords' ? maxResults : Number(maxChannels) * channelIds.length}개 | 검색모드: ${mode} | 키워드: ${keyword} | 기간: ${mode === 'keywords' ? publishedAfterK : publishedAfterC}일 | 국가: ${regionCode}`;
   return (
-    <div className="flex w-full flex-1 px-4 pb-4">
+    <div className="flex w-full flex-1 px-4 pb-4 h-full">
       <DataTable<VideoRow, unknown>
         columns={columns}
         hasNo={true}

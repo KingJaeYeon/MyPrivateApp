@@ -54,7 +54,7 @@ export default function PromptsPage() {
   };
 
   return (
-    <div className="flex w-full flex-1 gap-5 px-4">
+    <div className="flex w-full flex-1 gap-5 px-4 h-full ">
       <div className={'flex flex-7'}>
         <DataTable<PromptsColumns, unknown>
           columns={PROMPTS_COLUMNS}

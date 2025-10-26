@@ -26,8 +26,8 @@ export default function ChannelsPage() {
   };
 
   return (
-    <div className="flex w-full flex-1 gap-5 px-4 pb-4">
-      <DataTable<ChannelColumns, unknown>
+    <div className="h-full flex w-full flex-1 gap-5 px-4 pb-4">
+       <DataTable<ChannelColumns, unknown>
         columns={CHANNELS_COLUMNS}
         data={data}
         isFixHeader={true}

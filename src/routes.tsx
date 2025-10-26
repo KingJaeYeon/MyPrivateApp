@@ -172,8 +172,8 @@ export const routes: RouteObject[] = [
         element: null,
         children: [
           { index: true, element: <Navigate to="/lib/prompts" replace /> },
-          { path: 'prompts', element: <ReferencePage /> },
-          { path: 'reference', element: <PromptsPage /> },
+          { path: 'prompts', element: <PromptsPage /> },
+          { path: 'reference', element: <ReferencePage /> },
         ],
       },
       {
