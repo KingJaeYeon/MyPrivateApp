@@ -28,7 +28,7 @@ export const navigationRoutes: NavMainType = [
     items: [
       {
         title: 'Search Videos',
-        url: '/youtube',
+        url: '/youtube/search',
       },
       {
         title: 'Result',
@@ -51,12 +51,13 @@ export const navigationRoutes: NavMainType = [
       },
       {
         title: ':channelId',
-        url: '/manage/channel/:channelId',
+        url: '/manage/channels/:channelId',
         hidden: true,
       },
       {
-        title: 'Edit Channels...',
-        url: '/manage/channels-edit',
+        title: 'Edit',
+        url: '/manage/channels/edit',
+        suffix: 'Channels...'
       },
       {
         title: 'Tags',
@@ -66,7 +67,7 @@ export const navigationRoutes: NavMainType = [
   },
   {
     title: 'Library',
-    url: '/prompts',
+    url: '/lib',
     icon: BookOpen,
     items: [
       {
@@ -127,6 +128,14 @@ export const navigationRoutes: NavMainType = [
   },
 ];
 
+// const items = [
+//   { href: '#', label: 'Home' },
+//   { href: '#', label: 'Documentation' },
+//   { href: '#', label: 'Building Your Application' },
+//   { href: '#', label: 'Data Fetching' },
+//   { label: 'Caching and Revalidating' },
+// ];
+
 export const routes: RouteObject[] = [
   {
     path: '/',
@@ -141,7 +150,7 @@ export const routes: RouteObject[] = [
         element: null,
         children: [
           { index: true, element: <Navigate to="/youtube/search-videos" replace /> },
-          { path: 'search-videos', element: <SearchVideo /> },
+          { path: 'search', element: <SearchVideo /> },
           { path: 'result', element: <SearchVideoResult /> },
           { path: 'saved-results', element: <div>saved-results</div> },
           { path: 'edit', element: <div>edit</div> },
@@ -153,9 +162,9 @@ export const routes: RouteObject[] = [
         children: [
           { index: true, element: <Navigate to="/manage/channels" replace /> },
           { path: 'channels', element: <ChannelsPage /> },
-          { path: 'channel/:channelId', element: <ChannelDetailPage /> },
+          { path: 'channels/:channelId', element: <ChannelDetailPage /> },
           { path: 'tags', element: <TagPage /> },
-          { path: 'channels-edit', element: <div>edit</div> },
+          { path: 'channels/edit', element: <div>edit</div> },
         ],
       },
       {

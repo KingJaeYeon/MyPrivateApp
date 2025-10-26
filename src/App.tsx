@@ -10,6 +10,7 @@ import { BreadcrumbResponsive } from '@/components/BreadcrumbResponsive.tsx';
 export default function App() {
   useInitializeStores();
   UseBlock();
+
   return (
     <>
       <div className="flex min-h-svh w-full flex-col items-center justify-center">

@@ -1,7 +1,11 @@
-// Breadcrumbs.tsx
-import * as React from 'react';
-import { Link, useLocation, matchPath } from 'react-router-dom';
-import useChannelStore from '@/store/useChannelStore'; // 채널명 조회용(선택)
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { useMemo, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -11,107 +15,148 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 // 사이드바 네비 데이터
 import { navigationRoutes } from '@/routes.tsx';
 import { SidebarTrigger } from '@/components/ui/sidebar.tsx';
 import { Separator } from '@/components/ui/separator.tsx';
-import { useMemo } from 'react';
-
-type Crumb = { label: string; href?: string };
 
 const ITEMS_TO_DISPLAY = 3;
 
-/** 경로 세그먼트 누적 링크 만들기 */
-function buildSegments(pathname: string): string[] {
-  const parts = pathname.split('/').filter(Boolean);
-  const acc: string[] = [];
-  parts.forEach((_, i) => {
-    const seg = '/' + parts.slice(0, i + 1).join('/');
-    acc.push(seg);
-  });
-  return acc.length === 0 ? ['/'] : acc;
-}
-
-/** navigationRoutes에서 가장 근접한 항목 레이블 찾기 */
-function resolveLabelFromNav(path: string): string | null {
-  // 1) 최상위
-  for (const group of navigationRoutes) {
-    if (group.url && matchPath({ path: group.url, end: true }, path)) return group.title;
-    // 2) 하위
-    for (const it of group.items ?? []) {
-      if (it.url && matchPath({ path: it.url, end: true }, path)) return it.title;
-    }
-  }
-  return null;
-}
-
-/** 동적 경로 레이블 보정 (예: /manage/channel/:channelId → 채널명) */
-function useDynamicLabel(path: string): string | null {
-  console.log(path);
-  // 채널 상세
-  const m = matchPath('/manage/channel/:channelId', path);
-  const store = useChannelStore();
-  if (m?.params.channelId) {
-    const ch = store.data.find((c) => c.channelId === m.params.channelId);
-    if (ch?.name) return ch.name;
-    return m.params.channelId; // fallback
-  }
-  return null;
-}
-
-/** 현재 경로 → Crumb[] 생성 */
-function useCrumbs(): Crumb[] {
-  const { pathname } = useLocation();
-  const segs = buildSegments(pathname);
-
-  // 홈으로 가는 루트(선택)
-  const roots: Crumb[] = pathname === '/' ? [{ label: 'Home' }] : [{ label: 'Home', href: '/' }];
-
-  const crumbs: Crumb[] = segs.map((seg, i) => {
-    // 먼저 동적 라벨 시도
-    const dynamic = useDynamicLabel(seg);
-    const label = dynamic ?? resolveLabelFromNav(seg) ?? seg.split('/').pop() ?? seg;
-    const isLast = i === segs.length - 1;
-    return isLast ? { label } : { label, href: seg };
-  });
-
-  // 중복 Home 방지
-  if (pathname === '/') return roots;
-  // 첫 세그가 /youtube 또는 /manage 등이라면 Home 뒤에 붙인다
-  return [...roots, ...crumbs.filter((c) => !(c.href === '/'))];
-}
+type BreadcrumbPath = {
+  label: string;
+  href?: string;
+};
 
 /** 반응형 Breadcrumb */
 export function BreadcrumbResponsive() {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const params = useParams();
+  const [open, setOpen] = useState(false);
 
-  const path = useMemo(() => {
-    const path = pathname.split('/');
+  // navigationRoutes를 flat한 배열로 변환 (hidden 포함)
+  const routeMap = useMemo(() => {
+    const map: Array<{ label: string; href: string }> = [];
 
-    return [{ path: '', label: '' }];
-  }, [pathname]);
+    navigationRoutes.forEach((route) => {
+      // 상위 route 추가
+      map.push({ label: route.title, href: route.url });
+
+      // 하위 items 추가 (hidden 포함)
+      if (route.items) {
+        route.items.forEach((item) => {
+          map.push({ label: item.title, href: item.url });
+        });
+      }
+    });
+
+    return map;
+  }, []);
+
+  // 현재 경로를 breadcrumb path로 변환
+  const breadcrumbPath = useMemo(() => {
+    const segments = pathname.split('/').filter(Boolean);
+    const paths: BreadcrumbPath[] = [];
+
+    let accumulatedPath = '';
+    segments.forEach((segment, index) => {
+      accumulatedPath += `/${segment}`;
+
+      // 먼저 정확한 경로 매칭 시도
+      let route = routeMap.find((r) => r.href === accumulatedPath);
+
+      // 못 찾으면 동적 파라미터 패턴으로 시도
+      if (!route) {
+        const dynamicPath = accumulatedPath.replace(segment, `:${segment}`);
+        route = routeMap.find((r) => r.href === dynamicPath);
+
+        // 동적 라우트 찾았으면 실제 params 값으로 label 설정
+        if (route && params[segment]) {
+          paths.push({
+            label: params[segment],
+            href: index === segments.length - 1 ? undefined : accumulatedPath,
+          });
+          return;
+        }
+      }
+
+      // 마지막 segment는 href 없음 (현재 페이지)
+      paths.push({
+        label: route?.label || segment,
+        href: index === segments.length - 1 ? undefined : accumulatedPath,
+      });
+    });
+
+    return paths;
+  }, [pathname, params, routeMap]);
+
+  // ellipsis에 표시할 중간 항목들
+  const hiddenItems = breadcrumbPath.length > ITEMS_TO_DISPLAY ? breadcrumbPath.slice(1, -2) : [];
+
+  // 화면에 표시할 항목들 (첫 번째 + 마지막 2개)
+  const visibleItems =
+    breadcrumbPath.length > ITEMS_TO_DISPLAY
+      ? [breadcrumbPath[0], ...breadcrumbPath.slice(-2)]
+      : breadcrumbPath;
 
   return (
     <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
       <div className="flex items-center gap-2 px-4">
-        {pathname}
         <SidebarTrigger className="-ml-1" />
         <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
         <Breadcrumb>
           <BreadcrumbList>
-            <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbLink href="#">Building Your Application</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator className="hidden md:block" />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-            </BreadcrumbItem>
+            {/* 첫 번째 항목 */}
+            {visibleItems.length > 0 && (
+              <>
+                <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbLink>{visibleItems[0].label}</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+              </>
+            )}
+
+            {/* 중간 항목 (ellipsis) */}
+            {hiddenItems.length > 0 && (
+              <>
+                <BreadcrumbItem>
+                  <DropdownMenu open={open} onOpenChange={setOpen}>
+                    <DropdownMenuTrigger className="flex items-center gap-1" aria-label="더 보기">
+                      <BreadcrumbEllipsis className="size-4" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                      {hiddenItems.map((item, index) => (
+                        <DropdownMenuItem key={index}>
+                          <a href={item.href || '#'}>{item.label}</a>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+              </>
+            )}
+
+            {/* 마지막 2개 항목 (또는 전체) */}
+            {visibleItems.slice(1).map((item, index) => (
+              <BreadcrumbItem key={index}>
+                {item.href ? (
+                  <>
+                    <BreadcrumbLink
+                      className="max-w-20 truncate md:max-w-none"
+                      onClick={() => navigate(item.href!)}
+                    >
+                      {item.label}
+                    </BreadcrumbLink>
+                    <BreadcrumbSeparator />
+                  </>
+                ) : (
+                  <BreadcrumbPage className="max-w-20 truncate md:max-w-none">
+                    {item.label}
+                  </BreadcrumbPage>
+                )}
+              </BreadcrumbItem>
+            ))}
           </BreadcrumbList>
         </Breadcrumb>
       </div>

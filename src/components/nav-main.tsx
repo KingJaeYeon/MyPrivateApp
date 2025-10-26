@@ -22,6 +22,8 @@ export type NavMainType = {
     title: string;
     url: string;
     hidden?: boolean;
+    prefix?: string;
+    suffix?: string;
   }[];
 }[];
 
@@ -54,7 +56,9 @@ export function NavMain({ items }: { items: NavMainType }) {
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild>
                           <span className={'cursor-pointer'} onClick={() => navigate(subItem.url)}>
+                            {subItem.prefix && `${subItem.prefix} `}
                             {subItem.title}
+                            {subItem.suffix && ` ${subItem.suffix}`}
                           </span>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>

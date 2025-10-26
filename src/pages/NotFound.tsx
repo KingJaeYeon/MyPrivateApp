@@ -7,7 +7,7 @@ export default function NotFound() {
   const navigate = useNavigate();
   return (
     <div className={'no-drag flex flex-1 items-center justify-center select-none'}>
-      <div className={'mb-20 flex flex-col items-center gap-4'}>
+      <div className={'mt-20 flex flex-col items-center gap-4'}>
         <img
           src={theme === 'dark' ? './logo-dark.png' : './logo.png'}
           className={'w-[220px]'}
