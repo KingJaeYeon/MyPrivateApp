@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button.tsx';
 import { getOrderedColumns } from '@/lib/utils.ts';
 import useInitializeStores from '@/hooks/use-initialize-stores.tsx';
 import useChannelsSchedule from '@/hooks/use-channels-schedule.ts';
+import { toast } from 'sonner';
+import { useModalStore } from '@/store/modalStore.ts';
 
 export function ExcelFilesLocation() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -16,6 +18,7 @@ export function ExcelFilesLocation() {
   } = useSettingStore();
   const { reload } = useInitializeStores();
   const { handleStop } = useChannelsSchedule();
+  const { openModal } = useModalStore();
 
   async function handleClick() {
     const result = await window.electronAPI.pickFolder();
@@ -40,7 +43,7 @@ export function ExcelFilesLocation() {
         !!name.reference &&
         !!name.result;
       if (!isAllFill) {
-        alert('FileName Rule 먼저 체워 주세요.');
+        openModal('alert', 'FileName Rule 먼저 체워 주세요.');
         return;
       }
 
@@ -54,11 +57,11 @@ export function ExcelFilesLocation() {
       const resultCheck = /^\//.test(result) || /\./.test(result);
 
       if (!allXlsx) {
-        alert('result를 제외한 모든 파일명이 .xlsx, .xls 확장자를 가져야 합니다.');
+        toast.error('result를 제외한 모든 파일명이 .xlsx, .xls 확장자를 가져야 합니다.');
         return;
       }
       if (resultCheck) {
-        alert('result는 맨앞에 /와 . 제외해야합니다.');
+        toast.error('result는 맨앞에 /와 . 제외해야합니다.');
         return;
       }
 
@@ -111,9 +114,9 @@ export function ExcelFilesLocation() {
       }
       // const hasProgress = await window.fsApi.exists(`${location}/${name.progress}`)
       await updateIn('hasFile', true);
-      alert('생성완료');
+      toast.success('생성완료');
     } catch (e) {
-      alert('오류발생');
+      toast.error('오류발생');
     } finally {
       setLoading(false);
     }

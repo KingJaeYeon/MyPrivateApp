@@ -28,7 +28,7 @@ export default function PromptsPage() {
   const onSavedHandler = async () => {
     if (confirm('저장하시겠습니까?')) {
       await saved();
-      alert('저장되었습니다.');
+      openModal('alert', '저장되었습니다.');
     }
   };
 
@@ -54,7 +54,7 @@ export default function PromptsPage() {
   };
 
   return (
-    <div className="flex w-full flex-1 gap-5 px-4 h-full ">
+    <div className="flex h-full w-full flex-1 gap-5 px-4">
       <div className={'flex flex-7'}>
         <DataTable<PromptsColumns, unknown>
           columns={PROMPTS_COLUMNS}

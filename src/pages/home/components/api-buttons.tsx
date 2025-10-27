@@ -6,17 +6,20 @@ import { useMutation } from '@tanstack/react-query';
 import { pingTest } from '@/service/pingtest.ts';
 import React from 'react';
 import useChannelsSchedule from '@/hooks/use-channels-schedule.ts';
+import { toast } from 'sonner';
+import { useModalStore } from '@/store/modalStore.ts';
 
 export function DeleteButton() {
   const { updateIn } = useSettingStore();
   const { handleStop } = useChannelsSchedule();
+  const { openModal } = useModalStore();
 
   const deleteKey = async () => {
     const isDelete = confirm('정말 삭제하시겠습니까?');
     if (isDelete) {
       await updateIn('youtube', { usedQuota: 0, apiKey: '', quotaUpdatedAt: '' });
       await handleStop();
-      alert('삭제되었습니다. 다시 입력해주세요.');
+      openModal('alert', '삭제되었습니다. 다시 입력해주세요.');
     }
   };
 
@@ -37,6 +40,7 @@ export function ConnectButton({
   setIsEditing: React.Dispatch<React.SetStateAction<{ youtubeApiKey: boolean }>>;
 }) {
   const { updateIn } = useSettingStore();
+  const { openModal } = useModalStore();
 
   const { mutate, isPending } = useMutation({
     mutationFn: ({ apiKey, type }: { apiKey: string; type: ApiType }) => pingTest({ apiKey, type }),
@@ -47,7 +51,7 @@ export function ConnectButton({
         quotaUpdatedAt: new Date().toLocaleString(),
       });
       setIsEditing((prev) => ({ ...prev, [type]: false }));
-      alert('API 키 저장 완료');
+      toast.success('API 키 저장 완료');
     },
     onError: async (error: any) => {
       if (error.message.includes('quota')) {
@@ -56,10 +60,10 @@ export function ConnectButton({
           usedQuota: 10000,
           quotaUpdatedAt: new Date().toLocaleString(),
         });
-        alert('API 키가 저장되었습니다. 다만 할당량이 초과되었습니다.');
+        toast.warning('API 키가 저장되었습니다. 다만 할당량이 초과되었습니다.');
         return;
       }
-      alert('API 키가 유효하지 않거나 연결에 실패했습니다: ' + error.message);
+      openModal('alert', 'API 키가 유효하지 않거나 연결에 실패했습니다: ' + error.message);
     },
   });
   return (
@@ -67,7 +71,7 @@ export function ConnectButton({
       disabled={isPending}
       onClick={() => {
         if (!editValues[type] || editValues[type].trim() === '') {
-          alert('API 키를 입력해주세요.');
+          openModal('alert', 'API 키를 입력해주세요.');
           return;
         }
         mutate({ type, apiKey: editValues[type].trim() });

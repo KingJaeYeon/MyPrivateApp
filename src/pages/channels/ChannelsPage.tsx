@@ -21,13 +21,13 @@ export default function ChannelsPage() {
     if (confirm('저장하시겠습니까?')) {
       await savedH();
       await savedC();
-      alert('저장되었습니다.');
+      openModal('alert', '저장되었습니다.');
     }
   };
 
   return (
-    <div className="h-full flex w-full flex-1 gap-5 px-4 pb-4">
-       <DataTable<ChannelColumns, unknown>
+    <div className="flex h-full w-full flex-1 gap-5 px-4 pb-4">
+      <DataTable<ChannelColumns, unknown>
         columns={CHANNELS_COLUMNS}
         data={data}
         isFixHeader={true}

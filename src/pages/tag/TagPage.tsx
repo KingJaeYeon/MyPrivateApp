@@ -12,12 +12,12 @@ export default function TagPage() {
   const onSavedHandler = async () => {
     if (confirm('저장하시겠습니까?')) {
       await saved();
-      alert('저장되었습니다.');
+      toast.success('저장되었습니다.');
     }
   };
 
   return (
-    <div className="flex w-full flex-1 gap-5 px-4 h-full">
+    <div className="flex h-full w-full flex-1 gap-5 px-4">
       <div className={'flex flex-7'}>
         <DataTable<TagColumns, unknown>
           columns={TAG_COLUMNS}

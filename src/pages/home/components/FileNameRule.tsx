@@ -14,6 +14,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { useModalStore } from '@/store/modalStore.ts';
 
 export function FileNameRule() {
   const [editValues, setEditValues] = useState<State['data']['folder']['name']>();
@@ -21,6 +22,7 @@ export function FileNameRule() {
   const { location, name: names, exportFile } = useSettingStore((r) => r.data.folder);
   const { updateIn } = useSettingStore();
   const [open, setOpen] = useState(false);
+  const { openModal } = useModalStore();
 
   useEffect(() => {
     setEditValues(names);
@@ -50,7 +52,7 @@ export function FileNameRule() {
       !!editFileDate;
 
     if (!isAllFill) {
-      alert('FileName Rule 먼저 체워 주세요.');
+      openModal('alert', 'FileName Rule 먼저 체워 주세요.');
       return;
     }
 
@@ -59,11 +61,11 @@ export function FileNameRule() {
     const allXlsx = files.every((f) => /\.xlsx?$/.test(f.toLowerCase()));
     const resultCheck = /^\//.test(result) || /\./.test(result);
     if (!allXlsx) {
-      alert('result를 제외한 모든 파일명이 .xlsx, .xls 확장자를 가져야 합니다.');
+      openModal('alert', 'result를 제외한 모든 파일명이 .xlsx, .xls 확장자를 가져야 합니다.');
       return;
     }
     if (resultCheck) {
-      alert('result는 맨앞에 /와 . 제외해야합니다.');
+      openModal('alert', 'result는 맨앞에 /와 . 제외해야합니다.');
       return;
     }
 
@@ -74,7 +76,7 @@ export function FileNameRule() {
         fileStampMode: editFileDate,
       },
     });
-    alert('저장되었습니다.');
+    openModal('alert', '저장되었습니다.');
   }
 
   return (

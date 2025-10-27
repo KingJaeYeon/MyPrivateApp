@@ -4,6 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { RefreshCw, Trash2, ExternalLink } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
+import { useModalStore } from '@/store/modalStore.ts';
 
 // 임시 데이터
 const mockResults = [
@@ -47,6 +49,7 @@ const mockResults = [
 export function ResultsSettings() {
   const [results, setResults] = useState(mockResults);
   const [selectedId, setSelectedId] = useState(mockResults[2].id);
+  const { openModal } = useModalStore();
 
   const selectedResult = results.find((r) => r.id === selectedId);
 
@@ -60,7 +63,7 @@ export function ResultsSettings() {
   };
 
   const handleOpenFile = (filename: string) => {
-    alert(`${filename}.xlsx 파일을 엽니다`);
+    openModal('alert', `${filename}.xlsx 파일을 엽니다`);
   };
 
   return (
@@ -70,7 +73,7 @@ export function ResultsSettings() {
         <CardHeader className="flex-none">
           <div className="flex items-center justify-between">
             <CardTitle className="text-base">저장된 결과</CardTitle>
-            <Button size="icon" variant="ghost" onClick={() => alert('새로고침')}>
+            <Button size="icon" variant="ghost" onClick={() => toast('새로고침')}>
               <RefreshCw className="h-4 w-4" />
             </Button>
           </div>

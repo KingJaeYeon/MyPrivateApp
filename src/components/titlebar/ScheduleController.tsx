@@ -15,11 +15,13 @@ import { Separator } from '@/components/ui/separator.tsx';
 import { cn } from '@/lib/utils.ts';
 import { Badge } from '@/components/ui/badge.tsx';
 import useChannelsSchedule from '@/hooks/use-channels-schedule.ts';
+import { useModalStore } from '@/store/modalStore.ts';
 
 export function ScheduleController() {
   const { status, handleStart, handleStop, handleRunNow, loading } = useChannelsSchedule();
   const { data, updateIn } = useSettingStore();
   const [open, setOpen] = useState(false);
+  const { openModal } = useModalStore();
 
   // 상태별 스타일
   const getStatusConfig = () => {
@@ -51,11 +53,11 @@ export function ScheduleController() {
       open={open}
       onOpenChange={(open) => {
         if (!data.youtube.apiKey) {
-          alert('YouTube API Key 필요');
+          openModal('alert', 'YouTube API Key 필요');
           return;
         }
         if (!data.hasFile) {
-          alert('Excel 생성 필요');
+          openModal('alert', 'Excel 생성 필요');
           return;
         }
 

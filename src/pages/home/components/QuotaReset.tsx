@@ -3,12 +3,14 @@ import useSettingStore from '@/store/useSettingStore.ts';
 import { isAfter, isSameDay, parse, setHours, setMinutes, setSeconds } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { ko } from 'date-fns/locale';
+import { useModalStore } from '@/store/modalStore.ts';
 
 export default function QuotaReset() {
   const {
     data: { youtube },
     updateIn,
   } = useSettingStore();
+  const { openModal } = useModalStore();
 
   const [over1Day, setOver1Day] = useState<boolean>();
 
@@ -43,7 +45,7 @@ export default function QuotaReset() {
     const shouldUpdateQuota = isValid();
 
     if (!shouldUpdateQuota) {
-      alert('오후 4:00 이후에 클릭해주세요.');
+      openModal('alert', '오후 4:00 이후에 클릭해주세요.');
       return;
     }
 

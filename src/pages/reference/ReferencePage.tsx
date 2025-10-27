@@ -14,6 +14,7 @@ import TagSelector from '@/components/TagSelector.tsx';
 import useTagStore from '@/store/useTagStore.ts';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
+import { useModalStore } from '@/store/modalStore.ts';
 
 const FILTER = [
   { label: '참조', value: 'name' },
@@ -23,13 +24,14 @@ const FILTER = [
 export default function ReferencePage() {
   const { getData, saved, isChanged, remove, data, setEdit, setPanelState } = useReferenceStore();
   const { data: tags } = useTagStore();
+  const { openModal } = useModalStore();
   const [isDeleting, setIsDeleting] = useState(false);
   const [filter, setFilter] = React.useState(FILTER[0]);
 
   const onSavedHandler = async () => {
     if (confirm('저장하시겠습니까?')) {
       await saved();
-      alert('저장되었습니다.');
+      openModal('alert', '저장되었습니다.');
     }
   };
 
@@ -55,7 +57,7 @@ export default function ReferencePage() {
   };
 
   return (
-    <div className="flex w-full flex-1 gap-5 px-4 h-full">
+    <div className="flex h-full w-full flex-1 gap-5 px-4">
       <div className={'flex flex-7'}>
         <DataTable<ReferenceColumns, unknown>
           columns={REFERENCE_COLUMNS}

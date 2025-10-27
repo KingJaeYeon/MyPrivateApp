@@ -1,4 +1,3 @@
-// src/pages/ActionsButtons.tsx
 import { Button } from '@/components/ui/button.tsx';
 import useSettingStore from '@/store/useSettingStore.ts';
 import { useLogStore } from '@/store/useLogStore.ts';
@@ -18,6 +17,7 @@ import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
+import { useModalStore } from '@/store/modalStore.ts';
 
 export function ActionsButtons() {
   const {
@@ -31,6 +31,7 @@ export function ActionsButtons() {
     getFilterPayload,
     saved,
   } = useVideoSearchStore();
+  const { openModal } = useModalStore();
   const navigate = useNavigate();
   const {
     data: {
@@ -67,7 +68,7 @@ export function ActionsButtons() {
 
   const onStart = () => {
     if (!apiKey) {
-      window.alert('YouTube API 키를 먼저 저장해주세요.');
+      openModal('alert', 'YouTube API 키를 먼저 저장해주세요.');
       return;
     }
 
@@ -89,7 +90,7 @@ export function ActionsButtons() {
     }
 
     if (!isChanged) {
-      alert('검색 조건이 이전과 동일합니다. 조건을 변경한 후 다시 시도해주세요.');
+      openModal('alert', `검색 조건이 이전과 동일합니다.`);
       return;
     }
 

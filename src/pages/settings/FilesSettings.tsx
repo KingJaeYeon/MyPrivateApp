@@ -4,10 +4,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { FolderOpen, FileSpreadsheet, CheckCircle2 } from 'lucide-react';
 import useSettingStore from '@/store/useSettingStore';
+import { useModalStore } from '@/store/modalStore.ts';
 
 export function FilesSettings() {
   const { data, updateIn } = useSettingStore();
-
+  const { openModal } = useModalStore();
   const handlePickFolder = async () => {
     const path = await window.electronAPI.pickFolder();
     if (path) {
@@ -17,11 +18,11 @@ export function FilesSettings() {
 
   const handleCreateExcel = async () => {
     if (!data.folder.location) {
-      alert('폴더를 먼저 선택하세요');
+      openModal('alert', '폴더를 먼저 선택하세요');
       return;
     }
     // Excel 생성 로직
-    alert('Excel 파일이 생성되었습니다');
+    openModal('alert', 'Excel 파일이 생성되었습니다');
   };
 
   return (

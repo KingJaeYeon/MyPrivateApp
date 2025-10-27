@@ -10,14 +10,16 @@ import {
 } from '@/components/ui/select';
 import { AlertTriangle } from 'lucide-react';
 import useSettingStore from '@/store/useSettingStore';
+import { useModalStore } from '@/store/modalStore.ts';
 
 export function AdvancedSettings() {
   const { data, updateIn } = useSettingStore();
+  const { openModal } = useModalStore();
 
   const handleReset = () => {
     if (confirm('모든 설정을 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
       // 초기화 로직
-      alert('설정이 초기화되었습니다');
+      openModal('alert', '설정이 초기화되었습니다');
     }
   };
 
