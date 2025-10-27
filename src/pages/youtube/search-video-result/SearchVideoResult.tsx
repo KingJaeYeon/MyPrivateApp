@@ -7,18 +7,15 @@ import useChannelStore from '@/store/useChannelStore.ts';
 import { Button } from '@/components/ui/button.tsx';
 import { Table } from '@tanstack/react-table';
 import { ChannelColumns } from '@/components/data-table-columns/channel-columns.tsx';
-import { useModalStore } from '@/store/modalStore.ts';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function SearchVideoResult() {
   const { data } = useVideoSearchStore((s) => s.result);
   const { mode } = useCommonPair();
   const { keyword, maxResults, days: publishedAfterK, regionCode } = useKeywordPair();
   const { maxChannels, days: publishedAfterC, channelIds } = useChannelPair();
-  const { openModal } = useModalStore();
   const { data: channels } = useChannelStore();
   const navigate = useNavigate();
-  const location = useLocation();
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const columns = RESULT_COLUMNS(
     isEdit,
@@ -64,10 +61,7 @@ export default function SearchVideoResult() {
     }, []);
 
     // API 호출 또는 데이터 저장
-    openModal('channel', { data: filtered });
-    if (location.pathname !== '/channels') {
-      navigate('/channels');
-    }
+    navigate('/manage/channels/edit', { state: filtered });
   };
   const dataInfo = `Total ${data.length}/ ${mode === 'keywords' ? maxResults : Number(maxChannels) * channelIds.length}개 | 검색모드: ${mode} | 키워드: ${keyword} | 기간: ${mode === 'keywords' ? publishedAfterK : publishedAfterC}일 | 국가: ${regionCode}`;
   return (

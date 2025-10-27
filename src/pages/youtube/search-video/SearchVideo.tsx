@@ -13,7 +13,7 @@ export default function SearchVideo() {
         <FilterOptions />
         <div className={'flex justify-between'}>
           <ActionsButtons />
-          <Link to={'/search-videos/result'}>
+          <Link to={'/youtube/search/result'}>
             <Button variant={'outline'}>결과 보기</Button>
           </Link>
         </div>

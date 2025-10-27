@@ -19,6 +19,7 @@ import { NavMainType } from '@/components/nav-main.tsx';
 import { Youtube } from '@/assets/svg';
 import { BookOpen, Database, Languages, Settings2 } from 'lucide-react';
 import SavedListPage from '@/pages/youtube/saved-list/SavedListPage.tsx';
+import ChannelsEditPage from '@/pages/management/channel-edit/ChannelsEditPage.tsx';
 
 export const navigationRoutes: NavMainType = [
   {
@@ -58,7 +59,7 @@ export const navigationRoutes: NavMainType = [
       {
         title: 'Edit',
         url: '/manage/channels/edit',
-        suffix: 'Channels...',
+        suffix: 'Channels',
       },
       {
         title: 'Tags',
@@ -164,7 +165,7 @@ export const routes: RouteObject[] = [
           { path: 'channels', element: <ChannelsPage /> },
           { path: 'channels/:channelId', element: <ChannelDetailPage /> },
           { path: 'tags', element: <TagPage /> },
-          { path: 'channels/edit', element: <div>edit</div> },
+          { path: 'channels/edit', element: <ChannelsEditPage /> },
         ],
       },
       {

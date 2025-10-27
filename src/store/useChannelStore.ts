@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { buildAoaFromObjects } from '@/lib/utils.ts';
 import useSettingStore from '@/store/useSettingStore.ts';
-import { toast } from 'sonner';
 import { ChannelColumns } from '@/components/data-table-columns/channel-columns.tsx';
 import useTagStore from '@/store/useTagStore.ts';
 
@@ -30,7 +29,6 @@ const useChannelStore = create(
     },
     update: (data) => {
       set({ data, isChanged: true });
-      toast.success('변경되었습니다.');
     },
     /** 특정 key만 부분 업데이트 + electron-store 반영 */
     saved: async () => {

@@ -119,7 +119,7 @@ export function ChannelEditPanel({
         </div>
       </div>
       <div className="mt-3 flex justify-end gap-2">
-        <Button onClick={onUpdateRow}>저장</Button>
+        <Button onClick={onUpdateRow}>갱신</Button>
       </div>
     </div>
   );

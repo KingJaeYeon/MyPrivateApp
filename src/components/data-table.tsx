@@ -154,7 +154,7 @@ export function DataTable<TData, TValue>({
   }, [top1]);
 
   return (
-    <div className="flex flex-1 flex-col space-y-2">
+    <div className={cn('flex flex-1 flex-col', tableControls && 'space-y-2')}>
       {/* 스크롤 컨테이너 */}
       <div className={'text-muted-foreground flex w-full flex-col gap-1 text-sm'}>
         {tableControls && tableControls(table)}

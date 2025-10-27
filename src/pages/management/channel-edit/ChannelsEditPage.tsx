@@ -1,41 +1,42 @@
-import useSettingStore from '@/store/useSettingStore.ts';
 import useChannelStore from '@/store/useChannelStore.ts';
-import { useEffect, useState } from 'react';
+import { DataTable } from '@/components/data-table.tsx';
+import { Button } from '@/components/ui/button.tsx';
 import {
   ChannelColumns,
   CHANNELS_MODAL_COLUMNS,
 } from '@/components/data-table-columns/channel-columns.tsx';
+import useChannelHistoryStore, { ChannelHistory } from '@/store/useChannelHistoryStore.ts';
+import useSettingStore from '@/store/useSettingStore.ts';
+import { HandleSearchForm } from '@/pages/management/channel-edit/components/HandleSearchForm.tsx';
 import { useMutation } from '@tanstack/react-query';
 import { fetchChannelsByHandle } from '@/service/youtube.channels.ts';
 import { toast } from 'sonner';
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog.tsx';
-import { DataTable } from '@/components/data-table.tsx';
-import { HandleSearchForm } from '@/pages/management/channel-edit/components/HandleSearchForm.tsx';
+import { useEffect, useState } from 'react';
 import { ChannelEditPanel } from '@/pages/management/channel-edit/components/ChannelEditPanel.tsx';
-import { useModalStore } from '@/store/modalStore.ts';
-import { Button } from '@/components/ui/button.tsx';
-import useChannelHistoryStore, { ChannelHistory } from '@/store/useChannelHistoryStore.ts';
+import { SaveAllIcon } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
-interface ModalProps {
-  onClose: () => void;
-  data?: { data: any[]; isChanged: boolean };
-}
-
-export function AddChannelModal({ onClose, data }: ModalProps) {
+export default function ChannelsEditPage() {
   const usedQuota = useSettingStore((r) => r.data.youtube.usedQuota);
-  const { data: curChannels, update: channelUpdate } = useChannelStore();
+  const {
+    data: curChannels,
+    update: channelUpdate,
+    saved: savedC,
+    isChanged: isChangedC,
+  } = useChannelStore();
   const { data: curHistory, update: historyUpdate } = useChannelHistoryStore();
   const [select, setSelect] = useState<ChannelColumns | null>(null);
+  const location = useLocation();
+  const { saved: savedH } = useChannelHistoryStore();
   const youtubeApiKey = useSettingStore((r) => r.data.youtube.apiKey);
-  const { reOpenModal } = useModalStore();
 
+  const onSavedHandler = async () => {
+    if (confirm('저장하시겠습니까?')) {
+      await savedH();
+      await savedC();
+      toast.success('저장되었습니다.');
+    }
+  };
   const { mutate, isPending } = useMutation({
     mutationFn: async ({ handles }: { handles: string }) => {
       if (handles.trim() === '') {
@@ -79,10 +80,11 @@ export function AddChannelModal({ onClose, data }: ModalProps) {
   });
 
   useEffect(() => {
-    if (data?.data && data.data.length >= 1) {
+    const data = location.state;
+    if (data && data.length >= 1) {
       const curIds = curChannels.map((r) => r.channelId);
 
-      const filtered: ChannelColumns[] = data.data.filter((v) => !curIds.includes(v.channelId));
+      const filtered: ChannelColumns[] = data.filter((v: any) => !curIds.includes(v.channelId));
       const history: ChannelHistory[] = filtered.map((ch) => ({
         channelId: ch.channelId,
         fetchedAt: ch.fetchedAt,
@@ -92,41 +94,49 @@ export function AddChannelModal({ onClose, data }: ModalProps) {
       }));
       channelUpdate([...curChannels, ...filtered]);
       historyUpdate([...curHistory, ...history]);
+      toast.success('변경되었습니다.');
     }
-  }, [data]);
+  }, [location.state]);
 
   return (
-    <AlertDialog open={true} onOpenChange={onClose}>
-      <AlertDialogContent className={'flex h-[calc(100%-100px)] max-w-[calc(100%-100px)] flex-col'}>
-        <AlertDialogHeader className={'flex flex-1'}>
-          <AlertDialogTitle className={'mb-4 flex items-center gap-2'}>
+    <div className="flex h-full w-full flex-1 flex-col gap-5 px-4 pb-4">
+      <div>
+        <div className={'mb-2 flex w-full items-center justify-between gap-2'}>
+          <div className={'flex items-center gap-2'}>
             <div>채널추가</div>
             <div className={'text-sm'}>
               (사용한 쿼터:{' '}
               <span className={'font-mono'}>{usedQuota.toLocaleString()} / 10000)</span>
             </div>
-          </AlertDialogTitle>
-          <div className={'flex flex-1 flex-col'}>
-            <HandleSearchForm onSearch={(handles) => mutate({ handles })} isPending={isPending} />
-            <div className={'mt-2 flex flex-1 gap-2'}>
-              <DataTable<ChannelColumns, unknown>
-                initialSorting={[{ id: 'createdAt', desc: true }]}
-                columns={CHANNELS_MODAL_COLUMNS}
-                onSelectedRow={setSelect}
-                data={curChannels}
-                name={'addChannelModal'}
-                enableMultiRowSelection={false}
-                enableRowClickSelection={true}
-              />
-              <ChannelEditPanel select={select} setSelect={setSelect} />
+          </div>
+          <div className={'flex justify-between'}>
+            <div className={'fixed top-15 right-8 gap-2'}>
+              <Button
+                size={'sm'}
+                onClick={onSavedHandler}
+                variant={isChangedC ? 'destructive' : 'secondary'}
+              >
+                <SaveAllIcon />
+                엑셀파일 갱신
+              </Button>
             </div>
           </div>
-        </AlertDialogHeader>
-        <AlertDialogFooter className={'h-fit'}>
-          {data?.isChanged && <Button onClick={() => reOpenModal('result')}>뒤로가기</Button>}
-          <AlertDialogCancel>닫기</AlertDialogCancel>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+        </div>
+        <HandleSearchForm onSearch={(handles) => mutate({ handles })} isPending={isPending} />
+      </div>
+      <div className={'mt-2 flex flex-1 gap-2'}>
+        <DataTable<ChannelColumns, unknown>
+          columns={CHANNELS_MODAL_COLUMNS}
+          data={curChannels}
+          isFixHeader={true}
+          onSelectedRow={setSelect}
+          name={'addChannelModal'}
+          enableMultiRowSelection={false}
+          enableRowClickSelection={true}
+          initialSorting={[{ id: 'createdAt', desc: true }]}
+        />
+        <ChannelEditPanel select={select} setSelect={setSelect} />
+      </div>
+    </div>
   );
 }

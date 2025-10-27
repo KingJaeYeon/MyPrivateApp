@@ -10,9 +10,8 @@ import { IconClose } from '@/assets/svg';
 import { useState } from 'react';
 import useChannelStore from '@/store/useChannelStore.ts';
 import { Table } from '@tanstack/react-table';
-import { useModalStore } from '@/store/modalStore.ts';
 import { ChannelColumns } from '@/components/data-table-columns/channel-columns.tsx';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 interface ModalProps {
   onClose: () => void;
@@ -21,10 +20,8 @@ interface ModalProps {
 
 export default function FileResultModal({ onClose, data = [] }: ModalProps) {
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const { openModal } = useModalStore();
   const { data: channels } = useChannelStore();
   const navigate = useNavigate();
-  const location = useLocation();
   const columns = RESULT_COLUMNS(
     isEdit,
     channels.map((r) => r.channelId)
@@ -66,10 +63,8 @@ export default function FileResultModal({ onClose, data = [] }: ModalProps) {
     }, [] as ChannelColumns[]);
 
     // API 호출 또는 데이터 저장
-    openModal('channel', { data: filtered, isChanged: true });
-    if (location.pathname !== '/channels') {
-      navigate('/channels');
-    }
+    navigate('/manage/channels/edit', { state: filtered });
+    onClose();
   };
 
   return (

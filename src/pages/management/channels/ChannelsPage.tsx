@@ -6,24 +6,14 @@ import {
   CHANNELS_COLUMNS,
 } from '@/components/data-table-columns/channel-columns.tsx';
 import useTagStore from '@/store/useTagStore.ts';
-import { useModalStore } from '@/store/modalStore.ts';
 import TagSelector from '@/components/TagSelector.tsx';
-import useChannelHistoryStore from '@/store/useChannelHistoryStore.ts';
 import { Badge } from '@/components/ui/badge.tsx';
+import { useNavigate } from 'react-router-dom';
 
 export default function ChannelsPage() {
-  const { data, isChanged, saved: savedC } = useChannelStore();
-  const { saved: savedH } = useChannelHistoryStore();
+  const { data } = useChannelStore();
   const { data: tags } = useTagStore();
-  const { openModal } = useModalStore();
-
-  const onSavedHandler = async () => {
-    if (confirm('저장하시겠습니까?')) {
-      await savedH();
-      await savedC();
-      openModal('alert', '저장되었습니다.');
-    }
-  };
+  const navigate = useNavigate();
 
   return (
     <div className="flex h-full w-full flex-1 gap-5 px-4 pb-4">
@@ -47,15 +37,12 @@ export default function ChannelsPage() {
                 <Badge>{`채널: ${table.getFilteredRowModel().rows.length}/${data.length}`}</Badge>
               </div>
               <div className={'flex gap-2'}>
-                <Button size={'sm'} variant={'secondary'} onClick={() => openModal('channel')}>
-                  수정
-                </Button>
                 <Button
                   size={'sm'}
-                  onClick={onSavedHandler}
-                  variant={isChanged ? 'destructive' : 'default'}
+                  variant={'secondary'}
+                  onClick={() => navigate('/manage/channels/edit')}
                 >
-                  저장
+                  수정
                 </Button>
               </div>
             </div>
