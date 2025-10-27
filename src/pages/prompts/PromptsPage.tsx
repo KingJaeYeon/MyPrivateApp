@@ -13,6 +13,7 @@ import {
   PromptsColumns,
 } from '@/components/data-table-columns/prompts-columns.tsx';
 import { PromptSidePanel } from '@/pages/prompts/components/PromptSidePanel.tsx';
+import { useModalStore } from '@/store/modalStore.ts';
 
 const FILTER = [
   { label: '프롬프트', value: 'prompt' },
@@ -24,6 +25,7 @@ export default function PromptsPage() {
   const { data: tags } = useTagStore();
   const [isDeleting, setIsDeleting] = useState(false);
   const [filter, setFilter] = React.useState(FILTER[0]);
+  const { openModal } = useModalStore();
 
   const onSavedHandler = async () => {
     if (confirm('저장하시겠습니까?')) {
