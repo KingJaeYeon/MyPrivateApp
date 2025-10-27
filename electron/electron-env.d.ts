@@ -112,7 +112,6 @@ interface Window {
   windowsApi: {
     minimize: () => void;
     maximize: () => void;
-    restore: () => void;
     close: () => void;
   };
 }

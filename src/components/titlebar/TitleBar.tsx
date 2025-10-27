@@ -1,12 +1,12 @@
 import ThemeToggle from '@/components/titlebar/ThemeToggle.tsx';
 import { ScheduleController } from '@/components/titlebar/ScheduleController.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
-import { Wifi } from 'lucide-react';
+import { Maximize2Icon, Wifi } from 'lucide-react';
 import useSettingStore from '@/store/useSettingStore.ts';
 import MemoryBadge from '@/components/titlebar/MemoryBadge.tsx';
 import { useIsMac } from '@/hooks/use-is-mac.ts';
 import { cn } from '@/lib/utils.ts';
-import { IconClose } from '@/assets/svg';
+import { IconClose, IconMinus } from '@/assets/svg';
 
 export default function TitleBar() {
   const hasApiKey = useSettingStore((s) => !!s.data.youtube.apiKey);
@@ -18,19 +18,32 @@ export default function TitleBar() {
         isMac && 'pl-20'
       )}
     >
-      <div className={'flex items-center justify-start gap-2'}>
+      <div className="no-drag group flex items-center justify-start gap-2.5 pt-0.5">
         {!isMac && (
           <>
-            <button
-              className={'h-3 w-3 overflow-hidden rounded-full bg-red-400'}
-              onClick={() => window.windowsApi.close()}
-            >
-              <button
-                className={'h-full w-full items-center justify-center text-black hover:bg-blue-500'}
+            {[
+              { color: 'bg-red-400', action: () => window.windowsApi.close(), icon: IconClose },
+              {
+                color: 'bg-yellow-400',
+                action: () => window.windowsApi.minimize(),
+                icon: IconMinus,
+              },
+              {
+                color: 'bg-green-500',
+                action: () => window.windowsApi.maximize(),
+                icon: Maximize2Icon,
+              },
+            ].map(({ color, action, icon: Icon }, i) => (
+              <div
+                key={i}
+                className={cn(`flex h-3 w-3 items-center justify-center rounded-full`, color)}
+                onClick={action}
               >
-                <IconClose className={'h-2 w-2 stroke-2'} />
-              </button>
-            </button>
+                <button className="invisible flex items-center justify-center text-black group-hover:visible">
+                  <Icon className="h-2 w-2 stroke-2" />
+                </button>
+              </div>
+            ))}
           </>
         )}
       </div>

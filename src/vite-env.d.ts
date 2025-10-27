@@ -89,7 +89,6 @@ declare global {
     windowsApi: {
       minimize: () => void;
       maximize: () => void;
-      restore: () => void;
       close: () => void;
     };
   }

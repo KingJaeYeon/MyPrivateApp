@@ -41,7 +41,7 @@ function createWindow() {
     width: 1400,
     height: 800,
     trafficLightPosition: { x: 12, y: 10 },
-    titleBarStyle: process.platform === "darwin" ? "hidden" : undefined,
+    titleBarStyle: process.platform === 'darwin' ? 'hidden' : undefined,
     frame: false,
     ...(process.platform !== 'darwin' ? { titleBarOverlay: true } : {}),
     backgroundColor: '#0b0b0e',
@@ -121,23 +121,18 @@ app.on('before-quit', () => {
   youtubeScheduler.stopScheduler();
 });
 
-
-ipcMain.on('window:minimize', () => {
-  // Now we can access the window variable
-  win?.minimize();
-})
-
-ipcMain.on('window:maximize', () => {
-  // Now we can access the window variable
-  win?.maximize();
-})
-
-ipcMain.on('window:restore', () => {
-  // Now we can access the window variable
-  win?.restore();
-})
-
-ipcMain.on('window:close', () => {
-  // Now we can access the window variable
-  win?.close();
-})
+ipcMain.on('win:minimize', () => {
+  if (win) win.minimize();
+});
+ipcMain.on('win:maxToggle', () => {
+  if (!win) return;
+  if (process.platform === 'darwin') {
+    // macOS는 보통 풀스크린 토글 선호
+    win.setFullScreen(!win.isFullScreen());
+  } else {
+    win.isMaximized() ? win.unmaximize() : win.maximize();
+  }
+});
+ipcMain.on('win:close', () => {
+  if (win) win.close();
+});
