@@ -5,7 +5,7 @@ import ConfirmModal from '@/components/modals/ConfirmModal.tsx';
 import AlertModal from '@/components/modals/AlertModal.tsx';
 import FileResultModal from '@/components/modals/FileResultModal.tsx';
 import { AddChannelModal } from '@/components/modals/AddChannelModal.tsx';
-import { useTransition, config, animated } from '@react-spring/web';
+import { animated, config, useTransition } from '@react-spring/web';
 
 export default function ModalRenderer() {
   const { type, isOpen, closeModal, data, resultData } = useModalStore();
@@ -35,7 +35,7 @@ export default function ModalRenderer() {
   );
 }
 
-// function SomeComponent() {
+// export function SomeComponent() {
 //   const { openModal } = useModalStore();
 //
 //   return (
@@ -65,17 +65,10 @@ export default function ModalRenderer() {
 //       </button>
 //
 //       {/* 알림 모달 */}
-//       <button
-//         onClick={() =>
-//           openModal('alert', {
-//             title: '알림',
-//             message: '저장되었습니다.',
-//             buttonText: '확인',
-//           })
-//         }
-//       >
-//         알림
-//       </button>
+//       <button onClick={() => openModal('alert', 'YouTube API Key 필요')}>알림</button>
+//
+//       <button onClick={() => toast.error('YouTube API Key 필요')}>toast</button>
+//       <button onClick={() => alert('YouTube API 키를')}>toast</button>
 //     </div>
 //   );
 // }
