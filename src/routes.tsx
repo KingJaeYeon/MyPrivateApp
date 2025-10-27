@@ -10,10 +10,8 @@ import PromptsPage from '@/pages/lib/prompts/PromptsPage.tsx';
 import ChannelDetailPage from '@/pages/management/channel-detail/ChannelDetailPage.tsx';
 import NotFound from '@/pages/NotFound.tsx';
 import EnglishPage from '@/pages/english/EnglishPage.tsx';
-import { SettingsLayout } from '@/layouts/SettingsLayout.tsx';
 import { YouTubeAPISettings } from '@/pages/settings/YouTubeAPISettings.tsx';
 import { FilesSettings } from '@/pages/settings/FilesSettings.tsx';
-import { ResultsSettings } from '@/pages/settings/ResultsSettings.tsx';
 import { AdvancedSettings } from '@/pages/settings/AdvancedSettings.tsx';
 import { NavMainType } from '@/components/nav-main.tsx';
 import { Youtube } from '@/assets/svg';
@@ -122,10 +120,6 @@ export const navigationRoutes: NavMainType = [
         title: 'Files & Folders',
         url: '/settings/files',
       },
-      {
-        title: 'Saved',
-        url: '/settings/saved-list',
-      },
     ],
   },
 ];
@@ -187,12 +181,11 @@ export const routes: RouteObject[] = [
       },
       {
         path: 'settings',
-        element: <SettingsLayout />,
+        element: null,
         children: [
           { index: true, element: <Navigate to="/settings/youtube" replace /> },
           { path: 'youtube', element: <YouTubeAPISettings /> },
           { path: 'files', element: <FilesSettings /> },
-          { path: 'saved-list', element: <ResultsSettings /> },
           { path: 'advanced', element: <AdvancedSettings /> },
         ],
       },

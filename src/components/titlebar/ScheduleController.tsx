@@ -41,7 +41,7 @@ export function ScheduleController() {
     }
     return {
       dot: 'bg-gray-400',
-      text: '중지',
+      text: '채널 자동수집 Off',
       textColor: 'text-muted-foreground',
     };
   };

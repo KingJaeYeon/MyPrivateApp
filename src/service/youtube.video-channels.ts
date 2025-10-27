@@ -60,12 +60,10 @@ async function fetchPlaylistIds({ apiKey, channelIds }: { apiKey: string; channe
       id: batch.join(','),
     };
 
-    const url = `${request_youtube.defaults.baseURL}/playlistItems?${new URLSearchParams(searchParams).toString()}`;
+    const url = `${request_youtube.defaults.baseURL}/channels?${new URLSearchParams(searchParams).toString()}`;
     logApiRequest(url);
 
-    const { data } = await request_youtube.get('channels', {
-      params: searchParams,
-    });
+    const { data } = await request_youtube.get('channels', { params: searchParams });
     await incrementQuota(1);
     const channels = data?.items ?? [];
     result.push(...channels.map((channel: any) => channel.contentDetails.relatedPlaylists.uploads));
@@ -92,13 +90,9 @@ async function fetchVideoIds({
     maxResults: 50,
     ...(pageToken && { pageToken }),
   };
-
-  const { data } = await request_youtube.get('playlistItems', {
-    params: searchParams,
-  });
-
   const url = `${request_youtube.defaults.baseURL}/playlistItems?${new URLSearchParams(searchParams).toString()}`;
   logApiRequest(url);
+  const { data } = await request_youtube.get('playlistItems', { params: searchParams });
   await incrementQuota(1);
 
   const pItem = data?.items ?? [];

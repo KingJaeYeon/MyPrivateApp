@@ -2,27 +2,62 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Key, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Key } from 'lucide-react';
 import { useState } from 'react';
 import useSettingStore from '@/store/useSettingStore';
+import Tip from '@/components/Tip.tsx';
+import IconMoreInfo from '@/assets/svg/IconMoreInfo.tsx';
+import {
+  CancelButton,
+  ConnectButton,
+  DeleteButton,
+  EditButton,
+} from '@/pages/home/components/api-buttons.tsx';
+import { ApiType } from '@/pages/home/Home.tsx';
 
 export function YouTubeAPISettings() {
   const { data, updateIn } = useSettingStore();
-  const [apiKey, setApiKey] = useState(data.youtube.apiKey);
-  const [isSaving, setIsSaving] = useState(false);
+  const [apiKey, setApiKey] = useState('');
+  const hasApiKey = Boolean(data.youtube.apiKey);
+  const [editing, setEditing] = useState(false);
 
-  const handleSave = async () => {
-    setIsSaving(true);
-    await updateIn('youtube', { ...data.youtube, apiKey });
-    setIsSaving(false);
+  const youtubeApiKey = useSettingStore((r) => r.data.youtube.apiKey);
+  const [editValues, setEditValues] = useState({ youtubeApiKey: '' });
+  const [isEditing, setIsEditing] = useState({ youtubeApiKey: false });
+
+  const getValue = () => {
+    if (hasApiKey && !editing) {
+      return data.youtube.apiKey;
+    }
+    return apiKey;
+  };
+
+  const ConnectionStatus = ({ isConnect }: { isConnect: boolean }) => {
+    if (isConnect && !editing) {
+      return (
+        <div className="flex gap-2">
+          <EditButton setEditing={setEditing} setApiKey={setApiKey} />
+          <DeleteButton />
+        </div>
+      );
+    }
+
+    if (isConnect && editing) {
+      return (
+        <div className="flex gap-2">
+          <ConnectButton editValues={editValues} setIsEditing={setEditing} />
+          <CancelButton setIsEditing={setIsEditing} setEditValues={setEditValues} />
+        </div>
+      );
+    }
+
+    return <ConnectButton editValues={editValues} setIsEditing={setIsEditing} />;
   };
 
   const quotaPercentage = (data.youtube.usedQuota / 10000) * 100;
 
   return (
-    <div className="max-w-2xl space-y-6">
-      {/* API Key 입력 */}
+    <div className="flex h-full w-[750px] flex-1 flex-col gap-5 px-4">
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
@@ -33,21 +68,20 @@ export function YouTubeAPISettings() {
             YouTube 채널 및 영상 정보를 가져오기 위한 API Key를 설정하세요
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
+        <CardContent className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="apiKey">API Key</Label>
             <div className="flex gap-2">
               <Input
                 id="apiKey"
+                readOnly={Boolean(youtubeApiKey) && !isEditing['youtubeApiKey']}
+                value={getValue()}
                 type="password"
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
                 placeholder="AIzaSyDDe44x6EkzF2V0QOD1gecv929QSjD0dS4"
+                onChange={(e) => setApiKey(e.target.value)}
                 className="font-mono text-sm"
               />
-              <Button onClick={handleSave} disabled={isSaving}>
-                {isSaving ? '저장 중...' : '저장'}
-              </Button>
+              <ConnectionStatus isConnect={hasApiKey} />
             </div>
             {apiKey && (
               <div className="flex items-center gap-2 text-sm text-green-600">
@@ -58,21 +92,33 @@ export function YouTubeAPISettings() {
           </div>
 
           <div className="border-t pt-4">
-            href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener
-            noreferrer" className="text-sm text-blue-600 hover:underline"
-            <a>→ Google Cloud Console에서 API Key 발급받기</a>
+            <p
+              onClick={() =>
+                window.electronAPI.openExternal('https://console.cloud.google.com/apis/credentials')
+              }
+              className="inline cursor-pointer text-sm text-blue-600 hover:underline"
+            >
+              → Google Cloud Console에서 API Key 발급받기
+            </p>
           </div>
         </CardContent>
       </Card>
 
-      {/* 할당량 모니터링 */}
+      {/*/!* 할당량 모니터링 *!/*/}
       <Card>
         <CardHeader>
-          <CardTitle>할당량 사용량</CardTitle>
+          <CardTitle className={'flex gap-2'}>
+            할당량 사용량
+            <Tip
+              txt={`주요 API 작업 비용\n• 채널 정보 조회 1 unit\n• 영상 검색 - 키워드 (50개) 100 unit\n• 영상 검색 - 채널 (50개) 1 unit\n• 영상 상세 정보 (50개) 1 unit`}
+            >
+              <IconMoreInfo />
+            </Tip>
+          </CardTitle>
           <CardDescription>일일 10,000 units 제한</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
+        <CardContent className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">사용량</span>
               <span className="font-mono font-medium">
@@ -111,29 +157,6 @@ export function YouTubeAPISettings() {
             >
               할당량 수동 초기화
             </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* API 작업 비용 안내 */}
-      <Card>
-        <CardHeader>
-          <CardTitle>주요 API 작업 비용</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">채널 정보 조회</span>
-              <Badge variant="secondary">1 unit</Badge>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">영상 검색 (50개)</span>
-              <Badge variant="secondary">100 units</Badge>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">영상 상세 정보 (50개)</span>
-              <Badge variant="secondary">1 unit</Badge>
-            </div>
           </div>
         </CardContent>
       </Card>

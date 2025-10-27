@@ -1,6 +1,7 @@
 import { request_youtube } from '@/service/axios.ts';
 import { ChannelColumns } from '@/components/data-table-columns/channel-columns.tsx';
 import { format } from 'date-fns';
+import { incrementQuota, logApiRequest } from '@/lib/log.ts';
 
 // ── 채널들: channels.list 로 채널 정보 수집
 export async function fetchChannelsByHandle({
@@ -13,13 +14,17 @@ export async function fetchChannelsByHandle({
   let result = [];
 
   try {
-    const cResp = await request_youtube.get('channels', {
-      params: {
-        key: apiKey,
-        part: 'snippet,statistics',
-        forHandle: handles.join(','),
-      },
-    });
+    const searchParams = {
+      key: apiKey,
+      part: 'snippet,statistics',
+      forHandle: handles.join(','),
+    };
+
+    const url = `${request_youtube.defaults.baseURL}/channels?${new URLSearchParams(searchParams).toString()}`;
+    logApiRequest(url);
+    const cResp = await request_youtube.get('channels', { params: searchParams });
+    await incrementQuota(1);
+
     result = cResp.data?.items ?? [];
   } catch (e) {
     throw new Error('channels.list API 요청 중 오류가 발생했습니다. API 키와 쿼터를 확인하세요.');
