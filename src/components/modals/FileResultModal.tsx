@@ -81,7 +81,6 @@ export default function FileResultModal({ onClose, data = [] }: ModalProps) {
               columns={columns}
               hasNo={true}
               isEdit={isEdit}
-              isFixHeader={true}
               data={data}
               fontSize={{ head: 'text-0.5xs', cell: 'text-1.5xs' }}
               tableControls={(_table) => {

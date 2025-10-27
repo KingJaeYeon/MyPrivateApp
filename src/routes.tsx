@@ -18,7 +18,7 @@ import { AdvancedSettings } from '@/pages/settings/AdvancedSettings.tsx';
 import { NavMainType } from '@/components/nav-main.tsx';
 import { Youtube } from '@/assets/svg';
 import { BookOpen, Database, Languages, Settings2 } from 'lucide-react';
-import SavedExcelListPage from '@/pages/youtube/saved-excel-list/SavedExcelListPage.tsx';
+import SavedListPage from '@/pages/youtube/saved-list/SavedListPage.tsx';
 
 export const navigationRoutes: NavMainType = [
   {
@@ -38,11 +38,6 @@ export const navigationRoutes: NavMainType = [
       {
         title: 'Saved List',
         url: '/youtube/saved-list',
-      },
-      {
-        title: 'Result',
-        url: '/youtube/saved-list/result',
-        hidden: true,
       },
     ],
   },
@@ -155,11 +150,10 @@ export const routes: RouteObject[] = [
         path: 'youtube',
         element: null,
         children: [
-          { index: true, element: <Navigate to="/youtube/search-videos" replace /> },
+          { index: true, element: <Navigate to="/youtube/search" replace /> },
           { path: 'search', element: <SearchVideo /> },
           { path: 'search/result', element: <SearchVideoResult /> },
-          { path: 'saved-list', element: <SavedExcelListPage /> },
-          { path: 'saved-list/result', element: <div>edit</div> },
+          { path: 'saved-list', element: <SavedListPage /> },
         ],
       },
       {
