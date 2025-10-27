@@ -20,7 +20,7 @@ export default function App() {
           <SidebarInset>
             <BreadcrumbResponsive />
             <div className="scrollNone relative flex flex-1 flex-col gap-4 overflow-auto">
-              <div className={'absolute w-full p-4 pt-0 h-full'}>
+              <div className={'absolute h-full w-full p-4 pt-0'}>
                 <Outlet />
               </div>
             </div>

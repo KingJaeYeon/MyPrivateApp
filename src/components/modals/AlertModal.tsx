@@ -1,39 +1,40 @@
 import {
   AlertDialog,
   AlertDialogContent,
+  AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogDescription,
 } from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
+import { useTheme } from '@/providers/theme-provider.tsx';
 
 interface AlertModalProps {
   onClose: () => void;
-  data?: {
-    title?: string;
-    message?: string;
-    buttonText?: string;
-  };
+  data?: string;
 }
 
-/**
- * @deprecated
- * @param onClose
- * @param data
- * @constructor
- */
 export default function AlertModal({ onClose, data }: AlertModalProps) {
+  const { theme } = useTheme();
   return (
     <AlertDialog open={true} onOpenChange={onClose}>
-      <AlertDialogContent className="max-w-md">
+      <AlertDialogContent className="bg-secondary max-w-3xs border-2 p-4">
         <AlertDialogHeader>
-          <AlertDialogTitle>{data?.title || '알림'}</AlertDialogTitle>
-          <AlertDialogDescription>{data?.message}</AlertDialogDescription>
+          <AlertDialogTitle className={'flex justify-center'}>
+            <img
+              src={theme === 'dark' ? './logo-dark.png' : './logo.png'}
+              className={'w-[100px]'}
+              alt={'logo'}
+            />
+          </AlertDialogTitle>
+          <AlertDialogDescription
+            className={'text-0.5xs mt-3 px-2 text-center font-semibold text-white'}
+          >
+            {data}
+          </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <div className="flex justify-end">
-          <Button onClick={onClose}>{data?.buttonText || '확인'}</Button>
-        </div>
+        <button className={'btn-submit w-full text-sm'} onClick={onClose}>
+          OK
+        </button>
       </AlertDialogContent>
     </AlertDialog>
   );
