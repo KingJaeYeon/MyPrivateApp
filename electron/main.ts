@@ -121,10 +121,10 @@ app.on('before-quit', () => {
   youtubeScheduler.stopScheduler();
 });
 
-ipcMain.on('win:minimize', () => {
+ipcMain.handle('win:minimize', () => {
   if (win) win.minimize();
 });
-ipcMain.on('win:maxToggle', () => {
+ipcMain.handle('win:maximize', () => {
   if (!win) return;
   if (process.platform === 'darwin') {
     // macOS는 보통 풀스크린 토글 선호
@@ -133,6 +133,6 @@ ipcMain.on('win:maxToggle', () => {
     win.isMaximized() ? win.unmaximize() : win.maximize();
   }
 });
-ipcMain.on('win:close', () => {
+ipcMain.handle('win:close', () => {
   if (win) win.close();
 });

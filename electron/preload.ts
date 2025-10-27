@@ -94,7 +94,7 @@ contextBridge.exposeInMainWorld('schedulerApi', {
 });
 
 contextBridge.exposeInMainWorld('windowsApi', {
-  minimize: () => ipcRenderer.invoke('windows:minimize'),
-  maximize: () => ipcRenderer.invoke('windows:maximize'),
-  close: () => ipcRenderer.invoke('windows:close'),
+  minimize: () => ipcRenderer.invoke('win:minimize'),
+  maximize: () => ipcRenderer.invoke('win:maximize'),
+  close: () => ipcRenderer.invoke('win:close'),
 });
