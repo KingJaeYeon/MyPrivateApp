@@ -4,7 +4,6 @@ import SignupModal from '@/components/modals/SignupModal.tsx';
 import ConfirmModal from '@/components/modals/ConfirmModal.tsx';
 import AlertModal from '@/components/modals/AlertModal.tsx';
 import FileResultModal from '@/components/modals/FileResultModal.tsx';
-import { AddChannelModal } from '@/components/modals/AddChannelModal.tsx';
 import { animated, config, useTransition } from '@react-spring/web';
 
 export default function ModalRenderer() {
@@ -27,7 +26,6 @@ export default function ModalRenderer() {
     confirm: <ConfirmModal onClose={closeModal} data={data} />,
     alert: <AlertModal onClose={closeModal} data={data} />,
     result: <FileResultModal onClose={closeModal} data={resultData} />,
-    channel: <AddChannelModal onClose={closeModal} data={data} />,
   };
 
   return transitions((style, item) =>
