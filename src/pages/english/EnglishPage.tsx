@@ -5,11 +5,11 @@ import { useMemo } from 'react';
 import NotFound from '@/pages/NotFound.tsx';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
 import { formatCompactNumber } from '@/lib/utils.ts';
-import ChannelStat from '@/pages/channel-detail/components/ChannelStat.tsx';
+import ChannelStat from '@/pages/management/channel-detail/components/ChannelStat.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
 import { format } from 'date-fns';
 import { TagChooser } from '@/components/TagChooser.tsx';
-import ChartRender from '@/pages/channel-detail/components/ChartRender.tsx';
+import ChartRender from '@/pages/management/channel-detail/components/ChartRender.tsx';
 import { SidePanel } from '@/pages/english/components/SidePanel.tsx';
 
 export default function EnglishPage() {

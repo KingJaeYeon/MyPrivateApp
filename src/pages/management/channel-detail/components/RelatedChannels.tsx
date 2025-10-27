@@ -1,8 +1,8 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { formatCompactNumber } from '@/lib/utils';
-import { cn } from '@/lib/utils';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
+import { Badge } from '@/components/ui/badge.tsx';
+import { ScrollArea } from '@/components/ui/scroll-area.tsx';
+import { formatCompactNumber } from '@/lib/utils.ts';
+import { cn } from '@/lib/utils.ts';
 import { useNavigate } from 'react-router-dom';
 import { useMemo } from 'react';
 import useChannelStore from '@/store/useChannelStore.ts';
@@ -14,7 +14,7 @@ export function RelatedChannels({ channel }: { channel: ChannelColumns }) {
   const { data } = useChannelStore();
   const { jsonData } = useTagStore();
   const handleClick = (channelId: string) => {
-    navigate(`/channels/${channelId}`);
+    navigate(`/manage/channels/${channelId}`);
   };
 
   const related = useMemo(() => {

@@ -4,8 +4,8 @@ import { FloatingOutlinedInput } from '@/components/FloatingOutlinedInput.tsx';
 import { Label } from '@/components/ui/label.tsx';
 import { TagChooser } from '@/components/TagChooser.tsx';
 import usePromptsStore from '@/store/usePromptsStore.ts';
-import { ButtonRenderer } from '@/pages/prompts/components/ButtonRenderer.tsx';
-import { BadgeRenderer } from '@/pages/prompts/components/BadgeRenderer.tsx';
+import { ButtonRenderer } from '@/pages/lib/prompts/components/ButtonRenderer.tsx';
+import { BadgeRenderer } from '@/pages/lib/prompts/components/BadgeRenderer.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { IconCheck, IconLinearCopy } from '@/assets/svg';
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard.ts';
@@ -25,7 +25,7 @@ export function PromptSidePanel({ isDeleting }: { isDeleting: boolean }) {
   };
 
   return (
-    <div className={'mt-2 flex flex-1/4 flex-col h-full'}>
+    <div className={'mt-2 flex h-full flex-1/4 flex-col'}>
       <div className={'flex gap-2 pb-2'}>
         <BadgeRenderer
           isSub={panelState.isSub}

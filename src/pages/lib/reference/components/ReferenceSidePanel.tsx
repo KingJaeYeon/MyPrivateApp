@@ -5,8 +5,8 @@ import { Textarea } from '@/components/ui/textarea.tsx';
 import { FloatingOutlinedInput } from '@/components/FloatingOutlinedInput.tsx';
 import { Label } from '@/components/ui/label.tsx';
 import { TagChooser } from '@/components/TagChooser.tsx';
-import { ButtonRenderer } from '@/pages/reference/components/ButtonRenderer.tsx';
-import { BadgeRenderer } from '@/pages/reference/components/BadgeRenderer.tsx';
+import { ButtonRenderer } from '@/pages/lib/reference/components/ButtonRenderer.tsx';
+import { BadgeRenderer } from '@/pages/lib/reference/components/BadgeRenderer.tsx';
 
 export function ReferenceSidePanel({ isDeleting }: { isDeleting: boolean }) {
   const { update, push, edit, setEdit, panelState } = useReferenceStore();

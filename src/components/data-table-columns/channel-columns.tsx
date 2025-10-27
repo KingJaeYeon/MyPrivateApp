@@ -250,7 +250,7 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     accessorKey: 'memo',
     header: '메모',
     maxSize: 400,
-    minSize: 180,
+    minSize: 100,
     cell: ({ row }) => (
       <Tip txt={row.original.memo} className="max-w-[400px]">
         <span className="ellipsisLine2 max-w-[300px] min-w-[100px] cursor-pointer text-xs break-words whitespace-normal">
@@ -285,7 +285,7 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
   {
     accessorKey: 'menu',
     header: '',
-    size: 50,
+    maxSize: 50,
     enableSorting: false,
     cell: (cell: any) => <ColumnMenu data={cell.row.original} />,
   },

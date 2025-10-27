@@ -3,29 +3,30 @@ import { Button } from '@/components/ui/button.tsx';
 import React, { useMemo, useState } from 'react';
 import { Input } from '@/components/ui/input.tsx';
 import { toast } from 'sonner';
+import {
+  REFERENCE_COLUMNS,
+  ReferenceColumns,
+} from '@/components/data-table-columns/reference-columns.tsx';
+import useReferenceStore from '@/store/useReferenceStore.ts';
+import { ReferenceSidePanel } from '@/pages/lib/reference/components/ReferenceSidePanel.tsx';
+
 import TagSelector from '@/components/TagSelector.tsx';
 import useTagStore from '@/store/useTagStore.ts';
-import { ButtonGroup } from '@/components/ui/button-group';
-import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
-import usePromptsStore from '@/store/usePromptsStore.ts';
-import {
-  PROMPTS_COLUMNS,
-  PromptsColumns,
-} from '@/components/data-table-columns/prompts-columns.tsx';
-import { PromptSidePanel } from '@/pages/prompts/components/PromptSidePanel.tsx';
+import { ButtonGroup } from '@/components/ui/button-group.tsx';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select.tsx';
 import { useModalStore } from '@/store/modalStore.ts';
 
 const FILTER = [
-  { label: '프롬프트', value: 'prompt' },
+  { label: '참조', value: 'name' },
   { label: '메모', value: 'memo' },
 ];
 
-export default function PromptsPage() {
-  const { getData, saved, isChanged, remove, data, setEdit, setPanelState } = usePromptsStore();
+export default function ReferencePage() {
+  const { getData, saved, isChanged, remove, data, setEdit, setPanelState } = useReferenceStore();
   const { data: tags } = useTagStore();
+  const { openModal } = useModalStore();
   const [isDeleting, setIsDeleting] = useState(false);
   const [filter, setFilter] = React.useState(FILTER[0]);
-  const { openModal } = useModalStore();
 
   const onSavedHandler = async () => {
     if (confirm('저장하시겠습니까?')) {
@@ -34,7 +35,7 @@ export default function PromptsPage() {
     }
   };
 
-  const prompt = useMemo(() => {
+  const reference = useMemo(() => {
     return getData();
   }, [data]);
 
@@ -43,7 +44,7 @@ export default function PromptsPage() {
     setEdit('initialize');
   };
 
-  const onSelectHandler = (row: PromptsColumns | null) => {
+  const onSelectHandler = (row: ReferenceColumns | null) => {
     if (isDeleting) return;
 
     if (row === null) {
@@ -58,9 +59,9 @@ export default function PromptsPage() {
   return (
     <div className="flex h-full w-full flex-1 gap-5 px-4">
       <div className={'flex flex-7'}>
-        <DataTable<PromptsColumns, unknown>
-          columns={PROMPTS_COLUMNS}
-          data={prompt}
+        <DataTable<ReferenceColumns, unknown>
+          columns={REFERENCE_COLUMNS}
+          data={reference}
           isEdit={isDeleting}
           enableRowClickSelection={true}
           enableMultiRowSelection={isDeleting}
@@ -156,7 +157,7 @@ export default function PromptsPage() {
           }}
         />
       </div>
-      <PromptSidePanel isDeleting={isDeleting} />
+      <ReferenceSidePanel isDeleting={isDeleting} />
     </div>
   );
 }

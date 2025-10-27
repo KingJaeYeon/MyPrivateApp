@@ -1,13 +1,13 @@
 import { Navigate, RouteObject } from 'react-router-dom';
 import App from '@/App';
 import { Home } from '@/pages/home/Home';
-import SearchVideo from '@/pages/search-video/SearchVideo';
-import SearchVideoResult from '@/pages/search-video-result/SearchVideoResult';
-import TagPage from '@/pages/tag/TagPage';
-import ChannelsPage from '@/pages/channels/ChannelsPage';
-import ReferencePage from '@/pages/reference/ReferencePage.tsx';
-import PromptsPage from '@/pages/prompts/PromptsPage.tsx';
-import ChannelDetailPage from '@/pages/channel-detail/ChannelDetailPage.tsx';
+import SearchVideo from '@/pages/youtube/search-video/SearchVideo';
+import SearchVideoResult from '@/pages/youtube/search-video-result/SearchVideoResult';
+import TagPage from '@/pages/management/tag/TagPage';
+import ChannelsPage from '@/pages/management/channels/ChannelsPage';
+import ReferencePage from '@/pages/lib/reference/ReferencePage.tsx';
+import PromptsPage from '@/pages/lib/prompts/PromptsPage.tsx';
+import ChannelDetailPage from '@/pages/management/channel-detail/ChannelDetailPage.tsx';
 import NotFound from '@/pages/NotFound.tsx';
 import EnglishPage from '@/pages/english/EnglishPage.tsx';
 import { SettingsLayout } from '@/layouts/SettingsLayout.tsx';
@@ -18,6 +18,7 @@ import { AdvancedSettings } from '@/pages/settings/AdvancedSettings.tsx';
 import { NavMainType } from '@/components/nav-main.tsx';
 import { Youtube } from '@/assets/svg';
 import { BookOpen, Database, Languages, Settings2 } from 'lucide-react';
+import SavedExcelListPage from '@/pages/youtube/saved-excel-list/SavedExcelListPage.tsx';
 
 export const navigationRoutes: NavMainType = [
   {
@@ -32,11 +33,16 @@ export const navigationRoutes: NavMainType = [
       },
       {
         title: 'Result',
-        url: '/youtube/result',
+        url: '/youtube/search/result',
       },
       {
-        title: 'Saved Results...',
-        url: '/youtube/saved-results',
+        title: 'Saved List',
+        url: '/youtube/saved-list',
+      },
+      {
+        title: 'Result',
+        url: '/youtube/saved-list/result',
+        hidden: true,
       },
     ],
   },
@@ -57,7 +63,7 @@ export const navigationRoutes: NavMainType = [
       {
         title: 'Edit',
         url: '/manage/channels/edit',
-        suffix: 'Channels...'
+        suffix: 'Channels...',
       },
       {
         title: 'Tags',
@@ -151,9 +157,9 @@ export const routes: RouteObject[] = [
         children: [
           { index: true, element: <Navigate to="/youtube/search-videos" replace /> },
           { path: 'search', element: <SearchVideo /> },
-          { path: 'result', element: <SearchVideoResult /> },
-          { path: 'saved-results', element: <div>saved-results</div> },
-          { path: 'edit', element: <div>edit</div> },
+          { path: 'search/result', element: <SearchVideoResult /> },
+          { path: 'saved-list', element: <SavedExcelListPage /> },
+          { path: 'saved-list/result', element: <div>edit</div> },
         ],
       },
       {

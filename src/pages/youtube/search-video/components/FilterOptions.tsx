@@ -13,12 +13,12 @@ import Tip from '@/components/Tip.tsx';
 import IconMoreInfo from '@/assets/svg/IconMoreInfo.tsx';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
 import React from 'react';
-import { TagFilterRow } from '@/pages/search-video/components/TagFilterRow.tsx';
+import { TagFilterRow } from '@/pages/youtube/search-video/components/TagFilterRow.tsx';
 import { Slider } from '@/components/ui/slider.tsx';
 import { useChannelPair, useCommonPair, useKeywordPair } from '@/hooks/useVideoSearchSelectors.tsx';
 import { cn } from '@/lib/utils.ts';
 import { ButtonGroup } from '@/components/ui/button-group.tsx';
-import flag from '../../../../public/flag.json';
+import flag from '../../../../../public/flag.json';
 import {
   InputGroup,
   InputGroupAddon,

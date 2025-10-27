@@ -5,13 +5,12 @@ import { useMemo } from 'react';
 import NotFound from '@/pages/NotFound.tsx';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
 import { formatCompactNumber } from '@/lib/utils.ts';
-import { Header } from '@/pages/channel-detail/components/Header.tsx';
-import ChannelStat from '@/pages/channel-detail/components/ChannelStat.tsx';
+import ChannelStat from '@/pages/management/channel-detail/components/ChannelStat.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
-import { format } from 'date-fns';
 import { TagChooser } from '@/components/TagChooser.tsx';
-import ChartRender from '@/pages/channel-detail/components/ChartRender.tsx';
-import { RelatedChannels } from '@/pages/channel-detail/components/RelatedChannels.tsx';
+import ChartRender from '@/pages/management/channel-detail/components/ChartRender.tsx';
+import { RelatedChannels } from '@/pages/management/channel-detail/components/RelatedChannels.tsx';
+import DateState from '@/pages/management/channel-detail/components/DateState.tsx';
 
 export default function ChannelDetailPage() {
   const params = useParams();
@@ -26,10 +25,9 @@ export default function ChannelDetailPage() {
   }
 
   return (
-    <div className="flex w-full flex-1 flex-col gap-5 px-4 pb-4">
-      <Header channel={channel} />
-      <div className={'flex flex-1 gap-5 px-6'}>
-        <main className={'scrollNone relative flex w-[75%] overflow-auto'}>
+    <div className="flex h-full w-full flex-col gap-5 px-4 pb-4">
+      <div className={'flex flex-1 gap-5'}>
+        <main className={'scrollNone relative flex flex-1 overflow-auto'}>
           <section className={'absolute h-full w-full pr-2'}>
             <div className={'flex flex-col gap-4'}>
               <div className={'flex w-full items-end justify-between'}>
@@ -40,19 +38,14 @@ export default function ChannelDetailPage() {
                   </Avatar>
                   <div className={'flex flex-col gap-2'}>
                     <div>
-                      <p className={'flex items-center gap-4 text-2xl font-semibold'}>
+                      <p className={'flex items-center gap-4 text-2xl font-semibold text-nowrap'}>
                         {channel.name}
                         {channel.regionCode !== '' && (
                           <Badge variant={'secondary'} size={'lg'}>
                             {channel.regionCode}
                           </Badge>
                         )}
-                        <div className={'flex gap-5'}>
-                          <Badge size={'lg'}>가입일: {channel.publishedAt}</Badge>
-                          <Badge size={'lg'}>
-                            갱신일: {format(channel.fetchedAt, 'yyyy.MM.dd HH:mm')}
-                          </Badge>
-                        </div>
+                        <DateState channel={channel} />
                       </p>
                       <p className={'text-muted-foreground'}>{channel.handle}</p>
                     </div>
@@ -89,7 +82,7 @@ export default function ChannelDetailPage() {
             </div>
           </section>
         </main>
-        <aside className={'w-[25%]'}>
+        <aside className={'w-[300px]'}>
           <div className={'relative h-full w-full overflow-auto'}>
             <div className={'absolute bottom-0 h-full w-full'}>
               <RelatedChannels channel={channel} />

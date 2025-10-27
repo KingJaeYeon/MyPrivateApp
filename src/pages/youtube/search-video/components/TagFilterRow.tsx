@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/button.tsx';
 import {
   Sheet,
   SheetClose,
@@ -8,8 +8,8 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
-import { cn } from '@/lib/utils';
+} from '@/components/ui/sheet.tsx';
+import { cn } from '@/lib/utils.ts';
 import useTagStore from '@/store/useTagStore.ts';
 import { useEffect, useState } from 'react';
 import { Label } from '@/components/ui/label.tsx';

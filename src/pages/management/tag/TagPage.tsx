@@ -4,7 +4,7 @@ import { TAG_COLUMNS, TagColumns } from '@/components/data-table-columns/tag-col
 import { Input } from '@/components/ui/input.tsx';
 import useTagStore from '@/store/useTagStore.ts';
 import { toast } from 'sonner';
-import { AddTag } from '@/pages/tag/components/AddTag.tsx';
+import { AddTag } from '@/pages/management/tag/components/AddTag.tsx';
 
 export default function TagPage() {
   const { data, remove, saved, isChanged } = useTagStore();

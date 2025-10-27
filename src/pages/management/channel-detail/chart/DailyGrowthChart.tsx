@@ -1,14 +1,20 @@
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card.tsx';
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from '@/components/ui/chart';
-import { ChannelMetrics } from '@/pages/channel-detail/chart/channelMetrics.ts';
+} from '@/components/ui/chart.tsx';
+import { ChannelMetrics } from '@/pages/management/channel-detail/chart/channelMetrics.ts';
 import { format } from 'date-fns';
-import { formatCompactNumber } from '@/lib/utils';
+import { formatCompactNumber } from '@/lib/utils.ts';
 
 const chartConfig = {
   subscriberGrowth: {

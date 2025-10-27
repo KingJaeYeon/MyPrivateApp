@@ -6,10 +6,10 @@ import {
   ChartTooltipContent,
   ChartLegend,
   ChartLegendContent,
-} from '@/components/ui/chart';
-import { ChannelMetrics } from '@/pages/channel-detail/chart/channelMetrics.ts';
+} from '@/components/ui/chart.tsx';
+import { ChannelMetrics } from '@/pages/management/channel-detail/chart/channelMetrics.ts';
 import { format } from 'date-fns';
-import { formatCompactNumber } from '@/lib/utils';
+import { formatCompactNumber } from '@/lib/utils.ts';
 
 const subConfig = {
   value: {

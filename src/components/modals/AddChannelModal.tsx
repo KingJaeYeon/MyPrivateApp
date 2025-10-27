@@ -17,8 +17,8 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog.tsx';
 import { DataTable } from '@/components/data-table.tsx';
-import { HandleSearchForm } from '@/pages/channels/components/HandleSearchForm.tsx';
-import { ChannelEditPanel } from '@/pages/channels/components/ChannelEditPanel.tsx';
+import { HandleSearchForm } from '@/pages/management/channels/components/HandleSearchForm.tsx';
+import { ChannelEditPanel } from '@/pages/management/channels/components/ChannelEditPanel.tsx';
 import { useModalStore } from '@/store/modalStore.ts';
 import { Button } from '@/components/ui/button.tsx';
 import useChannelHistoryStore, { ChannelHistory } from '@/store/useChannelHistoryStore.ts';

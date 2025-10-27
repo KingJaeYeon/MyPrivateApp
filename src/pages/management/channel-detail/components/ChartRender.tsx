@@ -2,11 +2,11 @@ import ButtonSwitcher from '@/components/ButtonSwitcher.tsx';
 import { useMemo, useState } from 'react';
 import { ChannelColumns } from '@/components/data-table-columns/channel-columns.tsx';
 import useChannelHistoryStore from '@/store/useChannelHistoryStore.ts';
-import { calculateMetrics } from '@/pages/channel-detail/chart/channelMetrics';
-import { GrowthChart } from '@/pages/channel-detail/chart/GrowthChart.tsx';
-import { GrowthRateChart } from '@/pages/channel-detail/chart/GrowthRateChart.tsx';
-import { EfficiencyChart } from '@/pages/channel-detail/chart/EfficiencyChart.tsx';
-import { DailyGrowthChart } from '@/pages/channel-detail/chart/DailyGrowthChart.tsx';
+import { calculateMetrics } from '@/pages/management/channel-detail/chart/channelMetrics.ts';
+import { GrowthChart } from '@/pages/management/channel-detail/chart/GrowthChart.tsx';
+import { GrowthRateChart } from '@/pages/management/channel-detail/chart/GrowthRateChart.tsx';
+import { EfficiencyChart } from '@/pages/management/channel-detail/chart/EfficiencyChart.tsx';
+import { DailyGrowthChart } from '@/pages/management/channel-detail/chart/DailyGrowthChart.tsx';
 import { Textarea } from '@/components/ui/textarea.tsx';
 
 const chartList = [
