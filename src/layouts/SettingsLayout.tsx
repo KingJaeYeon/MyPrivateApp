@@ -10,14 +10,10 @@ export function SettingsLayout() {
   return (
     <div className={'relative'}>
       <div className="flex h-full flex-col overflow-auto">
-        <div className="border-b px-6 py-4">
-          <h1 className="text-2xl font-bold">설정</h1>
-          <p className="text-muted-foreground mt-1 text-sm">YouTube API 및 파일 관리 설정</p>
-        </div>
 
-        <Tabs value={location.pathname} className="flex-1">
-          <div className="border-b px-6">
-            <TabsList className="h-12">
+
+        <Tabs value={location.pathname} className="flex-1" >
+            <TabsList className="h-10">
               <TabsTrigger value="/settings/youtube" onClick={() => navigate('/settings/youtube')}>
                 YouTube API
               </TabsTrigger>
@@ -37,7 +33,6 @@ export function SettingsLayout() {
                 고급
               </TabsTrigger>
             </TabsList>
-          </div>
 
           <div className="flex-1 overflow-auto p-6">
             <Outlet />

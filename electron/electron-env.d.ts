@@ -1,6 +1,7 @@
 /// <reference types="vite-plugin-electron/electron-env" />
 
 import { AppPathKey } from './handlers/app.handler.ts';
+import { ipcRenderer } from 'electron';
 
 interface Config {
   settings: State['data'];
@@ -107,5 +108,11 @@ interface Window {
       callback: (data: { count: number; total: number; timestamp: string }) => void
     ) => () => void;
     onChannelsError: (callback: (error: { message: string }) => void) => () => void;
+  };
+  windowsApi: {
+    minimize: () => void;
+    maximize: () => void;
+    restore: () => void;
+    close: () => void;
   };
 }

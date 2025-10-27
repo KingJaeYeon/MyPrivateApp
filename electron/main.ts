@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 import {
@@ -41,7 +41,7 @@ function createWindow() {
     width: 1400,
     height: 800,
     trafficLightPosition: { x: 12, y: 10 },
-    titleBarStyle: 'hidden',
+    titleBarStyle: process.platform === "darwin" ? "hidden" : undefined,
     frame: false,
     ...(process.platform !== 'darwin' ? { titleBarOverlay: true } : {}),
     backgroundColor: '#0b0b0e',
@@ -50,6 +50,12 @@ function createWindow() {
       contextIsolation: true,
       nodeIntegration: false,
     },
+    // titleBarOverlay: {
+    //   color: '#2f3241',
+    //   symbolColor: '#74b1be',
+    //   height: 36
+    // },
+    // acceptFirstMouse: true,
   });
 
   win.webContents.on('did-finish-load', () => {
@@ -114,3 +120,24 @@ app.whenReady().then(() => {
 app.on('before-quit', () => {
   youtubeScheduler.stopScheduler();
 });
+
+
+ipcMain.on('window:minimize', () => {
+  // Now we can access the window variable
+  win?.minimize();
+})
+
+ipcMain.on('window:maximize', () => {
+  // Now we can access the window variable
+  win?.maximize();
+})
+
+ipcMain.on('window:restore', () => {
+  // Now we can access the window variable
+  win?.restore();
+})
+
+ipcMain.on('window:close', () => {
+  // Now we can access the window variable
+  win?.close();
+})

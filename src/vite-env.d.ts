@@ -86,6 +86,12 @@ declare global {
       ) => () => void;
       onChannelsError: (callback: (error: { message: string }) => void) => () => void;
     };
+    windowsApi: {
+      minimize: () => void;
+      maximize: () => void;
+      restore: () => void;
+      close: () => void;
+    };
   }
 }
 
