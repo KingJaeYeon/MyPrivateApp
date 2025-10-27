@@ -16,7 +16,7 @@ export default function AlertModal({ onClose, data }: AlertModalProps) {
   const { theme } = useTheme();
   return (
     <AlertDialog open={true} onOpenChange={onClose}>
-      <AlertDialogContent className="bg-secondary max-w-3xs border-2 p-4">
+      <AlertDialogContent className="bg-secondary max-w-[18rem] border-2 p-4">
         <AlertDialogHeader>
           <AlertDialogTitle className={'flex justify-center'}>
             <img
