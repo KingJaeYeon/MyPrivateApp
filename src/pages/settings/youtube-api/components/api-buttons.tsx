@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button.tsx';
-import { Trash2 } from 'lucide-react';
+import { BanIcon, Trash2 } from 'lucide-react';
 import useSettingStore from '@/store/useSettingStore.ts';
-import type { ApiType } from '@/pages/home/Home.tsx';
 import { useMutation } from '@tanstack/react-query';
 import { pingTest } from '@/service/pingtest.ts';
 import React from 'react';
@@ -32,29 +31,29 @@ export function DeleteButton() {
 
 export function ConnectButton({
   editValue,
-  setEditing,
+  setIsEditing,
 }: {
-  editValues: { youtubeApiKey: string };
-  setEditing: React.Dispatch<React.SetStateAction<boolean>>;
+  editValue: string;
+  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const { updateIn } = useSettingStore();
   const { openModal } = useModalStore();
 
   const { mutate, isPending } = useMutation({
-    mutationFn: ({ apiKey, type }: { apiKey: string; type: ApiType }) => pingTest({ apiKey, type }),
+    mutationFn: ({ apiKey }: { apiKey: string }) => pingTest({ apiKey, type: 'youtubeApiKey' }),
     onSuccess: async () => {
       await updateIn('youtube', {
-        apiKey: editValues[type],
+        apiKey: editValue,
         usedQuota: 0,
         quotaUpdatedAt: new Date().toLocaleString(),
       });
-      setEditing(false);
+      setIsEditing(false);
       toast.success('API 키 저장 완료');
     },
     onError: async (error: any) => {
       if (error.message.includes('quota')) {
         await updateIn('youtube', {
-          apiKey: editValues[type],
+          apiKey: editValue,
           usedQuota: 10000,
           quotaUpdatedAt: new Date().toLocaleString(),
         });
@@ -68,11 +67,11 @@ export function ConnectButton({
     <Button
       disabled={isPending}
       onClick={() => {
-        if (!editValues[type] || editValues[type].trim() === '') {
+        if (!editValue || editValue.trim() === '') {
           openModal('alert', 'API 키를 입력해주세요.');
           return;
         }
-        mutate({ type, apiKey: editValues[type].trim() });
+        mutate({ apiKey: editValue.trim() });
       }}
     >
       연결
@@ -81,38 +80,36 @@ export function ConnectButton({
 }
 
 export function CancelButton({
-  type,
   setIsEditing,
-  setEditValues,
+  setEditValue,
 }: {
-  type: ApiType;
-  setIsEditing: React.Dispatch<React.SetStateAction<{ youtubeApiKey: boolean }>>;
-  setEditValues: React.Dispatch<React.SetStateAction<{ youtubeApiKey: string }>>;
+  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
+  setEditValue: React.Dispatch<React.SetStateAction<string>>;
 }) {
   const handleCancel = () => {
-    setIsEditing((prev) => ({ ...prev, [type]: false }));
-    setEditValues((prev) => ({ ...prev, [type]: '' }));
+    setIsEditing(false);
+    setEditValue('');
   };
   return (
     <Button variant="secondary" onClick={handleCancel}>
-      취소
+      <BanIcon />
     </Button>
   );
 }
 
 export function EditButton({
-  setEditing,
-  setApiKey,
+  setIsEditing,
+  setEditValue,
 }: {
-  setEditing: React.Dispatch<React.SetStateAction<boolean>>;
-  setApiKey: React.Dispatch<React.SetStateAction<string>>;
+  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
+  setEditValue: React.Dispatch<React.SetStateAction<string>>;
 }) {
   const youtubeApiKey = useSettingStore((r) => r.data.youtube.apiKey);
 
   const handleEdit = () => {
-    setEditing((prev) => !prev);
+    setIsEditing((prev) => !prev);
     // 현재 저장된 값으로 초기화
-    setApiKey(youtubeApiKey);
+    setEditValue(youtubeApiKey);
   };
 
   return (

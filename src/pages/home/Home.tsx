@@ -7,12 +7,12 @@ import {
   ConnectButton,
   DeleteButton,
   EditButton,
-} from '@/pages/home/components/api-buttons.tsx';
+} from '@/pages/settings/youtube-api/components/api-buttons.tsx';
 import { ExcelFilesLocation } from '@/pages/home/components/ExcelFilesLocation.tsx';
 import { FileNameRule } from '@/pages/home/components/FileNameRule.tsx';
 import { SavedResult } from '@/pages/home/components/SavedResult.tsx';
 import { Button } from '@/components/ui/button.tsx';
-import QuotaReset from '@/pages/home/components/QuotaReset.tsx';
+import QuotaReset from '@/pages/settings/youtube-api/components/QuotaReset.tsx';
 
 export type ApiType = 'youtubeApiKey';
 

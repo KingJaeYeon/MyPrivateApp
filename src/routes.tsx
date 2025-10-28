@@ -10,7 +10,7 @@ import PromptsPage from '@/pages/lib/prompts/PromptsPage.tsx';
 import ChannelDetailPage from '@/pages/management/channel-detail/ChannelDetailPage.tsx';
 import NotFound from '@/pages/NotFound.tsx';
 import EnglishPage from '@/pages/english/EnglishPage.tsx';
-import { YouTubeAPISettings } from '@/pages/settings/YouTubeAPISettings.tsx';
+import { YouTubeAPISettings } from '@/pages/settings/youtube-api/YouTubeAPISettings.tsx';
 import { FilesSettings } from '@/pages/settings/FilesSettings.tsx';
 import { AdvancedSettings } from '@/pages/settings/AdvancedSettings.tsx';
 import { NavMainType } from '@/components/nav-main.tsx';
