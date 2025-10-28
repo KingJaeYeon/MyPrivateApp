@@ -106,7 +106,6 @@ export function DataTable<TData, TValue>({
   }, [getTriggerHeight, isFixHeader, name, ref1, setTriggerHeight, y]);
 
   // TableHeader의 위치 측정
-
   useEffect(() => {
     const scrollContainer = ref1.current;
     if (!scrollContainer) return;

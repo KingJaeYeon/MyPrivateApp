@@ -55,7 +55,7 @@ export default function APISettings() {
                 readOnly={hasApiKey && !isEditing}
                 value={getValue()}
                 type={inputType}
-                placeholder="AIzaSyDDe44x6EkzF2V0QOD1gecv929QSjD0dS4"
+                placeholder="AIzaSyDDe44x6EkzF2V01dsaegecv929QSjD0dS4"
                 onChange={(e) => setEditValue(e.target.value)}
                 className="font-mono text-sm"
               />
