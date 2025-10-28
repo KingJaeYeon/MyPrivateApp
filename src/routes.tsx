@@ -1,6 +1,5 @@
 import { Navigate, RouteObject } from 'react-router-dom';
 import App from '@/App';
-import { Home } from '@/pages/home/Home';
 import SearchVideo from '@/pages/youtube/search-video/SearchVideo';
 import SearchVideoResult from '@/pages/youtube/search-video-result/SearchVideoResult';
 import TagPage from '@/pages/management/tag/TagPage';
@@ -11,13 +10,14 @@ import ChannelDetailPage from '@/pages/management/channel-detail/ChannelDetailPa
 import NotFound from '@/pages/NotFound.tsx';
 import EnglishPage from '@/pages/english/EnglishPage.tsx';
 import { YouTubeAPISettings } from '@/pages/settings/youtube-api/YouTubeAPISettings.tsx';
-import { FilesSettings } from '@/pages/settings/FilesSettings.tsx';
+import { FilesSettings } from '@/pages/settings/LocationFile/FilesSettings.tsx';
 import { AdvancedSettings } from '@/pages/settings/AdvancedSettings.tsx';
 import { NavMainType } from '@/components/nav-main.tsx';
 import { Youtube } from '@/assets/svg';
 import { BookOpen, Database, Languages, Settings2 } from 'lucide-react';
 import SavedListPage from '@/pages/youtube/saved-list/SavedListPage.tsx';
 import ChannelsEditPage from '@/pages/management/channel-edit/ChannelsEditPage.tsx';
+import { Home } from '@/pages/home/Home.tsx';
 
 export const navigationRoutes: NavMainType = [
   {

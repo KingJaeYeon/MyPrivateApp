@@ -25,10 +25,10 @@ import { IconEyeOff, IconEyeOn } from '@/assets/svg';
 
 export default function APISettings() {
   const [isEditing, setIsEditing] = useState(false);
-  const [editValue, setEditValue] = useState('password');
+  const [editValue, setEditValue] = useState('');
   const { data } = useSettingStore();
   const hasApiKey = Boolean(data.youtube.apiKey);
-  const [inputType, setInputType] = useState<string>('');
+  const [inputType, setInputType] = useState<string>('password');
 
   const getValue = () => {
     if (hasApiKey && !isEditing) return data.youtube.apiKey;

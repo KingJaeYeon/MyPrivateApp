@@ -1,39 +1,33 @@
 import useSettingStore from '@/store/useSettingStore.ts';
-import React, { useState } from 'react';
-import { Label } from '@/components/ui/label.tsx';
-import { Input } from '@/components/ui/input.tsx';
-import { Button } from '@/components/ui/button.tsx';
-import { getOrderedColumns } from '@/lib/utils.ts';
-import useInitializeStores from '@/hooks/use-initialize-stores.tsx';
-import useChannelsSchedule from '@/hooks/use-channels-schedule.ts';
-import { toast } from 'sonner';
 import { useModalStore } from '@/store/modalStore.ts';
+import { toast } from 'sonner';
+import { getOrderedColumns } from '@/lib/utils.ts';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card.tsx';
+import { FileSpreadsheet } from 'lucide-react';
+import { Button } from '@/components/ui/button.tsx';
+import { FileNameRuleModal } from '@/pages/settings/LocationFile/components/FileNameRuleModal.tsx';
 
-export function ExcelFilesLocation() {
-  const [loading, setLoading] = useState<boolean>(false);
-  const { location, name } = useSettingStore((r) => r.data.folder);
+export function FileGenerator() {
   const {
-    data: { excel, folder, hasFile },
+    data: { folder, excel },
     updateIn,
   } = useSettingStore();
-  const { reload } = useInitializeStores();
-  const { handleStop } = useChannelsSchedule();
   const { openModal } = useModalStore();
 
-  async function handleClick() {
-    const result = await window.electronAPI.pickFolder();
-    if (!result) return;
-    await reload();
-    await updateIn('folder', {
-      ...folder,
-      location: result,
-    });
-    handleStop();
-  }
-
-  async function generateFiles() {
+  const handleCreateExcel = async () => {
+    const { name, location } = folder;
+    if (!location) {
+      openModal('alert', '폴더를 먼저 선택하세요');
+      return;
+    }
+    // Excel 생성 로직
     try {
-      setLoading(true);
       const isAllFill =
         !!name.channel &&
         !!name.tag &&
@@ -42,6 +36,7 @@ export function ExcelFilesLocation() {
         !!name.prompt &&
         !!name.reference &&
         !!name.result;
+
       if (!isAllFill) {
         openModal('alert', 'FileName Rule 먼저 체워 주세요.');
         return;
@@ -64,16 +59,15 @@ export function ExcelFilesLocation() {
         toast.error('result는 맨앞에 /와 . 제외해야합니다.');
         return;
       }
-
       const path = {
-        tag: `${location}/${name.tag}`,
-        channel: `${location}/${name.channel}`,
-        channelHistory: `${location}/${name.channelHistory}`,
-        english: `${location}/${name.english}`,
-        prompt: `${location}/${name.prompt}`,
-        reference: `${location}/${name.reference}`,
-        progress: `${location}/${name.progress}`,
-        result: `${location}/${name.result}`,
+        tag: `${location}/${folder.name.tag}`,
+        channel: `${location}/${folder.name.channel}`,
+        channelHistory: `${location}/${folder.name.channelHistory}`,
+        english: `${location}/${folder.name.english}`,
+        prompt: `${location}/${folder.name.prompt}`,
+        reference: `${location}/${folder.name.reference}`,
+        progress: `${location}/${folder.name.progress}`,
+        result: `${location}/${folder.name.result}`,
       };
 
       const hasTag = await window.fsApi.exists(path.tag);
@@ -114,36 +108,39 @@ export function ExcelFilesLocation() {
       }
       // const hasProgress = await window.fsApi.exists(`${location}/${name.progress}`)
       await updateIn('hasFile', true);
-      toast.success('생성완료');
+      openModal('alert', 'Excel 파일이 생성되었습니다');
     } catch (e) {
-      toast.error('오류발생');
-    } finally {
-      setLoading(false);
+      toast.error('오류발생: 다시 시도해주세요.');
     }
-  }
-
+  };
   return (
-    <React.Fragment>
-      <Label htmlFor="mode" className="min-w-[100px]">
-        Location
-      </Label>
-      <Input
-        className="h-8 w-[500px]"
-        value={location}
-        onClick={handleClick}
-        placeholder={'폴더를 지정해주세요.'}
-        readOnly
-      />
-      {location && (
-        <Button
-          variant={hasFile ? 'secondary' : 'destructive'}
-          onClick={generateFiles}
-          loading={loading}
-        >
-          Excel 생성
+    <Card>
+      <CardHeader>
+        <div className="flex items-center gap-2">
+          <FileSpreadsheet className="h-5 w-5" />
+          <CardTitle>Excel 파일 관리</CardTitle>
+        </div>
+        <CardDescription>필요한 Excel 파일을 생성하거나 관리합니다</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <FileNameRuleModal />
+        <Button onClick={handleCreateExcel} disabled={!folder.location} className="w-full">
+          Excel 파일 생성
         </Button>
-      )}
-      <Button onClick={() => window.electronAPI.openFolder(location)}>폴더열기</Button>
-    </React.Fragment>
+        <div className="text-muted-foreground bg-muted rounded-lg p-3 text-xs">
+          <p className="mb-2 font-medium">생성될 파일:</p>
+          <ul className="ml-4 list-disc space-y-1">
+            <li>{folder.name.channel} - 채널 정보</li>
+            <li>{folder.name.tag} - 태그 목록</li>
+            <li>{folder.name.prompt} - 프롬프트 저장</li>
+            <li>{folder.name.reference} - 참고 자료</li>
+            <li>{folder.name.channelHistory} - 채널 히스토리</li>
+            <li>{folder.name.result} - 검색결과 저장 폴더</li>
+            <li>{folder.name.english} - 영어(준비중)</li>
+            <li>{folder.name.progress} - progress(준비중)</li>
+          </ul>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
