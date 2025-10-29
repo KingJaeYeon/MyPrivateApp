@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label.tsx';
 import IconMoreInfo from '@/assets/svg/IconMoreInfo.tsx';
 import Tip from '@/components/Tip';
 import AreaChartRenderer from '@/pages/management/channel-detail/chart/AreaChartRenderer.tsx';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const vpvConfig = {
   value: {
@@ -31,11 +32,6 @@ type Props = {
   data: ChannelMetrics[];
 };
 
-/**
- * @deprecated 다른 채널이랑 비교할때 의미있는 차트임
- * @param data
- * @constructor
- */
 export function EfficiencyChart({ data }: Props) {
   const { vpv, vps, spv } = useMemo(() => {
     return data.reduce(
@@ -76,7 +72,54 @@ export function EfficiencyChart({ data }: Props) {
   }, [data]);
 
   return (
-    <div className={'flex flex-wrap gap-5 px-5 py-2'}>
+    <div className={'flex flex-col flex-wrap gap-5 px-5 py-2'}>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <Card className="border-muted bg-muted/30">
+          <CardHeader>
+            <CardTitle className="text-muted-foreground text-sm font-medium">
+              구독자당 조회수 (VPS)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">
+              {Math.ceil(vps.value[vps.value.length - 1]).toLocaleString()}
+            </p>
+            <p className="text-muted-foreground mt-1 text-xs">구독자 1명당 평균 조회수</p>
+          </CardContent>
+        </Card>
+        <Card className="border-muted bg-muted/30">
+          <CardHeader className="pb-1">
+            <CardTitle className="text-muted-foreground text-sm font-medium">
+              영상당 조회수 (VPV)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">
+              {Math.ceil(vpv.value[vpv.value.length - 1]).toLocaleString()}
+            </p>
+            <p className="text-muted-foreground mt-1 text-xs">영상 1개당 평균 조회수</p>
+          </CardContent>
+        </Card>
+        <Card className="border-muted bg-muted/30">
+          <CardHeader className="pb-1">
+            <CardTitle className="text-muted-foreground text-sm font-medium">
+              영상당 조회수 (SPV)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">
+              {Math.ceil(spv.value[spv.value.length - 1]).toLocaleString()} 회
+            </p>
+            <p className="text-muted-foreground mt-1 text-xs">영상 1편당 평균 구독자 전환수</p>
+          </CardContent>
+        </Card>
+      </div>
+      <div>
+        <Label className={'text-destructive'}>
+          해당차트들은 다른채널의 지표와 비교할때 의미있는 차트입니다.
+        </Label>
+        <Label className={'text-destructive'}>구현한게 아까워서 일단 넣어놨습니다</Label>
+      </div>
       <div className="flex w-full flex-col gap-5">
         <ChartTitleVPV />
         <AreaChartRenderer {...vps} config={vpsConfig} id={'fillValue'} />

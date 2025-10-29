@@ -11,6 +11,7 @@ import { TagChooser } from '@/components/TagChooser.tsx';
 import ChartRender from '@/pages/management/channel-detail/components/ChartRender.tsx';
 import { RelatedChannels } from '@/pages/management/channel-detail/components/RelatedChannels.tsx';
 import DateState from '@/pages/management/channel-detail/components/DateState.tsx';
+import { LucideExternalLink } from 'lucide-react';
 
 export default function ChannelDetailPage() {
   const params = useParams();
@@ -68,8 +69,12 @@ export default function ChannelDetailPage() {
                     </div>
                   </div>
                 </div>
-                <Button size={'lg'} className={'w-fit text-base'}>
-                  링크 이동
+                <Button
+                  size={'lg'}
+                  className={'w-fit px-4 text-base font-semibold text-nowrap'}
+                  onClick={() => window.electronAPI.openExternal(channel?.link)}
+                >
+                  <LucideExternalLink /> 이동
                 </Button>
               </div>
               <TagChooser

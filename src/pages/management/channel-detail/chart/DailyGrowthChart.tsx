@@ -38,9 +38,9 @@ type Props = {
 export function DailyGrowthChart({ data }: Props) {
   const chartData = data.slice(1).map((item) => ({
     date: format(new Date(item.fetchedAt), 'MM/dd'),
-    구독자증가: item.subscriberGrowth,
-    조회수증가: item.viewGrowth,
-    영상증가: item.videoGrowth,
+    subscriberGrowth: item.subscriberGrowth,
+    viewGrowth: item.viewGrowth,
+    videoGrowth: item.videoGrowth,
   }));
 
   return (
@@ -59,9 +59,9 @@ export function DailyGrowthChart({ data }: Props) {
               content={<ChartTooltipContent />}
               formatter={(value: number) => formatCompactNumber(value)}
             />
-            <Bar dataKey="구독자증가" fill="var(--color-subscriberGrowth)" />
-            <Bar dataKey="조회수증가" fill="var(--color-viewGrowth)" />
-            <Bar dataKey="영상증가" fill="var(--color-videoGrowth)" />
+            <Bar dataKey="subscriberGrowth" fill="var(--color-subscriberGrowth)" />
+            <Bar dataKey="viewGrowth" fill="var(--color-viewGrowth)" />
+            <Bar dataKey="videoGrowth" fill="var(--color-videoGrowth)" />
           </BarChart>
         </ChartContainer>
       </CardContent>
