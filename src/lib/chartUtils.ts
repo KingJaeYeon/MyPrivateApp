@@ -1,6 +1,6 @@
 import { differenceInDays, differenceInMonths, differenceInYears } from 'date-fns';
 
-type ScaleResult = {
+export type ScaleResult = {
   min: number;
   max: number;
   ticks: number[];

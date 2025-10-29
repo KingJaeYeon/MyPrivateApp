@@ -14,9 +14,6 @@ const subConfig = {
 } satisfies ChartConfig;
 
 const viewConfig = {
-  visitors: {
-    label: 'Visitors',
-  },
   value: {
     label: '조회수',
     color: 'var(--chart-4)',
