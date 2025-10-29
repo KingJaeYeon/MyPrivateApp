@@ -66,23 +66,8 @@ export function GrowthRateChart({ data }: Props) {
   const scale = calculateSmartScale(min, max);
 
   return (
-    <div className={'flex flex-wrap gap-5 px-5 py-2'}>
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
-            <Label className="text-base font-semibold">구독자 & 조회수 증가율</Label>
-            <Tip
-              txt="두 지표의 증가 속도를 비교하여 채널의 성장 균형을 파악할 수 있습니다"
-              side="right"
-            >
-              <IconMoreInfo className="text-muted-foreground h-4 w-4" />
-            </Tip>
-          </div>
-          <p className="text-muted-foreground mt-1 text-xs">
-            얼마나 빨리 성장하고 있는지 보여주는 지표
-          </p>
-        </div>
-      </div>
+    <div className={'flex flex-wrap px-5 py-2'}>
+      <ChartTitle />
       <div className="h-[350px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <ChartContainer config={chartConfig}>
@@ -144,30 +129,55 @@ export function GrowthRateChart({ data }: Props) {
           </ChartContainer>
         </ResponsiveContainer>
         {/* 차트 해석 가이드 */}
-        <div className="bg-muted/50 space-y-2 rounded-lg p-3">
-          <p className="text-xs font-medium">📊 차트 해석</p>
-          <div className="space-y-1.5">
-            <div className="flex items-start gap-2">
-              <span className="flex-shrink-0 text-xs text-green-600">✓</span>
-              <p className="text-muted-foreground text-xs">
-                <span className="font-medium">두 선이 붙어있음:</span> 조회수와 구독자가 균형있게
-                성장
-              </p>
-            </div>
-            <div className="flex items-start gap-2">
-              <span className="flex-shrink-0 text-xs text-blue-600">↑</span>
-              <p className="text-muted-foreground text-xs">
-                <span className="font-medium">조회수 선이 위:</span> 영상은 많이 보지만 구독 전환이
-                낮음
-              </p>
-            </div>
-            <div className="flex items-start gap-2">
-              <span className="flex-shrink-0 text-xs text-purple-600">↓</span>
-              <p className="text-muted-foreground text-xs">
-                <span className="font-medium">구독자 선이 위:</span> 기존 구독자의 충성도가 높음
-              </p>
-            </div>
-          </div>
+      </div>
+      <ChartGuide />
+    </div>
+  );
+}
+
+function ChartTitle() {
+  return (
+    <div className="flex items-start justify-between gap-4">
+      <div className="flex-1">
+        <div className="flex items-center gap-2">
+          <Label className="text-base font-semibold">구독자 & 조회수 증가율</Label>
+          <Tip
+            txt="두 지표의 증가 속도를 비교하여 채널의 성장 균형을 파악할 수 있습니다"
+            side="right"
+          >
+            <IconMoreInfo className="text-muted-foreground h-4 w-4" />
+          </Tip>
+        </div>
+        <p className="text-muted-foreground mt-1 text-xs">
+          얼마나 빨리 성장하고 있는지 보여주는 지표
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function ChartGuide() {
+  return (
+    <div className="bg-muted/50 w-full space-y-2 rounded-lg p-3">
+      <p className="text-xs font-medium">📊 차트 해석</p>
+      <div className="space-y-1.5">
+        <div className="flex items-start gap-2">
+          <span className="flex-shrink-0 text-xs text-green-600">✓</span>
+          <p className="text-muted-foreground text-xs">
+            <span className="font-medium">두 선이 붙어있음:</span> 조회수와 구독자가 균형있게 성장
+          </p>
+        </div>
+        <div className="flex items-start gap-2">
+          <span className="flex-shrink-0 text-xs text-blue-600">↑</span>
+          <p className="text-muted-foreground text-xs">
+            <span className="font-medium">조회수 선이 위:</span> 영상은 많이 보지만 구독 전환이 낮음
+          </p>
+        </div>
+        <div className="flex items-start gap-2">
+          <span className="flex-shrink-0 text-xs text-purple-600">↓</span>
+          <p className="text-muted-foreground text-xs">
+            <span className="font-medium">구독자 선이 위:</span> 기존 구독자의 충성도가 높음
+          </p>
         </div>
       </div>
     </div>

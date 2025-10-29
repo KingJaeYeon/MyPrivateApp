@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea.tsx';
 const chartList = [
   { value: 'growth', label: '성장 추이' },
   { value: 'rate', label: '증가율' },
-  { value: 'efficiency', label: '효율성' },
+  // { value: 'efficiency', label: '효율성' }, 다른 채널과 비교할때 의미있는 차트
   { value: 'daily', label: '일일 증가' },
   { value: 'memo', label: '메모' },
 ];
