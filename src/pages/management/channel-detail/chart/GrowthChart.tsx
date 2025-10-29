@@ -1,4 +1,4 @@
-import { CartesianGrid, XAxis, YAxis, AreaChart, Area } from 'recharts';
+import { CartesianGrid, XAxis, YAxis, AreaChart, Area, ResponsiveContainer } from 'recharts';
 import {
   ChartConfig,
   ChartContainer,
@@ -17,6 +17,7 @@ import {
   getDataMinMax,
   getOptimalDateFormat,
 } from '@/lib/chartUtils';
+import { useTheme } from '@/providers/theme-provider.tsx';
 
 const subConfig = {
   value: {
@@ -86,7 +87,7 @@ export function GrowthChart({ data }: Props) {
   }, [data]);
 
   return (
-    <div className={'flex flex-wrap justify-center gap-y-10 p-5'}>
+    <div className={'flex flex-wrap gap-5 px-5 py-2'}>
       <ChartRenderer {...video} config={videoConfig} id={'fillValue'} />
       <ChartRenderer {...view} config={viewConfig} id={'fillValue3'} />
       <ChartRenderer {...subscriber} config={subConfig} id={'fillValue2'} />
@@ -111,60 +112,69 @@ function ChartRenderer({
   const scale = calculateSmartScale(min, max);
   const { format: dateFormat } = getOptimalDateFormat(date);
   const xTicks = calculateXAxisTicks(data.length, 7);
+  const { theme } = useTheme();
   return (
-    <ChartContainer config={config} className="aspect-auto h-[200px] w-[80%]">
-      <AreaChart data={data}>
-        <defs>
-          <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="var(--color-value)" stopOpacity={0.8} />
-            <stop offset="95%" stopColor="var(--color-value)" stopOpacity={0.1} />
-          </linearGradient>
-        </defs>
-        <CartesianGrid vertical={false} />
-        <XAxis
-          dataKey="date"
-          tickMargin={8}
-          minTickGap={32}
-          tick={{ fontSize: 12 }}
-          ticks={xTicks.map((i) => data[i].date)}
-          tickFormatter={(date) => format(new Date(date), dateFormat)}
-        />
-        <YAxis
-          orientation="right"
-          dataKey={'value'}
-          tickLine={false}
-          axisLine={false}
-          tick={{ fontSize: 12 }}
-          domain={[scale.min, scale.max]}
-          ticks={scale.ticks}
-          allowDataOverflow
-          tickFormatter={(value) => formatCompactNumber(value)}
-        />
-        <ChartTooltip
-          cursor={false}
-          content={
-            <ChartTooltipContent
-              nameKey="value"
-              labelFormatter={(value) => {
-                return new Date(value).toLocaleDateString('KR', {
-                  month: 'short',
-                  day: 'numeric',
-                });
-              }}
-              hideIndicator={false}
-              indicator="line"
+    <div className="h-[350px] w-[100%]">
+      <ResponsiveContainer width="100%" height="100%">
+        <ChartContainer config={config}>
+          <AreaChart data={data} margin={{ top: 20, right: 20, left: 10, bottom: 20 }}>
+            <defs>
+              <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="var(--color-value)" stopOpacity={0.8} />
+                <stop offset="95%" stopColor="var(--color-value)" stopOpacity={0.1} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid
+              vertical={false}
+              stroke={theme === 'dark' ? '#e4e4e7' : 'oklch(80.8% 0.114 19.571)'}
+              className={'stroke-1'}
+              strokeDasharray="3 3"
+              strokeOpacity={0.4}
             />
-          }
-        />
-        <Area
-          dataKey="value"
-          type="natural"
-          fill={`url(#${id})`}
-          stroke="var(--color-value)"
-          stackId="a"
-        />
-        <ChartLegend content={<ChartLegendContent />} verticalAlign="top" height={1} />
-      </AreaChart>
-    </ChartContainer>
+            <XAxis
+              dataKey="date"
+              tick={{ fontSize: 12 }}
+              ticks={xTicks.map((i) => data[i].date)}
+              tickFormatter={(date) => format(new Date(date), dateFormat)}
+            />
+            <YAxis
+              dataKey={'value'}
+              tickLine={false}
+              axisLine={false}
+              tick={{ fontSize: 12 }}
+              domain={[scale.min, scale.max]}
+              ticks={scale.ticks}
+              allowDataOverflow
+              tickFormatter={(value) => formatCompactNumber(value)}
+            />
+            <ChartTooltip
+              cursor={false}
+              content={
+                <ChartTooltipContent
+                  nameKey="value"
+                  labelFormatter={(value) => {
+                    return new Date(value).toLocaleDateString('KR', {
+                      month: 'short',
+                      day: 'numeric',
+                    });
+                  }}
+                  hideIndicator={false}
+                  indicator="line"
+                />
+              }
+            />
+            <Area
+              dataKey="value"
+              type="monotone"
+              fill={`url(#${id})`}
+              stroke="var(--color-value)"
+              stackId="a"
+              strokeWidth={2.2}
+            />
+            <ChartLegend content={<ChartLegendContent />} verticalAlign="top" />
+          </AreaChart>
+        </ChartContainer>
+      </ResponsiveContainer>
+    </div>
   );
 }
