@@ -155,11 +155,11 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
+  --chart-1: oklch(0.68 0.14 250);  /* 청회색 Blue Gray — 안정적 */
+  --chart-2: oklch(0.75 0.11 110);  /* 올리브 그린 — 자연스러움 */
+  --chart-3: oklch(0.72 0.10 40);   /* 샌드 베이지 — 따뜻한 느낌 */
+  --chart-4: oklch(0.78 0.13 320);  /* 라일락 퍼플 — 감각적인 포인트 */
+  --chart-5: oklch(0.70 0.08 270);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -204,11 +204,11 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
+  --chart-1: oklch(0.58 0.17 250);  /* 쿨 블루그레이 */
+  --chart-2: oklch(0.55 0.13 130);  /* 뮤트 그린 */
+  --chart-3: oklch(0.60 0.12 40);   /* 소프트 오렌지브라운 */
+  --chart-4: oklch(0.65 0.16 310);  /* 라벤더 퍼플 */
+  --chart-5: oklch(0.58 0.10 270);  /* 미드그레이 */
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
