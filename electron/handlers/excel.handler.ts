@@ -4,6 +4,9 @@ import * as XLSX from 'xlsx';
 import fs from 'node:fs';
 import { format } from 'date-fns';
 import path from 'node:path';
+import Store from 'electron-store';
+
+const configStore = new Store();
 
 /**
  * Excel 관련 IPC 핸들러 등록
@@ -47,7 +50,26 @@ export function setupExcelHandlers() {
     return XLSX.utils.sheet_to_json(sheet, { defval: '' });
   });
 
-  // 시트 덮어쓰기 (기존 시트 교체)
+  /** 시트 덮어쓰기 (기존 시트 교체)
+   * 1. channels.xlsx (기존 정상 파일)
+   * 2. channels[2025-10-30].back.xlsx 백업 생성
+   * 3. channels.tmp.xlsx 새 데이터 쓰기 시작
+   * 4. channels.tmp.xlsx 쓰기 완료! ✅
+   * 5. channels.tmp.xlsx → channels.xlsx로 rename (교체)
+   * 6. 결과: channels.xlsx = 새 데이터 ✅
+   * ```
+   *
+   * ### 💥 버그/크래시 케이스:
+   * ```
+   * 1. channels.xlsx (기존 정상 파일)
+   * 2. channels[2025-10-30].back.xlsx 백업 생성
+   * 3. channels.tmp.xlsx 새 데이터 쓰기 시작
+   * 4. 💥 크래시 발생!
+   * 5. rename 단계까지 못 감
+   * 6. 결과:
+   *    - channels.xlsx = 기존 데이터 그대로! ✅ (안전)
+   *    - channels.tmp.xlsx = 손상된 데이터 (버려짐)
+   */
   ipcMain.handle(
     'excel:overwrite',
     async (_e, filePath: string, data: any[][], sheetName = 'Sheet1') => {
@@ -60,9 +82,12 @@ export function setupExcelHandlers() {
         }
 
         let backupPath: string | null = null;
+        const fileNames = configStore.get('settings.folder.name') as any;
+        const exclude = [fileNames.channelHistory];
+        const isExclude = exclude.some((exclude) => exclude === `${parsed.name}${parsed.ext}`);
 
         // 1) 기존 파일이 있으면 → [yyyy-MM-dd] 백업본 생성
-        if (fs.existsSync(filePath)) {
+        if (fs.existsSync(filePath) && !isExclude) {
           const stamp = format(new Date(), 'yyyy-MM-dd'); // 파일명에 들어갈 날짜
           // 예: tags[2025-10-03].bak.xlsx
           backupPath = path.join(parsed.dir, `${parsed.name}[${stamp}].back${parsed.ext}`);
