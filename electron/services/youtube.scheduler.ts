@@ -5,6 +5,7 @@ import path from 'path';
 import { BrowserWindow } from 'electron';
 import Store from 'electron-store';
 import { ChannelColumns } from '@/components/data-table-columns/channel-columns.tsx';
+import { addHours, isSameDay } from 'date-fns';
 
 const configStore = new Store();
 
@@ -144,23 +145,39 @@ class YouTubeScheduler {
 
       if (!existingChannels || existingChannels.length === 0) {
         console.log('❌ 수집할 채널이 없습니다.');
-        return { success: false, message: '채널이 없습니다' };
+        return { success: false, message: '수집할 채널이 없습니다.' };
       }
 
+      // 3. 같은날짜 갱신기록 있으면 패스
       const channelIds = existingChannels.map((c) => c.channelId).filter(Boolean);
+      const fetchedAtMaps = Object.fromEntries(
+        existingChannels.map((c) => [c.channelId, c.fetchedAt])
+      );
 
-      if (channelIds.length === 0) {
-        return { success: false, message: '유효한 채널 ID가 없습니다' };
+      const channelIdsToFetch = channelIds.filter((channelId) => {
+        const fetchedAt = fetchedAtMaps[channelId];
+
+        if (!fetchedAt) return true;
+
+        const fetchedDateInKorea = addHours(new Date(fetchedAt), 9);
+        const nowInKorea = addHours(new Date(), 9);
+
+        return !isSameDay(fetchedDateInKorea, nowInKorea);
+      });
+
+      if (channelIdsToFetch.length === 0) {
+        console.log('❌이미 갱신이 완료된 상태입니다.');
+        return { success: false, message: '이미 갱신이 완료된 상태입니다.' };
       }
 
-      console.log(`📊 수집 대상: ${channelIds.length}개 채널`);
+      console.log(`📊 수집 대상: ${channelIdsToFetch.length}개 채널`);
 
-      // 3. YouTube API 호출
-      const results = await this.fetchChannelData(channelIds);
+      // 4. YouTube API 호출
+      const results = await this.fetchChannelData(channelIdsToFetch);
 
       console.log(`✅ API 응답: ${results.length}개 채널`);
 
-      // 4. API 응답을 Map으로 변환
+      // 5. API 응답을 Map으로 변환
       const apiDataMap = new Map(
         results.map((item) => [
           item.id,
@@ -177,21 +194,24 @@ class YouTubeScheduler {
       // 5. 기존 데이터와 병합
       const timestamp = new Date().toISOString();
       const updatedChannels = existingChannels.map((channel) => {
-        const apiData = apiDataMap.get(channel.channelId);
+        // 오늘 fetch 안 한 채널만 업데이트
+        if (channelIdsToFetch.includes(channel.channelId)) {
+          const apiData = apiDataMap.get(channel.channelId);
 
-        if (apiData) {
-          return {
-            ...channel,
-            viewCount: apiData.viewCount,
-            subscriberCount: apiData.subscriberCount,
-            videoCount: apiData.videoCount,
-            icon: apiData.icon || channel.icon,
-            name: apiData.name || channel.name,
-            fetchedAt: timestamp,
-          };
+          if (apiData) {
+            return {
+              ...channel,
+              viewCount: apiData.viewCount,
+              subscriberCount: apiData.subscriberCount,
+              videoCount: apiData.videoCount,
+              icon: apiData.icon || channel.icon,
+              name: apiData.name || channel.name,
+              fetchedAt: timestamp,
+            };
+          }
         }
 
-        return channel;
+        return channel; // 오늘 이미 fetch했거나 API 응답 없으면 기존 데이터 유지
       });
 
       // 6. channels.xlsx 덮어쓰기
@@ -221,7 +241,7 @@ class YouTubeScheduler {
       if (mainWindow) {
         mainWindow.webContents.send('channels:updated', {
           count: results.length,
-          total: existingChannels.length,
+          total: channelIdsToFetch.length,
           timestamp,
         });
       }
@@ -229,7 +249,7 @@ class YouTubeScheduler {
       return {
         success: true,
         count: results.length,
-        total: existingChannels.length,
+        total: channelIdsToFetch.length,
       };
     } catch (error: any) {
       console.error('❌ 채널 데이터 수집 실패:', error);
@@ -339,7 +359,7 @@ class YouTubeScheduler {
   // 즉시 실행
   async runNow(): Promise<any> {
     console.log('▶️ 수동 실행...');
-    await this.collectChannelData();
+    return await this.collectChannelData();
   }
 
   // 상태 조회
