@@ -5,7 +5,7 @@ import path from 'path';
 import { BrowserWindow } from 'electron';
 import Store from 'electron-store';
 import { ChannelColumns } from '@/components/data-table-columns/channel-columns.tsx';
-import { addHours, isSameDay } from 'date-fns';
+import { isSameDay, parseISO } from 'date-fns';
 
 const configStore = new Store();
 
@@ -159,10 +159,7 @@ class YouTubeScheduler {
 
         if (!fetchedAt) return true;
 
-        const fetchedDateInKorea = addHours(new Date(fetchedAt), 9);
-        const nowInKorea = addHours(new Date(), 9);
-
-        return !isSameDay(fetchedDateInKorea, nowInKorea);
+        return !isSameDay(parseISO(fetchedAt), new Date());
       });
 
       if (channelIdsToFetch.length === 0) {
