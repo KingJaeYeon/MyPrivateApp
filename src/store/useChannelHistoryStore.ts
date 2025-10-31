@@ -2,7 +2,7 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import useSettingStore from '@/store/useSettingStore';
-import { buildAoaFromObjects } from '@/lib/utils.ts';
+import { buildAoaFromObjects } from '../../electron/docs.schema.ts';
 
 export type ChannelHistory = {
   channelId: string;
@@ -42,9 +42,8 @@ const useChannelHistoryStore = create(
     },
     update: (data) => set({ data }),
     saved: async () => {
-      const historySheet = useSettingStore.getState().data.excel.channelHistory;
       const { name, location } = useSettingStore.getState().data.folder;
-      const aoa = buildAoaFromObjects(get().data, historySheet);
+      const aoa = buildAoaFromObjects(get().data, 'channelHistory');
       await window.excelApi.overwrite(`${location}/${name.channelHistory}`, aoa, 'Sheet1');
     },
     reset: () => set({ data: [] }),

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { TagColumns } from '@/components/data-table-columns/tag-columns.tsx';
-import { buildAoaFromObjects } from '@/lib/utils.ts';
+import { buildAoaFromObjects } from '../../electron/docs.schema.ts';
 import useSettingStore from '@/store/useSettingStore.ts';
 import { toast } from 'sonner';
 import useChannelStore from '@/store/useChannelStore.ts';
@@ -157,10 +157,9 @@ const useTagStore = create(
     },
     /** 특정 key만 부분 업데이트 + electron-store 반영 */
     saved: async () => {
-      const tagSheet = useSettingStore.getState().data.excel.tag;
       const { name, location } = useSettingStore.getState().data.folder;
       const { setTags } = useVideoSearchStore.getState();
-      const aoa = buildAoaFromObjects(get().data, tagSheet);
+      const aoa = buildAoaFromObjects(get().data, 'tag');
 
       const jsonData = get().data.reduce(
         (acc, cur) => {

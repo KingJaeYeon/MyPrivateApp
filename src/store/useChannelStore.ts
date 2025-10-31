@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import { buildAoaFromObjects } from '@/lib/utils.ts';
+import { buildAoaFromObjects } from '../../electron/docs.schema.ts';
 import useSettingStore from '@/store/useSettingStore.ts';
 import { ChannelColumns } from '@/components/data-table-columns/channel-columns.tsx';
 import useTagStore from '@/store/useTagStore.ts';
@@ -32,9 +32,8 @@ const useChannelStore = create(
     },
     /** 특정 key만 부분 업데이트 + electron-store 반영 */
     saved: async () => {
-      const channelSheet = useSettingStore.getState().data.excel.channel;
       const { name, location } = useSettingStore.getState().data.folder;
-      const aoa = buildAoaFromObjects(get().data, channelSheet);
+      const aoa = buildAoaFromObjects(get().data, 'channel');
       await window.excelApi.overwrite(`${location}/${name.channel}`, aoa, 'Sheet1');
       set({ isChanged: false });
       useTagStore.getState().updateCounter('channel');

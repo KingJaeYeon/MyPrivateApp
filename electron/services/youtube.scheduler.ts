@@ -4,8 +4,8 @@ import * as fs from 'fs';
 import path from 'path';
 import { BrowserWindow } from 'electron';
 import Store from 'electron-store';
-import { ChannelColumns } from '@/components/data-table-columns/channel-columns.tsx';
 import { isSameDay, parseISO } from 'date-fns';
+import { buildAoaFromObjects, DBSchema } from '../docs.schema.ts';
 
 const configStore = new Store();
 
@@ -141,7 +141,7 @@ class YouTubeScheduler {
       }
 
       // 2. channels.xlsx에서 기존 데이터 읽기
-      const existingChannels: ChannelColumns[] = await this.readExcel(channelsPath);
+      const existingChannels: DBSchema['channel'][] = await this.readExcel(channelsPath);
 
       if (!existingChannels || existingChannels.length === 0) {
         console.log('❌ 수집할 채널이 없습니다.');
@@ -212,8 +212,7 @@ class YouTubeScheduler {
       });
 
       // 6. channels.xlsx 덮어쓰기
-      const channelsSheet: any = configStore.get('settings.excel.channel', seedChannelHistory);
-      const aoa = buildAoaFromObjects(updatedChannels, channelsSheet);
+      const aoa = buildAoaFromObjects(updatedChannels, 'channel');
       await this.overWriteExcel(channelsPath, aoa);
       console.log('💾 channels.xlsx 업데이트 완료');
 
@@ -284,8 +283,7 @@ class YouTubeScheduler {
 
     const allHistory = [...existingHistory, ...historyData];
 
-    const historySheet: any = configStore.get('settings.excel.channelHistory', seedChannelHistory);
-    const aoa = buildAoaFromObjects(allHistory, historySheet);
+    const aoa = buildAoaFromObjects(allHistory, 'channelHistory');
     await this.overWriteExcel(historyPath, aoa);
     console.log('📊 히스토리 추가:', historyData.length);
   }
@@ -381,57 +379,3 @@ class YouTubeScheduler {
 }
 
 export const youtubeScheduler = new YouTubeScheduler();
-
-function buildAoaFromObjects(
-  rows: Record<string, any>[], // 앱 내부 column기반 데이터 배열
-  sheet: SheetConfig // 해당 시트 설정
-): any[][] {
-  // id → def
-  const defsMap = new Map([...sheet.essentialDefs, ...sheet.optional].map((d) => [d.id, d]));
-  // order 순서대로 defs
-  const orderedDefs = sheet.order.map((id) => defsMap.get(id)).filter((d): d is ExcelColumn => !!d);
-
-  // 헤더(label)
-  const header = orderedDefs.map((d) => d.column);
-
-  // 바디(column 키로 값 추출)
-  const body = rows.map((obj) => orderedDefs.map((d) => formatArrayValue(obj[d.column])));
-
-  return [header, ...body];
-}
-
-function formatArrayValue(value: any): string {
-  if (Array.isArray(value)) {
-    return value.join('_');
-  }
-  return value ?? '';
-}
-
-const seedChannelHistory = {
-  essentialDefs: [
-    { id: 1, label: '채널ID', column: 'channelId' },
-    { id: 2, label: '구독자 수', column: 'subscriberCount' },
-    { id: 3, label: '총 조회수', column: 'viewCount' },
-    { id: 4, label: '동영상 수', column: 'videoCount' },
-    { id: 5, label: '갱신일', column: 'fetchedAt' },
-  ],
-  order: [1, 2, 3, 4, 5],
-  optional: [],
-};
-
-type ExcelColumn = {
-  id: number;
-  label: string;
-  column: string;
-  children?: any[];
-};
-
-type SheetConfig = {
-  /** essential 컬럼의 ‘정의’. 앱 코드/설정에서만 바뀜. UI 수정 불가 */
-  essentialDefs: ExcelColumn[];
-  /** essential 컬럼의 ‘순서’. UI에서 드래그 등으로 바꾸는 대상 */
-  order: number[]; // = essentialDefs의 id 배열
-
-  /** optional 컬럼은 자유롭게 추가/삭제/편집 */
-  optional: ExcelColumn[];
-};

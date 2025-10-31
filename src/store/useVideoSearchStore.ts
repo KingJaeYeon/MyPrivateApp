@@ -13,8 +13,9 @@ import {
   TagsFilterUI,
 } from '@/schemas/filter.schema';
 import useSettingStore from '@/store/useSettingStore.ts';
-import { buildAoaFromObjects, makeExcelFilename } from '@/lib/utils.ts';
+import { makeExcelFilename } from '@/lib/utils.ts';
 import { format } from 'date-fns';
+import { buildAoaFromObjects } from '../../electron/docs.schema.ts';
 // V2 refactor
 /** 슬라이스별 UI 타입 */
 
@@ -161,9 +162,8 @@ export const useVideoSearchStore = create<VideoSearchState>()(
         setResult: (rows) => set({ result: { data: rows }, isChanged: false }, false, 'result:set'),
         clearResult: () => set({ result: { data: [] }, isChanged: false }, false, 'result:clear'),
         saved: async () => {
-          const resultSheet = useSettingStore.getState().data.excel.result;
           const { name, location, exportFile } = useSettingStore.getState().data.folder;
-          const aoa = buildAoaFromObjects(get().result.data, resultSheet);
+          const aoa = buildAoaFromObjects(get().result.data, 'result');
           const prefix =
             exportFile.fileStampMode === 'date'
               ? format(new Date(), 'yyyy-MM-dd')

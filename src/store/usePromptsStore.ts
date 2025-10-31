@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import { buildAoaFromObjects } from '@/lib/utils.ts';
+import { buildAoaFromObjects } from '../../electron/docs.schema.ts';
 import useSettingStore from '@/store/useSettingStore.ts';
 import { toast } from 'sonner';
 import useTagStore from '@/store/useTagStore.ts';
@@ -142,9 +142,8 @@ const usePromptsStore = create(
     },
     /** 특정 key만 부분 업데이트 + electron-store 반영 */
     saved: async () => {
-      const sheetP = useSettingStore.getState().data.excel.prompt;
       const { name, location } = useSettingStore.getState().data.folder;
-      const aoa = buildAoaFromObjects(get().data, sheetP);
+      const aoa = buildAoaFromObjects(get().data, 'prompt');
       await window.excelApi.overwrite(`${location}/${name.prompt}`, aoa, 'Sheet1');
       set({ isChanged: false });
       useTagStore.getState().updateCounter('prompt');

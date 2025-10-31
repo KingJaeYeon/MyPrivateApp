@@ -1,7 +1,6 @@
 import useSettingStore from '@/store/useSettingStore.ts';
 import { useModalStore } from '@/store/modalStore.ts';
 import { toast } from 'sonner';
-import { getOrderedColumns } from '@/lib/utils.ts';
 import {
   Card,
   CardContent,
@@ -12,10 +11,11 @@ import {
 import { FileSpreadsheet } from 'lucide-react';
 import { Button } from '@/components/ui/button.tsx';
 import { FileNameRuleModal } from '@/pages/settings/LocationFile/components/FileNameRuleModal.tsx';
+import { SheetKeys } from '../../../../../electron/docs.schema.ts';
 
 export function FileGenerator() {
   const {
-    data: { folder, excel },
+    data: { folder },
     updateIn,
   } = useSettingStore();
   const { openModal } = useModalStore();
@@ -73,33 +73,28 @@ export function FileGenerator() {
       const hasTag = await window.fsApi.exists(path.tag);
       const hasChannel = await window.fsApi.exists(path.channel);
       const hasChannelHistory = await window.fsApi.exists(path.channelHistory);
-      const hasEnglish = await window.fsApi.exists(path.english);
+      // const hasEnglish = await window.fsApi.exists(path.english);
       const hasPrompt = await window.fsApi.exists(path.prompt);
       const hasReference = await window.fsApi.exists(path.reference);
 
       if (!hasTag) {
-        const arr = getOrderedColumns(excel, 'tag', 'column');
-        await window.excelApi.create(path.tag, [arr]);
+        await window.excelApi.create(path.tag, [SheetKeys['tag']]);
       }
       if (!hasChannel) {
-        const arr = getOrderedColumns(excel, 'channel', 'column');
-        await window.excelApi.create(path.channel, [arr]);
+        await window.excelApi.create(path.channel, [SheetKeys['channel']]);
       }
       if (!hasChannelHistory) {
-        const arr = getOrderedColumns(excel, 'channelHistory', 'column');
-        await window.excelApi.create(path.channelHistory, [arr]);
+        await window.excelApi.create(path.channelHistory, [SheetKeys['channelHistory']]);
       }
-      if (!hasEnglish) {
-        const arr = getOrderedColumns(excel, 'english', 'column');
-        await window.excelApi.create(path.english, [arr]);
-      }
+      // if (!hasEnglish) {
+      //   const arr = getOrderedColumns(excel, 'english', 'column');
+      //   await window.excelApi.create(path.english, [arr]);
+      // }
       if (!hasPrompt) {
-        const arr = getOrderedColumns(excel, 'prompt', 'column');
-        await window.excelApi.create(path.prompt, [arr]);
+        await window.excelApi.create(path.prompt, [SheetKeys['prompt']]);
       }
       if (!hasReference) {
-        const arr = getOrderedColumns(excel, 'reference', 'column');
-        await window.excelApi.create(path.reference, [arr]);
+        await window.excelApi.create(path.reference, [SheetKeys['reference']]);
       }
 
       const hasResultDic = await window.fsApi.exists(path.result.split('/')[1]);
