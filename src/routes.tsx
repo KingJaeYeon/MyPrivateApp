@@ -9,6 +9,9 @@ import PromptsPage from '@/pages/lib/prompts/PromptsPage.tsx';
 import ChannelDetailPage from '@/pages/management/channel-detail/ChannelDetailPage.tsx';
 import NotFound from '@/pages/NotFound.tsx';
 import PatternsPage from '@/pages/english/PatternsPage.tsx';
+import VocabularyPage from '@/pages/english/VocabularyPage.tsx';
+import ConversationsPage from '@/pages/english/ConversationsPage.tsx';
+import JournalPage from '@/pages/english/JournalPage.tsx';
 import { YouTubeAPISettings } from '@/pages/settings/youtube-api/YouTubeAPISettings.tsx';
 import { FilesSettings } from '@/pages/settings/LocationFile/FilesSettings.tsx';
 import { AdvancedSettings } from '@/pages/settings/AdvancedSettings.tsx';
@@ -177,6 +180,9 @@ export const routes: RouteObject[] = [
         children: [
           { index: true, element: <Navigate to="/english/patterns" replace /> },
           { path: 'patterns', element: <PatternsPage /> },
+          { path: 'vocabulary', element: <VocabularyPage /> },
+          { path: 'conversations', element: <ConversationsPage /> },
+          { path: 'journal', element: <JournalPage /> },
         ],
       },
       {

@@ -5,7 +5,11 @@ import type { DBSchema } from '../../electron/docs.schema.ts';
 import useSettingStore from '@/store/useSettingStore.ts';
 import { toast } from 'sonner';
 
-export type EnglishDataType = DBSchema['verbs'] | DBSchema['patterns'] | DBSchema['concepts'] | DBSchema['expressions'];
+export type EnglishDataType =
+  | DBSchema['verbs']
+  | DBSchema['patterns']
+  | DBSchema['concepts']
+  | DBSchema['expressions'];
 export type EnglishSheetName = 'verbs' | 'patterns' | 'concepts' | 'expressions';
 
 /** 전체 앱 설정 */
@@ -16,11 +20,17 @@ export type State = {
   expressions: DBSchema['expressions'][];
   currentType: EnglishSheetName;
   isChanged?: boolean;
-  
+
   // side panel states
   patternsEdit: DBSchema['patterns'];
   patternsSnapShot: DBSchema['patterns'];
   patternsPanelState: { isNew: boolean };
+  verbsEdit: DBSchema['verbs'];
+  verbsSnapShot: DBSchema['verbs'];
+  verbsPanelState: { isNew: boolean };
+  expressionsEdit: DBSchema['expressions'];
+  expressionsSnapShot: DBSchema['expressions'];
+  expressionsPanelState: { isNew: boolean };
 };
 
 type Action = {
@@ -32,11 +42,14 @@ type Action = {
   reset: (type: EnglishSheetName) => void;
   setCurrentType: (type: EnglishSheetName) => void;
   getData: (type: EnglishSheetName) => EnglishDataType[];
-  
+
   // patterns side panel
   edit: DBSchema['patterns'];
-  setEdit: (type: 'patterns', edit: DBSchema['patterns'] | 'initialize') => void;
-  setPanelState: (type: 'patterns', key: 'isNew', bool: boolean) => void;
+  setEdit: (
+    type: 'patterns' | 'verbs' | 'expressions',
+    edit: DBSchema['patterns'] | DBSchema['verbs'] | DBSchema['expressions'] | 'initialize'
+  ) => void;
+  setPanelState: (type: 'patterns' | 'verbs' | 'expressions', key: 'isNew', bool: boolean) => void;
 };
 
 const createNewPattern = (): DBSchema['patterns'] => {
@@ -51,6 +64,34 @@ const createNewPattern = (): DBSchema['patterns'] => {
     description: '',
     createdAt: new Date().toISOString(),
   } as unknown as DBSchema['patterns'];
+};
+
+const createNewVerb = (): DBSchema['verbs'] => {
+  const newId = `verb-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  return {
+    id: newId,
+    word: '',
+    meaning: '',
+    memo: '',
+    patternIds: [] as string[],
+    conceptIds: [] as string[],
+    createdAt: new Date().toISOString(),
+  } as unknown as DBSchema['verbs'];
+};
+
+const createNewExpression = (): DBSchema['expressions'] => {
+  const newId = `expression-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  return {
+    id: newId,
+    text: '',
+    meaning: '',
+    linkedPatterns: [] as string[],
+    linkedVerbs: [] as string[],
+    linkedConcepts: [] as string[],
+    importance: 'none',
+    memo: '',
+    createdAt: new Date().toISOString(),
+  } as unknown as DBSchema['expressions'];
 };
 
 const useEnglishStore = create(
@@ -68,6 +109,16 @@ const useEnglishStore = create(
     patternsPanelState: { isNew: false },
     edit: createNewPattern(),
 
+    // verbs side panel
+    verbsEdit: createNewVerb(),
+    verbsSnapShot: createNewVerb(),
+    verbsPanelState: { isNew: false },
+
+    // expressions side panel
+    expressionsEdit: createNewExpression(),
+    expressionsSnapShot: createNewExpression(),
+    expressionsPanelState: { isNew: false },
+
     setCurrentType: (type) => {
       set({ currentType: type });
     },
@@ -75,7 +126,7 @@ const useEnglishStore = create(
     getData: (type) => {
       return get()[type];
     },
-    
+
     setEdit: (type, edit) => {
       if (type === 'patterns') {
         if (edit === 'initialize') {
@@ -88,13 +139,46 @@ const useEnglishStore = create(
           });
           return;
         }
-        set({ patternsEdit: edit, patternsSnapShot: edit, edit: edit });
+        set({
+          patternsEdit: edit as DBSchema['patterns'],
+          patternsSnapShot: edit as DBSchema['patterns'],
+          edit: edit as DBSchema['patterns'],
+        });
+      } else if (type === 'verbs') {
+        if (edit === 'initialize') {
+          const newEdit = createNewVerb();
+          set({
+            verbsEdit: newEdit,
+            verbsSnapShot: newEdit,
+            verbsPanelState: { isNew: true },
+          });
+          return;
+        }
+        set({ verbsEdit: edit as DBSchema['verbs'], verbsSnapShot: edit as DBSchema['verbs'] });
+      } else if (type === 'expressions') {
+        if (edit === 'initialize') {
+          const newEdit = createNewExpression();
+          set({
+            expressionsEdit: newEdit,
+            expressionsSnapShot: newEdit,
+            expressionsPanelState: { isNew: true },
+          });
+          return;
+        }
+        set({
+          expressionsEdit: edit as DBSchema['expressions'],
+          expressionsSnapShot: edit as DBSchema['expressions'],
+        });
       }
     },
-    
+
     setPanelState: (type, key, bool) => {
       if (type === 'patterns') {
         set({ patternsPanelState: { ...get().patternsPanelState, [key]: bool } });
+      } else if (type === 'verbs') {
+        set({ verbsPanelState: { ...get().verbsPanelState, [key]: bool } });
+      } else if (type === 'expressions') {
+        set({ expressionsPanelState: { ...get().expressionsPanelState, [key]: bool } });
       }
     },
 
@@ -115,8 +199,32 @@ const useEnglishStore = create(
         });
         set({ patterns: updated, isChanged: true });
         toast.success('변경되었습니다.');
+      } else if (type === 'verbs') {
+        const cur = get().verbs;
+        const updated = cur.map((v) => {
+          if (v.id === (get().verbsEdit as DBSchema['verbs']).id) {
+            return get().verbsEdit as DBSchema['verbs'];
+          }
+          return v;
+        });
+        set({ verbs: updated, isChanged: true });
+        toast.success('변경되었습니다.');
+      } else if (type === 'expressions') {
+        const cur = get().expressions;
+        const updated = cur.map((v) => {
+          if (v.id === (get().expressionsEdit as DBSchema['expressions']).id) {
+            return get().expressionsEdit as DBSchema['expressions'];
+          }
+          return v;
+        });
+        set({ expressions: updated, isChanged: true });
+        toast.success('변경되었습니다.');
+      } else if (type === 'concepts') {
+        // concepts는 나중에 구현
+        set({ [type]: data as any, isChanged: true });
+        toast.success('변경되었습니다.');
       } else {
-        set({ [type]: data, isChanged: true });
+        set({ [type]: data as any, isChanged: true });
         toast.success('변경되었습니다.');
       }
     },
@@ -127,6 +235,10 @@ const useEnglishStore = create(
       set({ [type]: newArr, isChanged: true });
       if (type === 'patterns') {
         get().setEdit('patterns', 'initialize');
+      } else if (type === 'verbs') {
+        get().setEdit('verbs', 'initialize');
+      } else if (type === 'expressions') {
+        get().setEdit('expressions', 'initialize');
       }
       return true;
     },
