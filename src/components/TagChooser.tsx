@@ -224,7 +224,7 @@ function Floating(props: FloatingInputProps) {
         />
       </div>
       {disabled ? null : (
-        <div className={'scrollWidth3 h-[80px] overflow-auto'}>
+        <div className={'scrollWidth3 flex-1 overflow-auto'}>
           <div className={'mt-1 flex flex-wrap gap-1'}>
             {tags.map((tag, i) => {
               const isSelected = select?.toString().split(',').includes(tag.idx.toString());

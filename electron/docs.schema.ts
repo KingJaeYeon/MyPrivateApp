@@ -6,10 +6,10 @@ type DBSchema = {
   result: Result;
   prompt: Prompt;
   reference: Reference;
-  // verbs: Record<string, VerbDoc>;
-  // patterns: Record<string, PatternDoc>;
-  // concepts: Record<string, ConceptDoc>;
-  // expressions: Record<string, ExpressionDoc>;
+  verbs: Verbs;
+  patterns: Patterns;
+  concepts: Concepts;
+  expressions: Expressions;
   // diary: Record<string, DiaryDoc>;
 };
 
@@ -98,6 +98,53 @@ const ReferenceSchema = {
   createdAt: 'number',
 };
 
+// --- English ---
+//핵심 동사 정의 — ECM 등 문형을 가지는 중심 노드
+const VerbsSchema = {
+  id: 'string',
+  word: 'string',
+  meaning: 'string',
+  memo: 'string',
+  patternIds: 'string[]',
+  conceptIds: 'string[]',
+  createdAt: 'string',
+};
+
+//“문형(문장 구조)” 데이터
+const PatternsSchema = {
+  id: 'string',
+  title: 'string',
+  structure: 'string',
+  examples: 'string[]',
+  verbIds: 'string[]',
+  conceptIds: 'string[]',
+  description: 'string',
+  createdAt: 'string',
+};
+
+// ECM, 조동사, 조건문, 비교구문 등 문법적 상위 개념
+const ConceptsSchema = {
+  id: 'string',
+  name: 'string',
+  description: 'string',
+  relatedPatternIds: 'string[]',
+  relatedVerbIds: 'string[]',
+  createdAt: 'string',
+};
+// 실제 예문 - UI에서 필터링의 핵심 단위 (Expression 중심 뷰)
+const ExpressionsSchema = {
+  id: 'string',
+  text: 'string',
+  meaning: 'string',
+  linkedPatterns: 'string[]',
+  linkedVerbs: 'string[]',
+  linkedConcepts: 'string[]',
+  importance: 'string',
+  memo: 'string',
+  createdAt: 'string',
+};
+// --------
+
 // ✅ 공통 유틸
 type SchemaToType<T extends Record<string, any>> = {
   [K in keyof T]: T[K] extends 'number' ? number : T[K] extends 'string[]' ? string[] : string;
@@ -108,6 +155,10 @@ type Tag = SchemaToType<typeof TagSchema>;
 type Result = SchemaToType<typeof ResultSchema>;
 type Prompt = SchemaToType<typeof PromptSchema>;
 type Reference = SchemaToType<typeof ReferenceSchema>;
+type Verbs = SchemaToType<typeof VerbsSchema>;
+type Patterns = SchemaToType<typeof PatternsSchema>;
+type Concepts = SchemaToType<typeof ConceptsSchema>;
+type Expressions = SchemaToType<typeof ExpressionsSchema>;
 
 const SheetKeys = {
   channelHistory: Object.keys(ChannelHistorySchema) as (keyof ChannelHistory)[],
@@ -116,6 +167,10 @@ const SheetKeys = {
   result: Object.keys(ResultSchema) as (keyof Result)[],
   prompt: Object.keys(PromptSchema) as (keyof Prompt)[],
   reference: Object.keys(ReferenceSchema) as (keyof Reference)[],
+  verbs: Object.keys(VerbsSchema) as (keyof Verbs)[],
+  patterns: Object.keys(PatternsSchema) as (keyof Patterns)[],
+  concepts: Object.keys(ConceptsSchema) as (keyof Concepts)[],
+  expressions: Object.keys(ExpressionsSchema) as (keyof Expressions)[],
 };
 
 type SheetKeyType<T extends keyof typeof SheetKeys> = (typeof SheetKeys)[T][number];
