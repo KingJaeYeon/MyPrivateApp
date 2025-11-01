@@ -8,7 +8,7 @@ import ReferencePage from '@/pages/lib/reference/ReferencePage.tsx';
 import PromptsPage from '@/pages/lib/prompts/PromptsPage.tsx';
 import ChannelDetailPage from '@/pages/management/channel-detail/ChannelDetailPage.tsx';
 import NotFound from '@/pages/NotFound.tsx';
-import EnglishPage from '@/pages/english/EnglishPage.tsx';
+import PatternsPage from '@/pages/english/PatternsPage.tsx';
 import { YouTubeAPISettings } from '@/pages/settings/youtube-api/YouTubeAPISettings.tsx';
 import { FilesSettings } from '@/pages/settings/LocationFile/FilesSettings.tsx';
 import { AdvancedSettings } from '@/pages/settings/AdvancedSettings.tsx';
@@ -175,8 +175,8 @@ export const routes: RouteObject[] = [
         path: 'english',
         element: null,
         children: [
-          { index: true, element: <Navigate to="/enghlish/patterns" replace /> },
-          { path: 'patterns', element: <EnglishPage /> },
+          { index: true, element: <Navigate to="/english/patterns" replace /> },
+          { path: 'patterns', element: <PatternsPage /> },
         ],
       },
       {
