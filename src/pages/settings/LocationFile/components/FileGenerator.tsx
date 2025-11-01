@@ -32,7 +32,10 @@ export function FileGenerator() {
         !!name.channel &&
         !!name.tag &&
         !!name.progress &&
-        !!name.english &&
+        !!name.verbs &&
+        !!name.patterns &&
+        !!name.concepts &&
+        !!name.expressions &&
         !!name.prompt &&
         !!name.reference &&
         !!name.result;
@@ -63,7 +66,10 @@ export function FileGenerator() {
         tag: `${location}/${folder.name.tag}`,
         channel: `${location}/${folder.name.channel}`,
         channelHistory: `${location}/${folder.name.channelHistory}`,
-        english: `${location}/${folder.name.english}`,
+        verbs: `${location}/${folder.name.verbs}`,
+        patterns: `${location}/${folder.name.patterns}`,
+        concepts: `${location}/${folder.name.concepts}`,
+        expressions: `${location}/${folder.name.expressions}`,
         prompt: `${location}/${folder.name.prompt}`,
         reference: `${location}/${folder.name.reference}`,
         progress: `${location}/${folder.name.progress}`,
@@ -73,7 +79,10 @@ export function FileGenerator() {
       const hasTag = await window.fsApi.exists(path.tag);
       const hasChannel = await window.fsApi.exists(path.channel);
       const hasChannelHistory = await window.fsApi.exists(path.channelHistory);
-      // const hasEnglish = await window.fsApi.exists(path.english);
+      const hasVerbs = await window.fsApi.exists(path.verbs);
+      const hasPatterns = await window.fsApi.exists(path.patterns);
+      const hasConcepts = await window.fsApi.exists(path.concepts);
+      const hasExpressions = await window.fsApi.exists(path.expressions);
       const hasPrompt = await window.fsApi.exists(path.prompt);
       const hasReference = await window.fsApi.exists(path.reference);
 
@@ -86,10 +95,18 @@ export function FileGenerator() {
       if (!hasChannelHistory) {
         await window.excelApi.create(path.channelHistory, [SheetKeys['channelHistory']]);
       }
-      // if (!hasEnglish) {
-      //   const arr = getOrderedColumns(excel, 'english', 'column');
-      //   await window.excelApi.create(path.english, [arr]);
-      // }
+      if (!hasVerbs) {
+        await window.excelApi.create(path.verbs, [SheetKeys['verbs']]);
+      }
+      if (!hasPatterns) {
+        await window.excelApi.create(path.patterns, [SheetKeys['patterns']]);
+      }
+      if (!hasConcepts) {
+        await window.excelApi.create(path.concepts, [SheetKeys['concepts']]);
+      }
+      if (!hasExpressions) {
+        await window.excelApi.create(path.expressions, [SheetKeys['expressions']]);
+      }
       if (!hasPrompt) {
         await window.excelApi.create(path.prompt, [SheetKeys['prompt']]);
       }
@@ -131,7 +148,10 @@ export function FileGenerator() {
             <li>{folder.name.reference} - 참고 자료</li>
             <li>{folder.name.channelHistory} - 채널 히스토리</li>
             <li>{folder.name.result} - 검색결과 저장 폴더</li>
-            <li>{folder.name.english} - 영어(준비중)</li>
+            <li>{folder.name.verbs} - 동사</li>
+            <li>{folder.name.patterns} - 문형</li>
+            <li>{folder.name.concepts} - 문법 개념</li>
+            <li>{folder.name.expressions} - 예문</li>
             <li>{folder.name.progress} - progress(준비중)</li>
           </ul>
         </div>

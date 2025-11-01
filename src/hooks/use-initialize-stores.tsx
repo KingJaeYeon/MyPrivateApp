@@ -5,6 +5,7 @@ import useChannelStore from '@/store/useChannelStore.ts';
 import useReferenceStore from '@/store/useReferenceStore.ts';
 import usePromptsStore from '@/store/usePromptsStore.ts';
 import useChannelHistoryStore from '@/store/useChannelHistoryStore.ts';
+import useEnglishStore from '@/store/useEnglishStore.ts';
 
 export default function useInitializeStores(type?: ExcelFiles) {
   const { location, name } = useSettingStore((s) => s.data.folder);
@@ -15,6 +16,7 @@ export default function useInitializeStores(type?: ExcelFiles) {
   const { init: initHistory, reset: resetHistory } = useChannelHistoryStore();
   const { init: initRef, reset: resetRef } = useReferenceStore();
   const { init: initPrompt, reset: resetPrompt } = usePromptsStore();
+  const { init: initEnglish, reset: resetEnglish } = useEnglishStore();
 
   // ✅ 각 타입별 초기화 로직
   const initHandlers: Record<ExcelFiles, () => Promise<void>> = {
@@ -26,9 +28,10 @@ export default function useInitializeStores(type?: ExcelFiles) {
     result: async () => {
       await window.fsApi.listExcel(`${location}/${name.result.split('/')[0]}`);
     },
-    english: async () => {
-      // TODO
-    },
+    verbs: async () => await initEnglish('verbs', `${location}/${name.verbs}`),
+    patterns: async () => await initEnglish('patterns', `${location}/${name.patterns}`),
+    concepts: async () => await initEnglish('concepts', `${location}/${name.concepts}`),
+    expressions: async () => await initEnglish('expressions', `${location}/${name.expressions}`),
     progress: async () => {
       // TODO
     },
@@ -41,6 +44,10 @@ export default function useInitializeStores(type?: ExcelFiles) {
     channelHistory: resetHistory,
     reference: resetRef,
     prompt: resetPrompt,
+    verbs: () => resetEnglish('verbs'),
+    patterns: () => resetEnglish('patterns'),
+    concepts: () => resetEnglish('concepts'),
+    expressions: () => resetEnglish('expressions'),
   };
 
   // ✅ 단일 초기화

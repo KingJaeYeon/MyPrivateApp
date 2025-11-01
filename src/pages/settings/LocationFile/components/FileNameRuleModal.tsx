@@ -41,7 +41,10 @@ export function FileNameRuleModal() {
       !!editValues?.channel &&
       !!editValues?.tag &&
       !!editValues?.progress &&
-      !!editValues?.english &&
+      !!editValues?.verbs &&
+      !!editValues?.patterns &&
+      !!editValues?.concepts &&
+      !!editValues?.expressions &&
       !!editValues?.prompt &&
       !!editValues?.reference &&
       !!editValues?.result &&
@@ -84,7 +87,10 @@ export function FileNameRuleModal() {
     { key: 'channelHistory' as const, label: 'Channel History', icon: FileText },
     { key: 'prompt' as const, label: 'Prompts', icon: FileText },
     { key: 'reference' as const, label: 'References', icon: FileText },
-    { key: 'english' as const, label: 'English', icon: FileText },
+    { key: 'verbs' as const, label: 'Verbs', icon: FileText },
+    { key: 'patterns' as const, label: 'Patterns', icon: FileText },
+    { key: 'concepts' as const, label: 'Concepts', icon: FileText },
+    { key: 'expressions' as const, label: 'Expressions', icon: FileText },
     { key: 'progress' as const, label: 'Progress', icon: FileText },
   ];
 
