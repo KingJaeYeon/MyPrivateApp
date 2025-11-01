@@ -4,10 +4,8 @@ import { Button } from '@/components/ui/button.tsx';
 import Tip from '@/components/Tip.tsx';
 import useTagStore from '@/store/useTagStore.ts';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
-import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
-import { ReactNode } from 'react';
 import IconMoreInfo from '@/assets/svg/IconMoreInfo.tsx';
+import { ReactNode } from 'react';
 
 export type ReferenceColumns = {
   path: string;
@@ -19,6 +17,9 @@ export type ReferenceColumns = {
   updatedAt: string;
   createdAt: number;
 };
+
+// TODO: 삭제모드일때 체크박스 선택시 하위목록 선택안되는거, 상위목록 지워지면 하위목록에서 상위목록 idx삭제해주는거, 하위목록 숨김처리해주는거
+// 그냥 체크박스 내가 커스텀한걸로 하나 만들어야겠음, propmt도 마찬가지로
 export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
   {
     id: 'select',
@@ -33,22 +34,25 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
         aria-label="Select all"
       />
     ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
+    cell: ({ row }) => {
+      return (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      );
+    },
     enableSorting: false,
     enableHiding: false,
   },
   {
     accessorKey: 'name',
+    enableSorting: false,
     header: () => (
       <span>
         <span className={'mr-1'}>참조명</span>
-        <Tip txt={'클릭시 링크이동'} triggerClssName={'translate-y-0.5'}>
+        <Tip txt={'클릭시 링크이동/카테고리'} triggerClssName={'translate-y-0.5'}>
           <IconMoreInfo />
         </Tip>
       </span>
@@ -85,14 +89,27 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
       return (
         <div className="flex items-center gap-2">
           {renderDepth[depthKey]}
-          <Button
-            size={'sm'}
-            variant={'link'}
-            className={'shrink px-0 text-start text-xs font-semibold whitespace-normal'}
-            onClick={() => window.electronAPI.openExternal(row.original.link)}
-          >
-            {row.original.name}
-          </Button>
+
+          {row.original.link === '' ? (
+            <span
+              className={
+                'shrink px-0 py-2 text-start text-xs font-semibold whitespace-normal text-green-500 has-[>svg]:px-3'
+              }
+            >
+              {row.original.name}
+            </span>
+          ) : (
+            <Button
+              size={'sm'}
+              variant={'link'}
+              className={'shrink px-0 text-start text-xs font-semibold whitespace-normal'}
+              onClick={() =>
+                row.original.link && window.electronAPI.openExternal(row.original.link)
+              }
+            >
+              {row.original.name}
+            </Button>
+          )}
         </div>
       );
     },
@@ -102,6 +119,7 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
     header: '태그',
     minSize: 170,
     maxSize: 220,
+    enableSorting: false,
     cell: ({ row }) => {
       const tagsJSON = useTagStore.getState().jsonData;
       const cur = row?.original?.tag?.toString().split(',');
@@ -126,23 +144,19 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
     accessorKey: 'memo',
     header: '메모',
     minSize: 300,
-    maxSize: 400,
+    maxSize: 600,
+    enableSorting: false,
     cell: ({ row }) => (
-      <Tip txt={row.original.memo} className="max-w-[600px]" side={'right'}>
-        <span className="ellipsisLine2 min-w-[100px] cursor-pointer text-xs break-words whitespace-normal">
+      <Tip
+        txt={row.original.memo}
+        className="max-w-[600px]"
+        side={'right'}
+        triggerClssName={'w-full'}
+      >
+        <span className="ellipsisLine1 pointer-events-none w-full min-w-[100px] cursor-pointer resize-none align-middle text-xs break-words whitespace-pre-line">
           {row.original.memo}
         </span>
       </Tip>
-    ),
-  },
-  {
-    accessorKey: 'updatedAt',
-    header: '갱신일',
-    maxSize: 120,
-    cell: ({ row }) => (
-      <span className="text-xs tabular-nums">
-        {format(row.original.updatedAt, 'yyyy.MM.dd', { locale: ko })}
-      </span>
     ),
   },
 ];

@@ -72,7 +72,7 @@ export function ReferenceSidePanel({ isDeleting }: { isDeleting: boolean }) {
         </div>
         <div className={'flex justify-end gap-2'}>
           <ButtonRenderer
-            disabled={!(!!edit.name && !!edit.link)}
+            disabled={!edit.name}
             pushInput={pushInput}
             isDeleting={isDeleting}
             updated={() => update(edit)}

@@ -100,19 +100,39 @@ const useReferenceStore = create(
     },
     getData: () => {
       const copy = [...get().data];
+
+      const linkMap = new Map(copy.map((item) => [item.path, (item.link?.trim() ?? '') === '']));
+
       return copy.sort((a, b) => {
         const aParts = a.path.split('/').map(Number);
         const bParts = b.path.split('/').map(Number);
 
-        // 각 계층의 숫자 비교
         for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
-          const aVal = aParts[i] ?? -1;
-          const bVal = bParts[i] ?? -1;
-          if (aVal !== bVal) return aVal - bVal;
+          const aVal = aParts[i];
+          const bVal = bParts[i];
+
+          if (aVal === undefined) return -1;
+          if (bVal === undefined) return 1;
+
+          if (aVal !== bVal) {
+            // 해당 레벨의 path 구성
+            const aPath = aParts.slice(0, i + 1).join('/');
+            const bPath = bParts.slice(0, i + 1).join('/');
+
+            // Map에서 link 빈 값 여부 확인 (O(1))
+            const aIsEmpty = linkMap.get(aPath) ?? false;
+            const bIsEmpty = linkMap.get(bPath) ?? false;
+
+            // link 빈 값 우선
+            if (aIsEmpty && !bIsEmpty) return -1;
+            if (!aIsEmpty && bIsEmpty) return 1;
+
+            // 같으면 숫자 순서
+            return aVal - bVal;
+          }
         }
 
-        // 완전히 동일하면 길이순 (상위가 먼저)
-        return aParts.length - bParts.length;
+        return 0;
       });
     },
     update: (row) => {
@@ -129,7 +149,30 @@ const useReferenceStore = create(
     remove: (rows) => {
       const cur = get().data;
       const removeIds = rows.map((d) => d.idx);
-      const filtered = cur.filter((r) => !removeIds.includes(r.idx));
+      const removePaths = rows.map((r) => r.path);
+
+      // 자기 자신 + 모든 하위 항목
+      const allRemoveIds = cur
+        .filter(
+          (item) =>
+            removeIds.includes(item.idx) ||
+            removePaths.some((path) => item.path.startsWith(path + '/'))
+        )
+        .map((item) => item.idx);
+
+      // 하위 항목이 있으면 확인
+      const extraCount = allRemoveIds.length - removeIds.length;
+      if (extraCount > 0) {
+        const confirmed = confirm(
+          `선택한 항목과 하위 항목을 모두 삭제하시겠습니까?\n\n` +
+            `- 선택 항목: ${removeIds.length}개\n` +
+            `- 하위 항목: ${extraCount}개\n` +
+            `- 총 삭제: ${allRemoveIds.length}개`
+        );
+        if (!confirmed) return;
+      }
+
+      const filtered = cur.filter((r) => !allRemoveIds.includes(r.idx));
 
       set({ data: filtered, isChanged: true });
       get().setEdit('initialize');

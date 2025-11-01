@@ -26,6 +26,7 @@ export default function PromptsPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [filter, setFilter] = React.useState(FILTER[0]);
   const { openModal } = useModalStore();
+  const [selectTag, setSelectTag] = useState('');
 
   const onSavedHandler = async () => {
     if (confirm('저장하시겠습니까?')) {
@@ -35,8 +36,16 @@ export default function PromptsPage() {
   };
 
   const prompt = useMemo(() => {
-    return getData();
-  }, [data]);
+    const data = getData();
+
+    if (selectTag === '') {
+      return data;
+    }
+
+    return data.filter((item) => {
+      return item.tag.split(',').includes(selectTag);
+    });
+  }, [data, selectTag]);
 
   const onEditHandler = () => {
     setIsDeleting(true);
@@ -76,11 +85,11 @@ export default function PromptsPage() {
               <div className={'flex w-full justify-between'}>
                 <div className={'flex gap-1'}>
                   <TagSelector
-                    value={(table.getColumn('tag')?.getFilterValue() as string) ?? ''}
+                    value={selectTag}
                     setValue={(tagName) => {
                       const matched = tags.find((t) => t.name === tagName);
                       const tagIdx = matched ? matched.idx : ''; // 없으면 필터 해제
-                      table.getColumn('tag')?.setFilterValue(tagIdx);
+                      setSelectTag(tagIdx);
                     }}
                   />
                   <ButtonGroup>
