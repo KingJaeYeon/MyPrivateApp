@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge.tsx';
 import { cn } from '@/lib/utils.ts';
 import { toast } from 'sonner';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useModalStore } from '@/store/modalStore.ts';
 
 /**
  * @param select join(',')로 이어진 문자열
@@ -152,7 +153,8 @@ interface FloatingInputProps {
 function Floating(props: FloatingInputProps) {
   const { select, setSelect, id, sizeC = 'default', disabled } = props;
   const [isFocused, setIsFocused] = useState(false);
-  const { jsonData, data: tags } = useTagStore.getState();
+  const { jsonData } = useTagStore.getState();
+  const { openModal } = useModalStore();
 
   const sizes = {
     default: {
@@ -174,6 +176,11 @@ function Floating(props: FloatingInputProps) {
       setIsFocused(false);
     }
   }, [select]);
+
+  const handleOpenModal = () => {
+    if (disabled) return;
+    openModal('tagChooser', { select, setSelect });
+  };
 
   return (
     <div className={cn('flex flex-col gap-2', disabled && 'cursor-not-allowed')}>
@@ -222,43 +229,14 @@ function Floating(props: FloatingInputProps) {
             opacity: isFocused ? '1' : '0',
           }}
         />
+        {!disabled && (
+          <div
+            className="absolute inset-0 cursor-pointer"
+            onClick={handleOpenModal}
+            aria-label="태그 선택 모달 열기"
+          />
+        )}
       </div>
-      {disabled ? null : (
-        <div className={'scrollWidth3 flex-1 overflow-auto'}>
-          <div className={'mt-1 flex flex-wrap gap-1'}>
-            {tags.map((tag, i) => {
-              const isSelected = select?.toString().split(',').includes(tag.idx.toString());
-              return (
-                <Badge
-                  key={i}
-                  variant={isSelected ? 'green' : 'secondary'}
-                  className={'cursor-pointer'}
-                  onClick={() => {
-                    const currentTags = select !== '' ? select.toString().split(',') : [];
-
-                    if (currentTags.length >= 5) {
-                      toast.error('최대 5개까지 선택가능합니다.');
-                      return;
-                    }
-
-                    if (currentTags.includes(tag.idx.toString())) {
-                      // 이미 있으면 제거
-                      const newTags = currentTags.filter((t) => t !== tag.idx.toString());
-                      setSelect(newTags.join(','));
-                    } else {
-                      // 없으면 추가
-                      currentTags.push(tag.idx.toString());
-                      setSelect(currentTags.join(','));
-                    }
-                  }}
-                >
-                  {tag.name}
-                </Badge>
-              );
-            })}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

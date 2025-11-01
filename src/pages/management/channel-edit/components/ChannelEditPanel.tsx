@@ -106,7 +106,11 @@ export function ChannelEditPanel({
                 onChange={(e) => onChangeHandler('platform', e.target.value)}
               />
             </div>
-            <TagChooser select={select.tag} setSelect={(tags) => onChangeHandler('tag', tags)} />
+            <TagChooser
+              variants={'float'}
+              select={select.tag}
+              setSelect={(tags) => onChangeHandler('tag', tags)}
+            />
             <div className={'flex flex-col gap-2'}>
               <Label>메모</Label>
               <Textarea
