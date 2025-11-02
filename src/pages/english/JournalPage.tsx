@@ -1,170 +1,182 @@
-import { DataTable } from '@/components/data-table.tsx';
-import { Button } from '@/components/ui/button.tsx';
-import React, { useEffect, useMemo, useState } from 'react';
-import { Input } from '@/components/ui/input.tsx';
-import { toast } from 'sonner';
-import { ButtonGroup } from '@/components/ui/button-group.tsx';
-import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select.tsx';
-import useEnglishStore from '@/store/useEnglishStore.ts';
-import {
-  EXPRESSIONS_COLUMNS,
-  ExpressionsColumns,
-} from '@/components/data-table-columns/expressions-columns.tsx';
-import { JournalSidePanel } from '@/pages/english/components/JournalSidePanel.tsx';
-import { useModalStore } from '@/store/modalStore.ts';
-import useSettingStore from '@/store/useSettingStore.ts';
+import { useState } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
-const FILTER = [
-  { label: '예문', value: 'text' },
-  { label: '의미', value: 'meaning' },
-  { label: '메모', value: 'memo' },
+// ---- Mock Data ----
+type Diary = {
+  id: string;
+  title: string;
+  content: string;
+  date: string;
+  linkedPatterns: string[];
+  linkedVerbs: string[];
+  linkedConcepts: string[];
+  importance: string;
+  memo?: string;
+};
+
+const diaries: Diary[] = [
+  {
+    id: "D001",
+    title: "A rainy Monday",
+    content: "It was raining, so I stayed home and watched a movie. I wanted to go jogging, but I couldn’t help feeling lazy.",
+    date: "2025-10-30",
+    linkedPatterns: ["P001", "P002"],
+    linkedVerbs: ["V001", "V003"],
+    linkedConcepts: ["C001", "C002"],
+    importance: "★",
+    memo: "‘want to’, ‘can’t help -ing’ 구조 확인",
+  },
+  {
+    id: "D002",
+    title: "Morning routine",
+    content: "I prepared breakfast and helped my mom to clean up the kitchen.",
+    date: "2025-10-29",
+    linkedPatterns: ["P003"],
+    linkedVerbs: ["V002", "V003"],
+    linkedConcepts: ["C002"],
+    importance: "☆",
+  },
 ];
 
+const patterns = {
+  P001: "I want to V",
+  P002: "I can't help -ing",
+  P003: "Help O to V",
+};
+const verbs = {
+  V001: "want",
+  V002: "help",
+  V003: "prepare",
+};
+const concepts = {
+  C001: "ECM",
+  C002: "Infinitive",
+};
+
 export default function JournalPage() {
-  const {
-    getData,
-    saved,
-    isChanged,
-    remove,
-    setEdit,
-    setPanelState,
-    expressions: data,
-  } = useEnglishStore();
-  const { openModal } = useModalStore();
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [filter, setFilter] = React.useState(FILTER[0]);
-  const { location, name } = useSettingStore((s) => s.data.folder);
-
-  // 페이지 마운트 시 expressions 데이터 초기화 (Journal도 Expressions 사용)
-  useEffect(() => {
-    if (location && name.expressions) {
-      useEnglishStore.getState().init('expressions', `${location}/${name.expressions}`);
-    }
-  }, [location, name.expressions]);
-
-  // expressions 데이터 가져오기 (Journal은 Expressions 기반)
-  const expressions = useMemo(() => {
-    return getData('expressions') as ExpressionsColumns[];
-  }, [data]);
-
-  const onSavedHandler = async () => {
-    if (confirm('저장하시겠습니까?')) {
-      await saved('expressions');
-      openModal('alert', '저장되었습니다.');
-    }
-  };
-
-  const onEditHandler = () => {
-    setIsDeleting(true);
-    setEdit('expressions', 'initialize');
-  };
-
-  const onSelectHandler = (row: ExpressionsColumns | null) => {
-    if (isDeleting) return;
-
-    if (row === null) {
-      setEdit('expressions', 'initialize');
-      return;
-    }
-
-    setEdit('expressions', row);
-    setPanelState('expressions', 'isNew', false);
-  };
+  const [selected, setSelected] = useState<Diary | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   return (
-    <div className="flex h-full w-full flex-1 gap-5 px-4">
-      <div className={'flex flex-7'}>
-        <DataTable<ExpressionsColumns, unknown>
-          columns={EXPRESSIONS_COLUMNS}
-          data={expressions}
-          isEdit={isDeleting}
-          enableRowClickSelection={true}
-          enableMultiRowSelection={isDeleting}
-          onSelectedRow={onSelectHandler}
-          tableControls={(table) => {
-            const onFilterChange = (value: string) => {
-              table.getColumn(filter.value)?.setFilterValue('');
-              const find = FILTER.find((r) => r.value === value) ?? FILTER[0];
-              setFilter(find);
-            };
-            return (
-              <div className={'flex w-full justify-between'}>
-                <div className={'flex gap-1'}>
-                  <ButtonGroup>
-                    <Select value={filter.value} onValueChange={onFilterChange}>
-                      <SelectTrigger className="font-mono" size={'sm'}>
-                        {filter.label}
-                      </SelectTrigger>
-                      <SelectContent className="min-w-18">
-                        {FILTER.map((f) => (
-                          <SelectItem key={f.value} value={f.value}>
-                            <span className="text-muted-foreground">{f.label}</span>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Input
-                      value={(table.getColumn(filter.value)?.getFilterValue() as string) ?? ''}
-                      onChange={(event) => {
-                        return table.getColumn(filter.value)?.setFilterValue(event.target.value);
-                      }}
-                      className="h-8 w-[170px]"
-                    />
-                  </ButtonGroup>
-                </div>
-                <div className={'flex gap-2'}>
-                  {isDeleting ? (
-                    <React.Fragment>
-                      <Button
-                        size={'sm'}
-                        variant={'destructive'}
-                        onClick={() => {
-                          const selected = table.getSelectedRowModel().rows.map((r) => r.original);
-                          if (selected.length === 0) {
-                            toast.error('삭제할 항목을 선택하세요.');
-                            return;
-                          }
-                          const txt =
-                            '정말 삭제하시겠습니까?\n(엑셀 갱신버튼은 따로 눌러야합니다.)';
-                          if (!confirm(txt)) return;
-
-                          remove(
-                            'expressions',
-                            selected.map((r) => r.id)
-                          );
-                        }}
-                      >
-                        삭제
-                      </Button>
-                      <Button
-                        variant={'secondary'}
-                        size={'sm'}
-                        onClick={() => setIsDeleting(false)}
-                      >
-                        취소
-                      </Button>
-                    </React.Fragment>
-                  ) : (
-                    <React.Fragment>
-                      <Button
-                        size={'sm'}
-                        onClick={onSavedHandler}
-                        variant={isChanged ? 'destructive' : 'default'}
-                      >
-                        저장
-                      </Button>
-                      <Button size={'sm'} variant={'secondary'} onClick={onEditHandler}>
-                        수정
-                      </Button>
-                    </React.Fragment>
-                  )}
-                </div>
-              </div>
-            );
-          }}
-        />
+    <div className="grid grid-cols-[280px_1fr] h-[calc(100vh-4rem)]">
+      {/* Left: Diary List */}
+      <div className="border-r p-4">
+        <div className="flex justify-between mb-3">
+          <Button size="sm" onClick={() => setIsEditing(true)}>
+            + 새 일기
+          </Button>
+          <Button variant="outline" size="sm">
+            정렬 ▼
+          </Button>
+        </div>
+        <ScrollArea className="h-[85%]">
+          {diaries.map((d) => (
+            <Card
+              key={d.id}
+              className={`mb-2 cursor-pointer transition ${
+                selected?.id === d.id ? "border-blue-500 bg-blue-50" : ""
+              }`}
+              onClick={() => {
+                setSelected(d);
+                setIsEditing(false);
+              }}
+            >
+              <CardHeader className="p-3">
+                <CardTitle className="text-sm font-medium">
+                  {d.title} {d.importance}
+                </CardTitle>
+                <p className="text-xs text-muted-foreground">{d.date}</p>
+              </CardHeader>
+            </Card>
+          ))}
+        </ScrollArea>
       </div>
-      <JournalSidePanel isDeleting={isDeleting} />
+
+      {/* Right: Detail or Editor */}
+      <div className="p-6 overflow-y-auto">
+        {isEditing ? (
+          <DiaryEditor onSave={() => setIsEditing(false)} />
+        ) : selected ? (
+          <>
+            <h2 className="text-xl font-semibold mb-2">{selected.title}</h2>
+            <p className="text-xs text-muted-foreground mb-4">{selected.date}</p>
+            <p className="text-sm whitespace-pre-wrap mb-4">{selected.content}</p>
+
+            <Separator className="my-3" />
+            <h4 className="font-semibold mb-1">🧩 Linked Elements</h4>
+            <div className="flex flex-wrap gap-2 mb-3">
+              {selected.linkedPatterns.map((id) => (
+                <Badge key={id}>{patterns[id]}</Badge>
+              ))}
+              {selected.linkedVerbs.map((id) => (
+                <Badge key={id} variant="secondary">
+                  {verbs[id]}
+                </Badge>
+              ))}
+              {selected.linkedConcepts.map((id) => (
+                <Badge key={id} variant="outline">
+                  {concepts[id]}
+                </Badge>
+              ))}
+            </div>
+
+            {selected.memo && (
+              <>
+                <Separator className="my-3" />
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                  📝 {selected.memo}
+                </p>
+              </>
+            )}
+          </>
+        ) : (
+          <p className="text-muted-foreground text-sm mt-10">
+            왼쪽에서 일기를 선택하거나 새로 작성하세요.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// --- Editor Component ---
+function DiaryEditor({ onSave }: { onSave: () => void }) {
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [memo, setMemo] = useState("");
+
+  return (
+    <div className="space-y-3">
+      <h2 className="text-lg font-semibold">✏️ 새 일기 작성</h2>
+      <Input
+        placeholder="제목 입력"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
+      <Textarea
+        placeholder="영어 일기를 작성하세요..."
+        rows={8}
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+      />
+      <Textarea
+        placeholder="메모 (패턴, 문법 노트)"
+        rows={3}
+        value={memo}
+        onChange={(e) => setMemo(e.target.value)}
+      />
+      <div className="flex justify-end gap-2">
+        <Button variant="outline" onClick={onSave}>
+          취소
+        </Button>
+        <Button onClick={onSave}>저장</Button>
+      </div>
     </div>
   );
 }
