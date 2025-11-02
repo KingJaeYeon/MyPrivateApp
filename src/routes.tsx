@@ -21,6 +21,7 @@ import { BookOpen, Database, Languages, Settings2 } from 'lucide-react';
 import SavedListPage from '@/pages/youtube/saved-list/SavedListPage.tsx';
 import ChannelsEditPage from '@/pages/management/channel-edit/ChannelsEditPage.tsx';
 import { Home } from '@/pages/home/Home.tsx';
+import ExpressionsPage from '@/pages/english/ExpressionsPage.tsx';
 
 export const navigationRoutes: NavMainType = [
   {
@@ -104,6 +105,10 @@ export const navigationRoutes: NavMainType = [
         title: 'Journal',
         url: '/english/journal',
       },
+      {
+        title: 'Expressions',
+        url: '/english/expressions',
+      },
     ],
   },
   {
@@ -183,6 +188,7 @@ export const routes: RouteObject[] = [
           { path: 'vocabulary', element: <VocabularyPage /> },
           { path: 'conversations', element: <ConversationsPage /> },
           { path: 'journal', element: <JournalPage /> },
+          { path: 'expressions', element: <ExpressionsPage /> },
         ],
       },
       {

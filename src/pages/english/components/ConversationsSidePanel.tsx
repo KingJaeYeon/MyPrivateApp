@@ -64,7 +64,6 @@ export function ConversationsSidePanel({ isDeleting }: { isDeleting: boolean }) 
           disabled={isDeleting}
           onChangeValue={(value: string) => setEdit('expressions', { ...edit, text: value })}
         />
-
         <FloatingOutlinedInput
           id={'meaning'}
           label={'의미'}
@@ -72,7 +71,6 @@ export function ConversationsSidePanel({ isDeleting }: { isDeleting: boolean }) 
           disabled={isDeleting}
           onChangeValue={(value: string) => setEdit('expressions', { ...edit, meaning: value })}
         />
-
         <div className={'flex justify-between gap-1'}>
           <Label htmlFor={'importance'} className={'text-sm'}>
             중요도
@@ -92,7 +90,6 @@ export function ConversationsSidePanel({ isDeleting }: { isDeleting: boolean }) 
             </SelectContent>
           </Select>
         </div>
-
         <div className={'flex flex-col gap-1'}>
           <Label htmlFor={'memo'} className={'text-sm'}>
             메모
@@ -106,7 +103,7 @@ export function ConversationsSidePanel({ isDeleting }: { isDeleting: boolean }) 
             onChange={(e) => setEdit('expressions', { ...edit, memo: e.target.value })}
           />
         </div>
-
+        nesffice1586
         <div className={'flex flex-col gap-2'}>
           <Label className={'text-sm'}>연결된 패턴 ID (쉼표로 구분)</Label>
           <Input
@@ -130,7 +127,6 @@ export function ConversationsSidePanel({ isDeleting }: { isDeleting: boolean }) 
             </div>
           )}
         </div>
-
         <div className={'flex flex-col gap-2'}>
           <Label className={'text-sm'}>연결된 동사 ID (쉼표로 구분)</Label>
           <Input
@@ -154,7 +150,6 @@ export function ConversationsSidePanel({ isDeleting }: { isDeleting: boolean }) 
             </div>
           )}
         </div>
-
         <div className={'flex flex-col gap-2'}>
           <Label className={'text-sm'}>연결된 개념 ID (쉼표로 구분)</Label>
           <Input
