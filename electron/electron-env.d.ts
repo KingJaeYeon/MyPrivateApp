@@ -52,6 +52,10 @@ interface Window {
     }>;
   };
   fsApi: {
+    saveImage: (
+      fileBuffer: any,
+      path: string
+    ) => Promise<{ success: boolean; path: string; message: string }>;
     // existence & directory
     exists: (p: string) => Promise<boolean>;
     ensureDir: (dir: string) => Promise<boolean>;

@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron';
 import path from 'node:path';
-import { promises as fsp } from 'node:fs';
+import fs, { promises as fsp } from 'node:fs';
 
 // 사용 예시
 // 폴더 지정 후 엑셀 파일만 목록
@@ -42,6 +42,24 @@ export type FsListOptions = {
 };
 
 export function setupFsHandlers() {
+  ipcMain.handle('fs:saveImage', async (_e, fileBuffer, targetPath) => {
+    try {
+      const dir = path.dirname(targetPath);
+
+      // 폴더 없으면 생성
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+
+      // 파일 저장
+      fs.writeFileSync(targetPath, Buffer.from(fileBuffer));
+
+      return { success: true, path: targetPath, message: 'success' };
+    } catch (err) {
+      console.error('Image save error:', err);
+      return { success: false, message: 'failed to write file', path: '' };
+    }
+  });
   // 존재 여부
   ipcMain.handle('fs:exists', async (_e, p: string) => {
     try {

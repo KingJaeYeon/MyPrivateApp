@@ -8,6 +8,7 @@ export const textareaVariants = cva(
   {
     variants: {
       variant: {
+        none: 'placeholder:text-muted-foreground dark:bg-input/30 w-full px-3 py-4 outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
         default:
           'placeholder:text-muted-foreground dark:bg-input/30 field-sizing-content w-full rounded-md focus:border-[3px] border-2 bg-transparent px-3 py-2 outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus:border-input',
         blockquote:

@@ -101,7 +101,6 @@ const ReferenceSchema = {
 const EngWordsSchema = {
   id: 'string',
   word: 'string',
-  meaning: 'string',
   description: 'string',
   content: 'string', // 마크다운
   createdAt: 'string',

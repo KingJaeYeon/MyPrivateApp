@@ -28,6 +28,10 @@ declare global {
     };
     fsApi: {
       // existence & directory
+      saveImage: (
+        fileBuffer: any,
+        path: string
+      ) => Promise<{ success: boolean; path: string; message: string }>;
       exists: (p: string) => Promise<boolean>;
       ensureDir: (dir: string) => Promise<boolean>;
       list: (

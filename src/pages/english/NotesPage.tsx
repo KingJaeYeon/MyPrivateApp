@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import MDEditor from '@uiw/react-md-editor';
+import ReactMarkdown from 'react-markdown';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/providers/theme-provider.tsx';
 import { ScrollArea } from '@/components/ui/scroll-area.tsx';
@@ -62,33 +62,9 @@ export default function NotesPage() {
   const { theme } = useTheme();
 
   return (
-    <div className="flex h-full gap-4 p-4">
+    <div className="flex h-full w-full gap-5 px-4 pb-4">
       {/* 좌측 리스트 */}
-      <div className="w-[300px] overflow-y-auto border-r pr-3">
-        <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">📝 Notes</h2>
-          <Button size="sm" variant="outline">
-            + New
-          </Button>
-        </div>
-        <ScrollArea className="h-[85%] gap-4 pr-2">
-          {mockNotes.map((p) => (
-            <Card
-              key={p.id}
-              onClick={() => setSelected(p)}
-              className={`hover:bg-muted mb-2 cursor-pointer rounded-lg border p-3 transition ${
-                selected?.id === p.id ? 'bg-muted border-primary' : ''
-              }`}
-            >
-              <CardHeader className="p-3">
-                <div className="font-semibold">{p.title}</div>
-                <div className="text-muted-foreground text-xs">{p.description}</div>
-              </CardHeader>
-            </Card>
-          ))}
-        </ScrollArea>
-      </div>
-
+      <NoteList onSelect={setSelected} selected={selected} />
       {/* 우측 내용 */}
       <div className="flex-1 overflow-y-auto px-4">
         {selected ? (
@@ -117,13 +93,7 @@ export default function NotesPage() {
 
             {/* Markdown 본문 */}
             <div className="pt-3">
-              <MDEditor.Markdown
-                source={selected.content ?? ''}
-                className="prose prose-sm max-w-none rounded-lg p-4"
-                style={{
-                  backgroundColor: theme === 'dark' ? 'oklch(0.145 0 0)' : 'oklch(1 0 0)', // ✅ 마크다운 배경
-                }}
-              />
+              <ReactMarkdown>{selected.content}</ReactMarkdown>
             </div>
 
             {/* 연관된 단어 */}
@@ -149,6 +119,35 @@ export default function NotesPage() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function NoteList({ onSelect, selected }: { onSelect: (value: any) => void; selected: any }) {
+  return (
+    <div className="w-[300px] overflow-y-auto border-r pr-3">
+      <div className="mb-2 flex items-center justify-between">
+        <h2 className="text-lg font-semibold">📝 Notes</h2>
+        <Button size="sm" variant="outline">
+          + New
+        </Button>
+      </div>
+      <ScrollArea className="h-[85%] gap-4 pr-2">
+        {mockNotes.map((p) => (
+          <Card
+            key={p.id}
+            onClick={() => onSelect(p)}
+            className={`hover:bg-muted mb-2 cursor-pointer rounded-lg border p-3 transition ${
+              selected?.id === p.id ? 'bg-muted border-primary' : ''
+            }`}
+          >
+            <CardHeader className="p-3">
+              <div className="font-semibold">{p.title}</div>
+              <div className="text-muted-foreground text-xs">{p.description}</div>
+            </CardHeader>
+          </Card>
+        ))}
+      </ScrollArea>
     </div>
   );
 }

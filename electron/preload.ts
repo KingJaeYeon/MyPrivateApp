@@ -50,6 +50,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
 });
 
 contextBridge.exposeInMainWorld('fsApi', {
+  saveImage: (fileBuffer: any, targetPath: string) =>
+    ipcRenderer.invoke('fs:exists', fileBuffer, targetPath),
   exists: (p: string) => ipcRenderer.invoke('fs:exists', p),
   ensureDir: (dir: string) => ipcRenderer.invoke('fs:ensureDir', dir),
   list: (dir: string, opts?: any) => ipcRenderer.invoke('fs:list', dir, opts),
