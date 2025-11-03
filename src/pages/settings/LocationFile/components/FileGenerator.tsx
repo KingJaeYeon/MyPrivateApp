@@ -32,10 +32,8 @@ export function FileGenerator() {
         !!name.channel &&
         !!name.tag &&
         !!name.progress &&
-        !!name.verbs &&
-        !!name.patterns &&
-        !!name.concepts &&
-        !!name.expressions &&
+        !!name.engWords &&
+        !!name.engNotes &&
         !!name.prompt &&
         !!name.reference &&
         !!name.result;
@@ -62,61 +60,63 @@ export function FileGenerator() {
         toast.error('result는 맨앞에 /와 . 제외해야합니다.');
         return;
       }
-      const path = {
+      const pathFiles = {
         tag: `${location}/${folder.name.tag}`,
         channel: `${location}/${folder.name.channel}`,
         channelHistory: `${location}/${folder.name.channelHistory}`,
-        verbs: `${location}/${folder.name.verbs}`,
-        patterns: `${location}/${folder.name.patterns}`,
-        concepts: `${location}/${folder.name.concepts}`,
-        expressions: `${location}/${folder.name.expressions}`,
+        engWords: `${location}/english/${folder.name.engWords}`,
+        engNotes: `${location}/english/${folder.name.engNotes}`,
         prompt: `${location}/${folder.name.prompt}`,
         reference: `${location}/${folder.name.reference}`,
         progress: `${location}/${folder.name.progress}`,
+      };
+      const pathDic = {
         result: `${location}/${folder.name.result}`,
+        english: `${location}/english`,
+        englishImage: `${location}/english/image`,
       };
 
-      const hasTag = await window.fsApi.exists(path.tag);
-      const hasChannel = await window.fsApi.exists(path.channel);
-      const hasChannelHistory = await window.fsApi.exists(path.channelHistory);
-      const hasVerbs = await window.fsApi.exists(path.verbs);
-      const hasPatterns = await window.fsApi.exists(path.patterns);
-      const hasConcepts = await window.fsApi.exists(path.concepts);
-      const hasExpressions = await window.fsApi.exists(path.expressions);
-      const hasPrompt = await window.fsApi.exists(path.prompt);
-      const hasReference = await window.fsApi.exists(path.reference);
+      const hasTag = await window.fsApi.exists(pathFiles.tag);
+      const hasChannel = await window.fsApi.exists(pathFiles.channel);
+      const hasChannelHistory = await window.fsApi.exists(pathFiles.channelHistory);
+      const hasEngNotes = await window.fsApi.exists(pathFiles.engNotes);
+      const hasEngWords = await window.fsApi.exists(pathFiles.engWords);
+      const hasPrompt = await window.fsApi.exists(pathFiles.prompt);
+      const hasReference = await window.fsApi.exists(pathFiles.reference);
 
       if (!hasTag) {
-        await window.excelApi.create(path.tag, [SheetKeys['tag']]);
+        await window.excelApi.create(pathFiles.tag, [SheetKeys['tag']]);
       }
       if (!hasChannel) {
-        await window.excelApi.create(path.channel, [SheetKeys['channel']]);
+        await window.excelApi.create(pathFiles.channel, [SheetKeys['channel']]);
       }
       if (!hasChannelHistory) {
-        await window.excelApi.create(path.channelHistory, [SheetKeys['channelHistory']]);
-      }
-      if (!hasVerbs) {
-        await window.excelApi.create(path.verbs, [SheetKeys['verbs']]);
-      }
-      if (!hasPatterns) {
-        await window.excelApi.create(path.patterns, [SheetKeys['patterns']]);
-      }
-      if (!hasConcepts) {
-        await window.excelApi.create(path.concepts, [SheetKeys['concepts']]);
-      }
-      if (!hasExpressions) {
-        await window.excelApi.create(path.expressions, [SheetKeys['expressions']]);
+        await window.excelApi.create(pathFiles.channelHistory, [SheetKeys['channelHistory']]);
       }
       if (!hasPrompt) {
-        await window.excelApi.create(path.prompt, [SheetKeys['prompt']]);
+        await window.excelApi.create(pathFiles.prompt, [SheetKeys['prompt']]);
       }
       if (!hasReference) {
-        await window.excelApi.create(path.reference, [SheetKeys['reference']]);
+        await window.excelApi.create(pathFiles.reference, [SheetKeys['reference']]);
       }
 
-      const hasResultDic = await window.fsApi.exists(path.result.split('/')[1]);
+      const hasResultDic = await window.fsApi.exists(pathDic.result.split('/')[1]);
       if (!hasResultDic) {
-        await window.fsApi.ensureDir(path.result);
+        await window.fsApi.ensureDir(pathDic.result);
+      }
+      const hasEnglishDic = await window.fsApi.exists(pathDic.english.split('/')[1]);
+      if (!hasEnglishDic) {
+        await window.fsApi.ensureDir(pathDic.english);
+      }
+      const hasEnglishImage = await window.fsApi.exists(pathDic.englishImage.split('/')[1]);
+      if (!hasEnglishImage) {
+        await window.fsApi.ensureDir(pathDic.englishImage);
+      }
+      if (!hasEngNotes) {
+        await window.excelApi.create(pathFiles.engNotes, [SheetKeys['engNotes']]);
+      }
+      if (!hasEngWords) {
+        await window.excelApi.create(pathFiles.engWords, [SheetKeys['engWords']]);
       }
       // const hasProgress = await window.fsApi.exists(`${location}/${name.progress}`)
       await updateIn('hasFile', true);
@@ -148,10 +148,8 @@ export function FileGenerator() {
             <li>{folder.name.reference} - 참고 자료</li>
             <li>{folder.name.channelHistory} - 채널 히스토리</li>
             <li>{folder.name.result} - 검색결과 저장 폴더</li>
-            <li>{folder.name.verbs} - 동사</li>
-            <li>{folder.name.patterns} - 문형</li>
-            <li>{folder.name.concepts} - 문법 개념</li>
-            <li>{folder.name.expressions} - 예문</li>
+            <li>{folder.name.engNotes} - 영어학습노트</li>
+            <li>{folder.name.engWords} - 영단어</li>
             <li>{folder.name.progress} - progress(준비중)</li>
           </ul>
         </div>

@@ -8,7 +8,8 @@ import ReferencePage from '@/pages/lib/reference/ReferencePage.tsx';
 import PromptsPage from '@/pages/lib/prompts/PromptsPage.tsx';
 import ChannelDetailPage from '@/pages/management/channel-detail/ChannelDetailPage.tsx';
 import NotFound from '@/pages/NotFound.tsx';
-import EnglishPage from '@/pages/english/EnglishPage.tsx';
+import WordPage from '@/pages/english/WordPage.tsx';
+import NotesPage from '@/pages/english/NotesPage.tsx';
 import { YouTubeAPISettings } from '@/pages/settings/youtube-api/YouTubeAPISettings.tsx';
 import { FilesSettings } from '@/pages/settings/LocationFile/FilesSettings.tsx';
 import { AdvancedSettings } from '@/pages/settings/AdvancedSettings.tsx';
@@ -86,20 +87,12 @@ export const navigationRoutes: NavMainType = [
     icon: Languages,
     items: [
       {
-        title: 'Patterns',
-        url: '/english/patterns',
+        title: 'Words',
+        url: '/english/words',
       },
       {
-        title: 'Vocabulary',
-        url: '/english/vocabulary',
-      },
-      {
-        title: 'Conversations',
-        url: '/english/conversations',
-      },
-      {
-        title: 'Journal',
-        url: '/english/journal',
+        title: 'Notes',
+        url: '/english/notes',
       },
     ],
   },
@@ -175,8 +168,9 @@ export const routes: RouteObject[] = [
         path: 'english',
         element: null,
         children: [
-          { index: true, element: <Navigate to="/enghlish/patterns" replace /> },
-          { path: 'patterns', element: <EnglishPage /> },
+          { index: true, element: <Navigate to="/english/patterns" replace /> },
+          { path: 'words', element: <WordPage /> },
+          { path: 'notes', element: <NotesPage /> },
         ],
       },
       {

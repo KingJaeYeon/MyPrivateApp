@@ -28,10 +28,9 @@ export default function useInitializeStores(type?: ExcelFiles) {
     result: async () => {
       await window.fsApi.listExcel(`${location}/${name.result.split('/')[0]}`);
     },
-    verbs: async () => await initEnglish('verbs', `${location}/${name.verbs}`),
-    patterns: async () => await initEnglish('patterns', `${location}/${name.patterns}`),
-    concepts: async () => await initEnglish('concepts', `${location}/${name.concepts}`),
-    expressions: async () => await initEnglish('expressions', `${location}/${name.expressions}`),
+    engWords: async () => await initEnglish('engWords', `${location}/english/${name.engWords}`),
+    engNotes: async () => await initEnglish('engNotes', `${location}/english/${name.engNotes}`),
+
     progress: async () => {
       // TODO
     },
@@ -44,10 +43,8 @@ export default function useInitializeStores(type?: ExcelFiles) {
     channelHistory: resetHistory,
     reference: resetRef,
     prompt: resetPrompt,
-    verbs: () => resetEnglish('verbs'),
-    patterns: () => resetEnglish('patterns'),
-    concepts: () => resetEnglish('concepts'),
-    expressions: () => resetEnglish('expressions'),
+    engWords: () => resetEnglish('engWords'),
+    engNotes: () => resetEnglish('engNotes'),
   };
 
   // ✅ 단일 초기화
@@ -70,6 +67,8 @@ export default function useInitializeStores(type?: ExcelFiles) {
       'prompt',
       'result',
       'channelHistory',
+      'engNotes',
+      'engWords',
     ];
 
     for (const key of keys) {

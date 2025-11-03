@@ -10,10 +10,8 @@ export type ExcelFiles =
   | 'result'
   | 'prompt'
   | 'reference'
-  | 'verbs'
-  | 'patterns'
-  | 'concepts'
-  | 'expressions'
+  | 'engNotes'
+  | 'engWords'
   | 'progress';
 
 export type SchedulerConfig = {
@@ -68,10 +66,8 @@ const seed: State['data'] = {
       prompt: 'prompt.xlsx',
       reference: 'reference.xlsx',
       channelHistory: 'channels-history.xlsx',
-      verbs: 'verbs.xlsx',
-      patterns: 'patterns.xlsx',
-      concepts: 'concepts.xlsx',
-      expressions: 'expressions.xlsx',
+      engNotes: 'notes.xlsx',
+      engWords: 'words.xlsx',
       progress: 'progress.xlsx',
     },
     exportFile: {

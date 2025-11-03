@@ -6,10 +6,8 @@ type DBSchema = {
   result: Result;
   prompt: Prompt;
   reference: Reference;
-  verbs: Verbs;
-  patterns: Patterns;
-  concepts: Concepts;
-  expressions: Expressions;
+  engWords: EngWords;
+  engNotes: EngNotes;
   // diary: Record<string, DiaryDoc>;
 };
 
@@ -74,7 +72,7 @@ const ResultSchema = {
   chLink: 'string',
   chFetchAt: 'string',
   chRegionCode: 'string',
-};
+} as const;
 
 const PromptSchema = {
   idx: 'string',
@@ -85,7 +83,7 @@ const PromptSchema = {
   memo: 'string',
   updatedAt: 'string',
   createdAt: 'number',
-};
+} as const;
 
 const ReferenceSchema = {
   idx: 'string',
@@ -96,58 +94,45 @@ const ReferenceSchema = {
   memo: 'string',
   updatedAt: 'string',
   createdAt: 'number',
-};
+} as const;
 
 // --- English ---
 //핵심 동사 정의 — ECM 등 문형을 가지는 중심 노드
-const VerbsSchema = {
+const EngWordsSchema = {
   id: 'string',
   word: 'string',
   meaning: 'string',
-  memo: 'string',
-  patternIds: 'string[]',
-  conceptIds: 'string[]',
+  description: 'string',
+  content: 'string', // 마크다운
   createdAt: 'string',
-};
+  updatedAt: 'string',
+} as const;
 
 //“문형(문장 구조)” 데이터
-const PatternsSchema = {
+const EngNotesSchema = {
   id: 'string',
   title: 'string',
-  structure: 'string',
-  examples: 'string[]',
-  verbIds: 'string[]',
-  conceptIds: 'string[]',
   description: 'string',
+  content: 'string', // 마크다운
+  linkedWords: '{id:string, title:string}[]',
   createdAt: 'string',
-};
+  updatedAt: 'string',
+} as const;
 
-// ECM, 조동사, 조건문, 비교구문 등 문법적 상위 개념
-const ConceptsSchema = {
-  id: 'string',
-  name: 'string',
-  description: 'string',
-  relatedPatternIds: 'string[]',
-  relatedVerbIds: 'string[]',
-  createdAt: 'string',
-};
-// 실제 예문 - UI에서 필터링의 핵심 단위 (Expression 중심 뷰)
-const ExpressionsSchema = {
-  id: 'string',
-  text: 'string',
-  meaning: 'string',
-  linkedPatterns: 'string[]',
-  linkedVerbs: 'string[]',
-  linkedConcepts: 'string[]',
-  importance: 'string',
-  memo: 'string',
-  createdAt: 'string',
-};
 // --------
-
 // ✅ 공통 유틸
 type SchemaToType<T extends Record<string, any>> = {
-  [K in keyof T]: T[K] extends 'number' ? number : T[K] extends 'string[]' ? string[] : string;
+  [K in keyof T]: T[K] extends 'number' // 숫자
+    ? number
+    : // 문자열 배열
+      T[K] extends 'string[]'
+      ? string[]
+      : // 객체 배열 (ex: '{id:string, title:string}[]')
+        T[K] extends `${string}[]`
+        ? T[K] extends `{${string}}[]`
+          ? Record<string, string>[]
+          : string[]
+        : string;
 };
 type ChannelHistory = SchemaToType<typeof ChannelHistorySchema>;
 type Channel = SchemaToType<typeof ChannelSchema>;
@@ -155,10 +140,8 @@ type Tag = SchemaToType<typeof TagSchema>;
 type Result = SchemaToType<typeof ResultSchema>;
 type Prompt = SchemaToType<typeof PromptSchema>;
 type Reference = SchemaToType<typeof ReferenceSchema>;
-type Verbs = SchemaToType<typeof VerbsSchema>;
-type Patterns = SchemaToType<typeof PatternsSchema>;
-type Concepts = SchemaToType<typeof ConceptsSchema>;
-type Expressions = SchemaToType<typeof ExpressionsSchema>;
+type EngWords = SchemaToType<typeof EngWordsSchema>;
+type EngNotes = SchemaToType<typeof EngNotesSchema>;
 
 const SheetKeys = {
   channelHistory: Object.keys(ChannelHistorySchema) as (keyof ChannelHistory)[],
@@ -167,10 +150,8 @@ const SheetKeys = {
   result: Object.keys(ResultSchema) as (keyof Result)[],
   prompt: Object.keys(PromptSchema) as (keyof Prompt)[],
   reference: Object.keys(ReferenceSchema) as (keyof Reference)[],
-  verbs: Object.keys(VerbsSchema) as (keyof Verbs)[],
-  patterns: Object.keys(PatternsSchema) as (keyof Patterns)[],
-  concepts: Object.keys(ConceptsSchema) as (keyof Concepts)[],
-  expressions: Object.keys(ExpressionsSchema) as (keyof Expressions)[],
+  engWords: Object.keys(EngWordsSchema) as (keyof EngWords)[],
+  engNotes: Object.keys(EngNotesSchema) as (keyof EngNotes)[],
 };
 
 type SheetKeyType<T extends keyof typeof SheetKeys> = (typeof SheetKeys)[T][number];

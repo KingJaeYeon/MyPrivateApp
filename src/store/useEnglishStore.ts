@@ -5,15 +5,13 @@ import type { DBSchema } from '../../electron/docs.schema.ts';
 import useSettingStore from '@/store/useSettingStore.ts';
 import { toast } from 'sonner';
 
-export type EnglishDataType = DBSchema['verbs'] | DBSchema['patterns'] | DBSchema['concepts'] | DBSchema['expressions'];
-export type EnglishSheetName = 'verbs' | 'patterns' | 'concepts' | 'expressions';
+export type EnglishDataType = DBSchema['engWords'] | DBSchema['engNotes'];
+export type EnglishSheetName = 'engWords' | 'engNotes';
 
 /** 전체 앱 설정 */
 export type State = {
-  verbs: DBSchema['verbs'][];
-  patterns: DBSchema['patterns'][];
-  concepts: DBSchema['concepts'][];
-  expressions: DBSchema['expressions'][];
+  engWords: DBSchema['engWords'][];
+  engNotes: DBSchema['engNotes'][];
   currentType: EnglishSheetName;
   isChanged?: boolean;
 };
@@ -31,11 +29,9 @@ type Action = {
 
 const useEnglishStore = create(
   immer<State & Action>((set, get) => ({
-    verbs: [],
-    patterns: [],
-    concepts: [],
-    expressions: [],
-    currentType: 'verbs',
+    engWords: [],
+    engNotes: [],
+    currentType: 'engNotes',
     isChanged: false,
 
     setCurrentType: (type) => {
@@ -76,7 +72,7 @@ const useEnglishStore = create(
       const data = get()[type];
       const aoa = buildAoaFromObjects(data, type);
       const fileName = name[type];
-      await window.excelApi.overwrite(`${location}/${fileName}`, aoa, 'Sheet1');
+      await window.excelApi.overwrite(`${location}/english/${fileName}`, aoa, 'Sheet1');
       set({ isChanged: false });
     },
 
