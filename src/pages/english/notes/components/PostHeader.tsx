@@ -22,14 +22,14 @@ export default function PostHeader({
         <input
           className="placeholder:text-muted-foreground text-2xl font-bold outline-none"
           value={data.title}
-          placeholder={'ex) look at'}
+          placeholder={'ex) ECM 동사'}
           readOnly={state === 'read'}
           onChange={(e) => onChange('title', e.target.value)}
         />
         <input
           className="text-muted-foreground text-sm outline-none"
           value={data.description}
-          placeholder={'보다 - 주어가 주체적으로 본다.'}
+          placeholder={'S가 V한다 O가 ToV하기를 의 뜻을 가지는 동사들'}
           readOnly={state === 'read'}
           onChange={(e) => onChange('description', e.target.value)}
         />

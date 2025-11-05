@@ -23,6 +23,7 @@ import WordDetailPage from '@/pages/english/words/WordDetailPage.tsx';
 import NotesLayout from '@/pages/english/notes/NotesLayout.tsx';
 import NoteCreatePage from '@/pages/english/notes/NoteCreatePage.tsx';
 import NoteDetailPage from '@/pages/english/notes/NoteDetailPage.tsx';
+import DashboardPage from '@/pages/english/dashboard/DashboardPage.tsx';
 
 export const navigationRoutes: NavMainType = [
   {
@@ -90,6 +91,10 @@ export const navigationRoutes: NavMainType = [
     url: '/english',
     icon: Languages,
     items: [
+      {
+        title: 'DashBoard',
+        url: '/english/dashboard',
+      },
       {
         title: 'Words',
         url: '/english/words',
@@ -172,7 +177,8 @@ export const routes: RouteObject[] = [
         path: 'english',
         element: null,
         children: [
-          { index: true, element: <Navigate to="/english/patterns" replace /> },
+          { index: true, element: <Navigate to="/english/dashboard" replace /> },
+          { path: 'dashboard', element: <DashboardPage /> },
           {
             path: 'words',
             element: <WordsLayout />,
