@@ -1,5 +1,5 @@
 import PostHeader from '@/pages/english/notes/components/PostHeader.tsx';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useTheme } from '@/providers/theme-provider.tsx';
 import useEnglishStore from '@/store/useEnglishStore.ts';
 import { useEffect, useState } from 'react';
@@ -25,6 +25,7 @@ export default function NoteDetailPage() {
   const { theme } = useTheme();
   const { getData, setState, state, jsonEngWords } = useEnglishStore();
   const [edit, setEdit] = useState<DBSchema['engNotes']>(seed);
+  const navigate = useNavigate();
 
   const { data, isPending, refetch } = useQuery({
     queryKey: ['engNote', noteId],
@@ -85,6 +86,7 @@ export default function NoteDetailPage() {
           <div className="flex flex-wrap gap-2">
             {data.linkedWordIds.split(',').map((id) => (
               <span
+                onClick={() => navigate(`/english/words/${id}`)}
                 key={'readedit' + id}
                 className="bg-muted hover:bg-primary/20 cursor-pointer rounded-md px-2 py-1 text-xs"
               >
