@@ -83,7 +83,12 @@ export function setupExcelHandlers() {
 
         let backupPath: string | null = null;
         const fileNames = configStore.get('settings.folder.name') as any;
-        const exclude = [fileNames.channelHistory];
+        const exclude = [
+          fileNames.channelHistory,
+          fileNames.engNotes,
+          fileNames.engWords,
+          fileNames.progress,
+        ];
         const isExclude = exclude.some((exclude) => exclude === `${parsed.name}${parsed.ext}`);
 
         // 1) 기존 파일이 있으면 → [yyyy-MM-dd] 백업본 생성

@@ -1,4 +1,4 @@
-import PostHeader from '@/pages/english/components/PostHeader.tsx';
+import PostHeader from '@/pages/english/words/components/PostHeader.tsx';
 import { useTheme } from '@/providers/theme-provider.tsx';
 import { DBSchema } from '../../../../electron/docs.schema.ts';
 import { useEffect, useState } from 'react';
@@ -14,7 +14,7 @@ const seed: DBSchema['engWords'] = {
   id: '',
 };
 
-export default function CreatePage() {
+export default function WordCreatePage() {
   const { theme } = useTheme();
   const [data, setData] = useState<DBSchema['engWords']>(seed);
   const { setState } = useEnglishStore();

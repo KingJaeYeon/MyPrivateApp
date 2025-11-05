@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button.tsx';
-import { DBSchema } from '../../../../electron/docs.schema.ts';
+import { DBSchema } from '../../../../../electron/docs.schema.ts';
 import useEnglishStore from '@/store/useEnglishStore.ts';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +10,7 @@ export default function PostHeader({
   onChange,
   refetch,
 }: {
-  data: DBSchema['engWords'];
+  data: DBSchema['engNotes'];
   onEdit?: () => void;
   onChange: (type: string, value: string) => void;
   refetch?: () => void;
@@ -21,10 +21,10 @@ export default function PostHeader({
       <div className={'flex flex-1 flex-col'}>
         <input
           className="placeholder:text-muted-foreground text-2xl font-bold outline-none"
-          value={data.word}
+          value={data.title}
           placeholder={'ex) look at'}
           readOnly={state === 'read'}
-          onChange={(e) => onChange('word', e.target.value)}
+          onChange={(e) => onChange('title', e.target.value)}
         />
         <input
           className="text-muted-foreground text-sm outline-none"
@@ -44,7 +44,7 @@ function ButtonRenderer({
   onEdit,
   refetch,
 }: {
-  data: DBSchema['engWords'];
+  data: DBSchema['engNotes'];
   onEdit?: () => void;
   refetch?: () => void;
 }) {
@@ -57,7 +57,7 @@ function ButtonRenderer({
     }
     remove('engWords', [data.id]);
     toast.success('삭제되었습니다.');
-    navigate('/english/words');
+    navigate('/english/notes');
   };
 
   if (state === 'read')
@@ -76,7 +76,7 @@ function ButtonRenderer({
     if (!confirm('저장하시겠습니까?')) {
       return;
     }
-    const cur = getData('engWords');
+    const cur = getData('engNotes');
 
     const find = cur.find((item) => item.id === data.id);
     if (find) {
@@ -86,21 +86,21 @@ function ButtonRenderer({
         }
         return item;
       });
-      update('engWords', temp);
+      update('engNotes', temp);
       setState('read');
       refetch && refetch();
       return;
     }
 
     const lastId = cur.length === 0 ? 1 : +cur[cur.length - 1].id + 1;
-    push('engWords', { ...data, id: lastId.toString() });
-    navigate(`/english/words/${lastId}`);
+    push('engNotes', { ...data, id: lastId.toString() });
+    navigate(`/english/notes/${lastId}`);
     toast.success('추가되었습니다.');
   };
 
   return (
     <div className="flex items-center gap-2">
-      <Button size="sm" onClick={onSave} disabled={data.word === '' || !data.description}>
+      <Button size="sm" onClick={onSave} disabled={data.title === '' || !data.description}>
         저장
       </Button>
     </div>

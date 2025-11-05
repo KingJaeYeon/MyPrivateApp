@@ -8,7 +8,6 @@ import ReferencePage from '@/pages/lib/reference/ReferencePage.tsx';
 import PromptsPage from '@/pages/lib/prompts/PromptsPage.tsx';
 import ChannelDetailPage from '@/pages/management/channel-detail/ChannelDetailPage.tsx';
 import NotFound from '@/pages/NotFound.tsx';
-import NotesPage from '@/pages/english/NotesPage.tsx';
 import { YouTubeAPISettings } from '@/pages/settings/youtube-api/YouTubeAPISettings.tsx';
 import { FilesSettings } from '@/pages/settings/LocationFile/FilesSettings.tsx';
 import { AdvancedSettings } from '@/pages/settings/AdvancedSettings.tsx';
@@ -19,8 +18,11 @@ import SavedListPage from '@/pages/youtube/saved-list/SavedListPage.tsx';
 import ChannelsEditPage from '@/pages/management/channel-edit/ChannelsEditPage.tsx';
 import { Home } from '@/pages/home/Home.tsx';
 import WordsLayout from '@/pages/english/words/WordsLayout.tsx';
-import CreatePage from '@/pages/english/words/CreatePage.tsx';
-import DetailPage from '@/pages/english/words/DetailPage.tsx';
+import WordCreatePage from '@/pages/english/words/WordCreatePage.tsx';
+import WordDetailPage from '@/pages/english/words/WordDetailPage.tsx';
+import NotesLayout from '@/pages/english/notes/NotesLayout.tsx';
+import NoteCreatePage from '@/pages/english/notes/NoteCreatePage.tsx';
+import NoteDetailPage from '@/pages/english/notes/NoteDetailPage.tsx';
 
 export const navigationRoutes: NavMainType = [
   {
@@ -175,11 +177,18 @@ export const routes: RouteObject[] = [
             path: 'words',
             element: <WordsLayout />,
             children: [
-              { index: true, element: <CreatePage /> },
-              { path: ':wordId', element: <DetailPage /> },
+              { index: true, element: <WordCreatePage /> },
+              { path: ':wordId', element: <WordDetailPage /> },
             ],
           },
-          { path: 'notes', element: <NotesPage /> },
+          {
+            path: 'notes',
+            element: <NotesLayout />,
+            children: [
+              { index: true, element: <NoteCreatePage /> },
+              { path: ':noteId', element: <NoteDetailPage /> },
+            ],
+          },
         ],
       },
       {

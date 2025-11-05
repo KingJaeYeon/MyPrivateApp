@@ -1,4 +1,4 @@
-import PostHeader from '@/pages/english/components/PostHeader.tsx';
+import PostHeader from '@/pages/english/words/components/PostHeader.tsx';
 import { useParams } from 'react-router-dom';
 import { useTheme } from '@/providers/theme-provider.tsx';
 import useEnglishStore from '@/store/useEnglishStore.ts';
@@ -18,7 +18,7 @@ const seed: DBSchema['engWords'] = {
   id: '',
 };
 
-export default function DetailPage() {
+export default function WordDetailPage() {
   const { wordId } = useParams();
   const { theme } = useTheme();
   const { getData, setState, state } = useEnglishStore();

@@ -11,6 +11,7 @@ export type mdState = 'read' | 'edit' | 'create';
 /** 전체 앱 설정 */
 export type State = {
   engWords: DBSchema['engWords'][];
+  jsonEngWords: Record<string, any>;
   engNotes: DBSchema['engNotes'][];
   state: mdState;
   currentType: EnglishSheetName;
@@ -33,6 +34,7 @@ const useEnglishStore = create(
   immer<State & Action>((set, get) => ({
     engWords: [],
     engNotes: [],
+    jsonEngWords: {},
     state: 'read',
     setState: (state: mdState) => set({ state }),
     currentType: 'engNotes',
@@ -49,7 +51,15 @@ const useEnglishStore = create(
     /** 앱 시작 시 호출: electron-store에서 값 불러와 zustand state 세팅 */
     init: async (type, filePath) => {
       const result = await window.excelApi.read(filePath);
-      set({ [type]: result });
+      const jsonData = result.reduce(
+        (acc, cur) => {
+          acc[cur.id] = cur.word;
+          return acc;
+        },
+        {} as Record<string, any>
+      );
+
+      set({ [type]: result, jsonEngWords: jsonData });
     },
 
     update: (type, data) => {
@@ -77,7 +87,19 @@ const useEnglishStore = create(
       const aoa = buildAoaFromObjects(data, type);
       const fileName = name[type];
       await window.excelApi.overwrite(`${location}/english/${fileName}`, aoa, 'Sheet1');
+
       set({ isChanged: false });
+
+      if (type === 'engNotes') {
+        const jsonData = get().engWords.reduce(
+          (acc, cur) => {
+            acc[cur.id] = cur.word;
+            return acc;
+          },
+          {} as Record<string, any>
+        );
+        set({ jsonEngWords: jsonData });
+      }
     },
 
     reset: (type) => {

@@ -113,7 +113,7 @@ const EngNotesSchema = {
   title: 'string',
   description: 'string',
   content: 'string', // 마크다운
-  linkedWords: '{id:string, title:string}[]',
+  linkedWordIds: 'string',
   createdAt: 'string',
   updatedAt: 'string',
 } as const;
