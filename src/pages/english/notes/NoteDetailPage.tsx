@@ -8,6 +8,7 @@ import { DBSchema } from '../../../../electron/docs.schema.ts';
 import MarkdownPreview from '@/components/MarkdownPreview.tsx';
 import MarkdownEditor from '@/components/MarkdownEditor.tsx';
 import { useQuery } from '@tanstack/react-query';
+import { LinkedWordsEditor } from '@/pages/english/notes/components/LinkedWordsEditor.tsx';
 
 const seed: DBSchema['engNotes'] = {
   content: '',
@@ -50,6 +51,10 @@ export default function NoteDetailPage() {
     setEdit((prev) => ({ ...prev, [type]: value }));
   };
 
+  const onEditLinkedWords = (linkedWordIds: string) => {
+    setEdit((prev) => ({ ...prev, ['linkedWordIds']: linkedWordIds }));
+  };
+
   const onEdit = () => {
     setEdit(data);
     setState('edit');
@@ -74,19 +79,23 @@ export default function NoteDetailPage() {
           />
         )}
       </div>
-      <div className="mt-4 border-t pt-3">
-        <p className="text-muted-foreground mb-1 text-xs">🔗 관련 단어</p>
-        <div className="flex flex-wrap gap-2">
-          {data.linkedWordIds.split(',').map((id) => (
-            <span
-              key={'readedit' + id}
-              className="bg-muted hover:bg-primary/20 cursor-pointer rounded-md px-2 py-1 text-xs"
-            >
-              {jsonEngWords[id]}
-            </span>
-          ))}
+      {state === 'read' ? (
+        <div className="mt-4 border-t pt-3">
+          <p className="text-muted-foreground mb-1 text-xs">🔗 관련 단어</p>
+          <div className="flex flex-wrap gap-2">
+            {data.linkedWordIds.split(',').map((id) => (
+              <span
+                key={'readedit' + id}
+                className="bg-muted hover:bg-primary/20 cursor-pointer rounded-md px-2 py-1 text-xs"
+              >
+                {jsonEngWords[id]}
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
+      ) : (
+        <LinkedWordsEditor linkedWordIds={edit.linkedWordIds} onChange={onEditLinkedWords} />
+      )}
     </div>
   );
 }

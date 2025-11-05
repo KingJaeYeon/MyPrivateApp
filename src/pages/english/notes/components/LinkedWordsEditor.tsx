@@ -1,5 +1,4 @@
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import { X, Plus, Search } from 'lucide-react';
 import { useState } from 'react';
 import {
@@ -119,7 +118,10 @@ export function LinkedWordsEditor({
           <span className="text-muted-foreground text-xs">추가된 단어가 없습니다</span>
         ) : (
           linkedWordIds.split(',').map((id) => (
-            <Badge key={'linkedWordId' + id} variant="secondary" className={'gap-1 px-3 py-1'}>
+            <span
+              key={'linkedWordId' + id}
+              className="bg-muted hover:bg-primary/20 flex cursor-pointer items-center rounded-md px-2 py-1 text-xs"
+            >
               {jsonEngWords[id]}
               <button
                 onClick={() => handleRemove(id)}
@@ -127,7 +129,7 @@ export function LinkedWordsEditor({
               >
                 <X className="h-3 w-3" />
               </button>
-            </Badge>
+            </span>
           ))
         )}
       </div>
