@@ -49,13 +49,8 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.mjs'),
       contextIsolation: true,
       nodeIntegration: false,
+      webSecurity: false,
     },
-    // titleBarOverlay: {
-    //   color: '#2f3241',
-    //   symbolColor: '#74b1be',
-    //   height: 36
-    // },
-    // acceptFirstMouse: true,
   });
 
   win.webContents.on('did-finish-load', () => {

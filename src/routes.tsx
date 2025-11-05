@@ -8,7 +8,6 @@ import ReferencePage from '@/pages/lib/reference/ReferencePage.tsx';
 import PromptsPage from '@/pages/lib/prompts/PromptsPage.tsx';
 import ChannelDetailPage from '@/pages/management/channel-detail/ChannelDetailPage.tsx';
 import NotFound from '@/pages/NotFound.tsx';
-import WordPage from '@/pages/english/words/WordPage.tsx';
 import NotesPage from '@/pages/english/NotesPage.tsx';
 import { YouTubeAPISettings } from '@/pages/settings/youtube-api/YouTubeAPISettings.tsx';
 import { FilesSettings } from '@/pages/settings/LocationFile/FilesSettings.tsx';
@@ -19,6 +18,9 @@ import { BookOpen, Database, Languages, Settings2 } from 'lucide-react';
 import SavedListPage from '@/pages/youtube/saved-list/SavedListPage.tsx';
 import ChannelsEditPage from '@/pages/management/channel-edit/ChannelsEditPage.tsx';
 import { Home } from '@/pages/home/Home.tsx';
+import WordsLayout from '@/pages/english/words/WordsLayout.tsx';
+import CreatePage from '@/pages/english/words/CreatePage.tsx';
+import DetailPage from '@/pages/english/words/DetailPage.tsx';
 
 export const navigationRoutes: NavMainType = [
   {
@@ -169,7 +171,14 @@ export const routes: RouteObject[] = [
         element: null,
         children: [
           { index: true, element: <Navigate to="/english/patterns" replace /> },
-          { path: 'words', element: <WordPage /> },
+          {
+            path: 'words',
+            element: <WordsLayout />,
+            children: [
+              { index: true, element: <CreatePage /> },
+              { path: ':wordId', element: <DetailPage /> },
+            ],
+          },
           { path: 'notes', element: <NotesPage /> },
         ],
       },

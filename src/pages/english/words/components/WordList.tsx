@@ -1,55 +1,108 @@
 import { Button } from '@/components/ui/button.tsx';
 import { ScrollArea } from '@/components/ui/scroll-area.tsx';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card.tsx';
-import { DBSchema } from '../../../../../electron/docs.schema.ts';
 import useEnglishStore from '@/store/useEnglishStore.ts';
+import { useModalStore } from '@/store/modalStore.ts';
+import { cn } from '@/lib/utils.ts';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
 
-export function WordList({
-  onSelect,
-  selected,
-  onCreate,
-}: {
-  onSelect: (value: any) => void;
-  selected: DBSchema['engWords'] | null;
-  onCreate: () => void;
-}) {
+export function WordList() {
+  const { saved, isChanged } = useEnglishStore();
+  const { openModal } = useModalStore();
+  const navigate = useNavigate();
+
+  const onSave = async () => {
+    if (confirm('저장하시겠습니까?')) {
+      await saved('engWords');
+      openModal('alert', '저장되었습니다.');
+    }
+  };
+
   return (
     <div className="w-[300px] overflow-y-auto border-r pr-3">
       <div className="mb-2 flex items-center justify-between">
         <h2 className="text-lg font-semibold">📘 Word List</h2>
-        <Button size="sm" variant="outline" onClick={onCreate}>
-          + New
-        </Button>
+        <div className="flex gap-2">
+          <Button size="sm" variant={isChanged ? 'destructive' : 'default'} onClick={onSave}>
+            저장
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => navigate('/english/words')}>
+            + New
+          </Button>
+        </div>
       </div>
       <ScrollArea className="h-[85%] gap-4 pr-2">
-        <RenderList selected={selected} onSelect={onSelect} />
+        <RenderList />
       </ScrollArea>
     </div>
   );
 }
 
-function RenderList({
-  selected,
-  onSelect,
-}: {
-  selected: DBSchema['engWords'] | null;
-  onSelect: (value: any) => void;
-}) {
-  const { engWords } = useEnglishStore();
+function RenderList() {
+  const { engWords, state } = useEnglishStore();
+  const navigate = useNavigate();
+  const { wordId } = useParams();
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  if (!engWords.length || !selected) {
-    return <div className={'text-muted-foreground text-sm'}>새로운 Word를 등록해주세요.</div>;
+  useEffect(() => {
+    if (!wordId || !engWords.length) {
+      setSelectedIndex(-1);
+      return;
+    }
+
+    const idx = engWords.findIndex((w) => w.id.toString() === wordId);
+    if (idx >= 0) {
+      setSelectedIndex(idx);
+    }
+  }, [wordId, engWords]);
+
+  // 키보드 이동
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (state !== 'read') return;
+      if (!engWords.length) return;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        const nextIndex = (selectedIndex + 1) % engWords.length;
+        setSelectedIndex(nextIndex);
+        navigate(`/english/words/${engWords[nextIndex].id}`); // 바로 이동
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        const prevIndex = (selectedIndex - 1 + engWords.length) % engWords.length;
+        setSelectedIndex(prevIndex);
+        navigate(`/english/words/${engWords[prevIndex].id}`); // 바로 이동
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [engWords, selectedIndex, navigate, state]);
+
+  // 선택 시 스크롤 자동 이동
+  useEffect(() => {
+    const el = cardRefs.current[selectedIndex];
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, [selectedIndex]);
+
+  if (!engWords.length) {
+    return <div className="text-muted-foreground text-sm">새로운 Word를 등록해주세요.</div>;
   }
 
   return (
-    <ScrollArea className="h-[85%] gap-4 pr-2">
-      {engWords.map((p) => (
+    <div className="space-y-2">
+      {engWords.map((p, i) => (
         <Card
+          ref={(el) => (cardRefs.current[i] = el)}
           key={p.id}
-          onClick={() => onSelect(p)}
-          className={`hover:bg-muted mb-2 cursor-pointer rounded-lg border p-3 transition ${
-            selected?.id === p.id ? 'bg-muted border-primary' : ''
-          }`}
+          onClick={() => {
+            setSelectedIndex(i);
+            navigate(`/english/words/${p.id}`);
+          }}
+          className={cn(
+            'hover:bg-muted cursor-pointer border p-3 transition',
+            i === selectedIndex ? 'border-primary bg-muted' : ''
+          )}
         >
           <CardHeader className="p-3">
             <CardTitle className="text-sm font-medium">{p.word}</CardTitle>
@@ -57,6 +110,6 @@ function RenderList({
           </CardHeader>
         </Card>
       ))}
-    </ScrollArea>
+    </div>
   );
 }

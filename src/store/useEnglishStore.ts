@@ -7,17 +7,19 @@ import { toast } from 'sonner';
 
 export type EnglishDataType = DBSchema['engWords'] | DBSchema['engNotes'];
 export type EnglishSheetName = 'engWords' | 'engNotes';
-
+export type mdState = 'read' | 'edit' | 'create';
 /** 전체 앱 설정 */
 export type State = {
   engWords: DBSchema['engWords'][];
   engNotes: DBSchema['engNotes'][];
+  state: mdState;
   currentType: EnglishSheetName;
   isChanged?: boolean;
 };
 
 type Action = {
   init: (type: EnglishSheetName, filePath: string) => Promise<void>;
+  setState: (state: mdState) => void;
   push: (type: EnglishSheetName, obj: EnglishDataType) => boolean;
   saved: (type: EnglishSheetName) => Promise<void>;
   update: (type: EnglishSheetName, data: EnglishDataType[]) => void;
@@ -31,6 +33,8 @@ const useEnglishStore = create(
   immer<State & Action>((set, get) => ({
     engWords: [],
     engNotes: [],
+    state: 'read',
+    setState: (state: mdState) => set({ state }),
     currentType: 'engNotes',
     isChanged: false,
 
