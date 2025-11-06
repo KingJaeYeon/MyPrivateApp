@@ -7,6 +7,7 @@ import MemoryBadge from '@/components/titlebar/MemoryBadge.tsx';
 import { useIsMac } from '@/hooks/use-is-mac.ts';
 import { cn } from '@/lib/utils.ts';
 import { IconClose, IconMinus } from '@/assets/svg';
+import { CommandLinkDialog } from '@/components/CommandLinkDialog.tsx';
 
 export default function TitleBar() {
   const hasApiKey = useSettingStore((s) => !!s.data.youtube.apiKey);
@@ -48,6 +49,7 @@ export default function TitleBar() {
         )}
       </div>
       <div className={cn('no-drag flex items-center gap-2')}>
+        <CommandLinkDialog />
         {hasApiKey && (
           <Badge variant="secondary" className="h-5 gap-1 text-[10px] font-normal">
             <Wifi className="h-2.5 w-2.5" />

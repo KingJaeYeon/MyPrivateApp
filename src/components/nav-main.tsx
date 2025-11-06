@@ -16,9 +16,9 @@ import { useNavigate } from 'react-router-dom';
 export type NavMainType = {
   title: string;
   url: string;
-  icon?: LucideIcon;
+  icon: LucideIcon;
   isActive?: boolean;
-  items?: {
+  items: {
     title: string;
     url: string;
     hidden?: boolean;
