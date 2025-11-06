@@ -54,7 +54,7 @@ function UsedQuotaDisplay() {
           <div className="bg-secondary relative h-2 overflow-hidden rounded-full">
             <div
               className="absolute h-full bg-blue-600 transition-all"
-              style={{ width: `${Math.min(quota.usedQuota % 100, 100)}%` }}
+              style={{ width: `${Math.min(quota.usedQuota / 100, 100)}%` }}
             />
           </div>
 
