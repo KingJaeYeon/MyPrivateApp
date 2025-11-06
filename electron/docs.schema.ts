@@ -35,6 +35,7 @@ const ChannelSchema = {
   fetchedAt: 'string',
   icon: 'string',
   createdAt: 'number',
+  lastVideoPublishedAt: 'number',
 } as const;
 
 const TagSchema = {

@@ -129,11 +129,11 @@ export default function ChannelsEditPage() {
           columns={CHANNELS_MODAL_COLUMNS}
           data={curChannels}
           isFixHeader={true}
-          onSelectedRow={setSelect}
           name={'addChannelModal'}
+          initialSorting={[{ id: 'createdAt', desc: true }]}
+          onSelectedRow={setSelect}
           enableMultiRowSelection={false}
           enableRowClickSelection={true}
-          initialSorting={[{ id: 'createdAt', desc: true }]}
         />
         <ChannelEditPanel select={select} setSelect={setSelect} />
       </div>

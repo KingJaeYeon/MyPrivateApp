@@ -46,11 +46,11 @@ export function CommandLinkDialog() {
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           {navigationRoutes.map((route) => (
-            <CommandGroup heading={route.title.toLocaleUpperCase()}>
+            <CommandGroup heading={route.title.toLocaleUpperCase()} key={route.title}>
               {route.items
                 .filter((f) => !f.hidden)
                 .map((item) => (
-                  <CommandItem onSelect={() => handleSelect(item.url)}>
+                  <CommandItem onSelect={() => handleSelect(item.url)} key={item.title}>
                     <route.icon />
                     <span>{item.title}</span>
                   </CommandItem>

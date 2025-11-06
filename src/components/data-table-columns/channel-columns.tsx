@@ -4,9 +4,12 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
 import { Badge } from '@/components/ui/badge.tsx';
 import Tip from '@/components/Tip.tsx';
 import useTagStore from '@/store/useTagStore.ts';
-import { Youtube } from '@/assets/svg';
 import ColumnMenu from '@/components/data-table-columns/ColumnMenu.tsx';
 import { formatNumber } from '@/lib/utils';
+import { Button } from '@/components/ui/button.tsx';
+import IconMoreInfo from '@/assets/svg/IconMoreInfo.tsx';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
 
 export type ChannelColumns = {
   channelId: string;
@@ -24,6 +27,7 @@ export type ChannelColumns = {
   platform: string;
   videoCount: number;
   createdAt: number;
+  lastVideoPublishedAt?: number;
   menu?: any;
 };
 
@@ -35,7 +39,14 @@ const copyToClipboard = (text: string) => {
 export const CHANNELS_MODAL_COLUMNS: ColumnDef<ChannelColumns>[] = [
   {
     accessorKey: 'name',
-    header: '채널명',
+    header: () => (
+      <span>
+        <span className={'mr-1'}>채널명</span>
+        <Tip txt={'클릭시 링크이동'} triggerClssName={'translate-y-0.5'}>
+          <IconMoreInfo />
+        </Tip>
+      </span>
+    ),
     maxSize: 200,
     minSize: 170,
     cell: ({ row }) => (
@@ -44,16 +55,25 @@ export const CHANNELS_MODAL_COLUMNS: ColumnDef<ChannelColumns>[] = [
           <AvatarImage src={row.original.icon} />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
-        <p className="font-bold whitespace-break-spaces">{row.original.name}</p>
+        <Button
+          variant={'link'}
+          size={'sm'}
+          className={
+            'h-0 shrink cursor-pointer px-0 text-start text-xs font-semibold break-words whitespace-break-spaces'
+          }
+        >
+          {row.original.name}
+        </Button>
       </div>
     ),
   },
   {
     accessorKey: 'handle',
     header: '핸들',
+    maxSize: 120,
     cell: ({ row }) => (
       <p
-        className="cursor-pointer text-xs font-bold break-words"
+        className="cursor-pointer text-xs font-bold break-words whitespace-break-spaces"
         onClick={() => copyToClipboard(row.original.handle)}
       >
         {row.original.handle}
@@ -130,28 +150,42 @@ export const CHANNELS_MODAL_COLUMNS: ColumnDef<ChannelColumns>[] = [
     ),
   },
   {
+    accessorKey: 'lastVideoPublishedAt',
+    header: '영상게시일',
+    size: 120,
+    cell: ({ row }) => {
+      const published = row.original.lastVideoPublishedAt;
+      const hasValue = typeof published === 'number';
+      return (
+        <span className="text-xs tabular-nums">
+          {hasValue ? format(new Date(published), 'yyyy.MM.dd', { locale: ko }) : ''}
+        </span>
+      );
+    },
+  },
+  {
     accessorKey: 'publishedAt',
     header: '개설일',
     size: 120,
     cell: ({ row }) => <span className="text-xs tabular-nums">{row.original.publishedAt}</span>,
   },
-  {
-    accessorKey: 'platform',
-    header: '플랫폼',
-    cell: ({ row }) =>
-      row.original.platform === 'youtube' ? (
-        <div className="flex items-center justify-center">
-          <button
-            className={'cursor-pointer'}
-            onClick={() => window.electronAPI.openExternal(row.original.link)}
-          >
-            <Youtube className="text-red-600" />
-          </button>
-        </div>
-      ) : (
-        <Badge variant="destructive">{row.original.platform}</Badge>
-      ),
-  },
+  // {
+  //   accessorKey: 'platform',
+  //   header: '플랫폼',
+  //   cell: ({ row }) =>
+  //     row.original.platform === 'youtube' ? (
+  //       <div className="flex items-center justify-center">
+  //         <button
+  //           className={'cursor-pointer'}
+  //           onClick={() => window.electronAPI.openExternal(row.original.link)}
+  //         >
+  //           <Youtube className="text-red-600" />
+  //         </button>
+  //       </div>
+  //     ) : (
+  //       <Badge variant="destructive">{row.original.platform}</Badge>
+  //     ),
+  // },
   {
     accessorKey: 'createdAt',
     header: '생성일',
@@ -166,7 +200,14 @@ export const CHANNELS_MODAL_COLUMNS: ColumnDef<ChannelColumns>[] = [
 export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
   {
     accessorKey: 'name',
-    header: '채널명',
+    header: () => (
+      <span>
+        <span className={'mr-1'}>채널명</span>
+        <Tip txt={'클릭시 링크이동'} triggerClssName={'translate-y-0.5'}>
+          <IconMoreInfo />
+        </Tip>
+      </span>
+    ),
     maxSize: 200,
     minSize: 170,
     cell: ({ row }) => (
@@ -175,16 +216,25 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
           <AvatarImage src={row.original.icon} />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
-        <p className="font-bold whitespace-break-spaces">{row.original.name}</p>
+        <Button
+          variant={'link'}
+          size={'sm'}
+          className={
+            'h-0 shrink cursor-pointer px-0 text-start text-xs font-semibold break-words whitespace-break-spaces'
+          }
+        >
+          {row.original.name}
+        </Button>
       </div>
     ),
   },
   {
     accessorKey: 'handle',
     header: '핸들',
+    maxSize: 120,
     cell: ({ row }) => (
       <p
-        className="cursor-pointer text-xs font-bold break-words"
+        className="cursor-pointer text-xs font-bold break-words whitespace-break-spaces"
         onClick={() => copyToClipboard(row.original.handle)}
       >
         {row.original.handle}
@@ -194,8 +244,8 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
   {
     accessorKey: 'tag',
     header: '태그',
-    maxSize: 200,
-    minSize: 170,
+    maxSize: 1000,
+    minSize: 200,
     cell: ({ row }) => {
       const tags = useTagStore.getState().jsonData;
       const cur = row.original.tag.split(',');
@@ -261,28 +311,42 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     ),
   },
   {
+    accessorKey: 'lastVideoPublishedAt',
+    header: '영상게시일',
+    size: 120,
+    cell: ({ row }) => {
+      const published = row.original.lastVideoPublishedAt;
+      const hasValue = typeof published === 'number';
+      return (
+        <span className="text-xs tabular-nums">
+          {hasValue ? format(new Date(published), 'yyyy.MM.dd', { locale: ko }) : ''}
+        </span>
+      );
+    },
+  },
+  {
     accessorKey: 'publishedAt',
     header: '개설일',
     size: 120,
     cell: ({ row }) => <span className="text-xs tabular-nums">{row.original.publishedAt}</span>,
   },
-  {
-    accessorKey: 'platform',
-    header: '플랫폼',
-    cell: ({ row }) =>
-      row.original.platform === 'youtube' ? (
-        <div className="items-center justify-center">
-          <button
-            className={'cursor-pointer'}
-            onClick={() => window.electronAPI.openExternal(row.original.link)}
-          >
-            <Youtube className="text-red-600" />
-          </button>
-        </div>
-      ) : (
-        <Badge variant="destructive">{row.original.platform}</Badge>
-      ),
-  },
+  // {
+  //   accessorKey: 'platform',
+  //   header: '플랫폼',
+  //   cell: ({ row }) =>
+  //     row.original.platform === 'youtube' ? (
+  //       <div className="items-center justify-center">
+  //         <button
+  //           className={'cursor-pointer'}
+  //           onClick={() => window.electronAPI.openExternal(row.original.link)}
+  //         >
+  //           <Youtube className="text-red-600" />
+  //         </button>
+  //       </div>
+  //     ) : (
+  //       <Badge variant="destructive">{row.original.platform}</Badge>
+  //     ),
+  // },
   {
     accessorKey: 'menu',
     header: '',

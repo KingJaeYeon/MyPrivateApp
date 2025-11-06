@@ -16,7 +16,7 @@ export async function fetchChannelsByHandle({
   try {
     const searchParams = {
       key: apiKey,
-      part: 'snippet,statistics',
+      part: 'snippet,statistics,contentDetails',
       forHandle: handles.join(','),
     };
 
@@ -33,25 +33,50 @@ export async function fetchChannelsByHandle({
   if (result.length === 0) {
     throw new Error('채널을 찾을 수 없습니다. 채널 핸들을 다시 확인하세요.');
   }
-  const channels: ChannelColumns[] = result.map((item: any) => ({
-    icon: item.snippet.thumbnails?.default?.url || '',
-    name: item.snippet.title,
-    channelId: item.id,
-    handle: item.snippet.customUrl || '',
-    tag: '',
-    publishedAt: format(item.snippet.publishedAt, 'yyyy.MM.dd'),
-    link: `https://www.youtube.com/channel/${item.id}`,
-    regionCode: item.snippet.country || '',
-    videoCount: parseInt(item.statistics.videoCount) || 0,
-    viewCount: parseInt(item.statistics.viewCount) || 0,
-    subscriberCount: parseInt(item.statistics.subscriberCount) || 0, // ✅ 구독자 수
-    memo: '',
-    fetchedAt: new Date().toISOString(),
-    createdAt: new Date().getTime(),
-    platform: 'youtube', //TODO: 하드코딩 임시 처리 && Enum 처리
-  }));
+  const channels: ChannelColumns[] = [];
 
+  for (const item of result) {
+    const lastVideoPublishedAt = await fetchLastPublishedAt({
+      apiKey,
+      upload: item.contentDetails.relatedPlaylists.uploads,
+    });
+
+    channels.push({
+      icon: item.snippet.thumbnails?.default?.url || '',
+      name: item.snippet.title,
+      channelId: item.id,
+      handle: item.snippet.customUrl || '',
+      tag: '',
+      publishedAt: format(item.snippet.publishedAt, 'yyyy.MM.dd'),
+      link: `https://www.youtube.com/channel/${item.id}`,
+      regionCode: item.snippet.country || '',
+      videoCount: parseInt(item.statistics.videoCount) || 0,
+      viewCount: parseInt(item.statistics.viewCount) || 0,
+      subscriberCount: parseInt(item.statistics.subscriberCount) || 0, // ✅ 구독자 수
+      memo: '',
+      fetchedAt: new Date().toISOString(),
+      createdAt: new Date().getTime(),
+      platform: 'youtube', //TODO: 하드코딩 임시 처리 && Enum 처리
+      lastVideoPublishedAt,
+    });
+  }
   return channels;
+}
+
+async function fetchLastPublishedAt({ apiKey, upload }: { apiKey: string; upload: string }) {
+  const searchParams: Record<string, any> = {
+    key: apiKey,
+    part: 'snippet,contentDetails',
+    playlistId: upload,
+    maxResults: 1,
+  };
+  const url = `${request_youtube.defaults.baseURL}/playlistItems?${new URLSearchParams(searchParams).toString()}`;
+  logApiRequest(url);
+  const { data } = await request_youtube.get('playlistItems', { params: searchParams });
+  await incrementQuota(1);
+
+  const latest = data?.items?.[0]?.snippet?.publishedAt;
+  return new Date(latest).getTime() ?? undefined;
 }
 
 // const statistics = {

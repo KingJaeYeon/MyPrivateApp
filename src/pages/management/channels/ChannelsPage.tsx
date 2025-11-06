@@ -32,6 +32,7 @@ export default function ChannelsPage() {
         columns={CHANNELS_COLUMNS}
         data={channels}
         isFixHeader={true}
+        name={'channels'}
         initialSorting={[{ id: 'createdAt', desc: true }]}
         tableControls={(table) => {
           return (

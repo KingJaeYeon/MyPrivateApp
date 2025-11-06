@@ -12,6 +12,8 @@ import ChartRender from '@/pages/management/channel-detail/components/ChartRende
 import { RelatedChannels } from '@/pages/management/channel-detail/components/RelatedChannels.tsx';
 import DateState from '@/pages/management/channel-detail/components/DateState.tsx';
 import { LucideExternalLink } from 'lucide-react';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
 
 export default function ChannelDetailPage() {
   const params = useParams();
@@ -66,6 +68,15 @@ export default function ChannelDetailPage() {
                         label={'동영상 수'}
                         seq={1}
                       />
+                      {channel.lastVideoPublishedAt !== undefined && (
+                        <ChannelStat
+                          value={format(new Date(channel.lastVideoPublishedAt), 'yyyy-MM-dd', {
+                            locale: ko,
+                          })}
+                          label={'마지막영상 갱신일'}
+                          seq={1}
+                        />
+                      )}
                     </div>
                   </div>
                 </div>

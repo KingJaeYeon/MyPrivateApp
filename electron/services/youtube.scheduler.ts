@@ -60,7 +60,32 @@ class YouTubeScheduler {
       throw error;
     }
   }
+  async fetchLastPublishedAt(upload: string) {
+    const apiKey = this.getAPIKey();
 
+    const params = new URLSearchParams({
+      key: apiKey,
+      part: 'snippet,contentDetails',
+      playlistId: upload,
+      maxResults: '1',
+    });
+    const url = `${this.baseURL}/channels?${params}`;
+    console.log(`📡 YouTube API 호출 (${url})`);
+    const response = await fetch(url);
+    const quota = configStore.get('settings.youtube.usedQuota', 0);
+    configStore.set('settings.youtube.usedQuota', Number(quota) + 1);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        `YouTube API Error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`
+      );
+    }
+    const data = await response.json();
+
+    const latest = data?.items?.[0]?.snippet?.publishedAt;
+    return new Date(latest).getTime() ?? undefined;
+  }
   // 채널 데이터 가져오기 (YouTube API)
   async fetchChannelData(channelIds: string[]): Promise<any[]> {
     const apiKey = this.getAPIKey();
@@ -77,7 +102,7 @@ class YouTubeScheduler {
       const batch = channelIds.slice(i, i + batchSize);
       usedQuota += 1;
       const params = new URLSearchParams({
-        part: 'snippet,statistics',
+        part: 'snippet,statistics,contentDetails',
         id: batch.join(','),
         key: apiKey,
       });
@@ -184,32 +209,38 @@ class YouTubeScheduler {
             videoCount: parseInt(item.statistics?.videoCount || '0'),
             icon: item.snippet?.thumbnails?.default?.url || '',
             name: item.snippet?.title || '',
+            upload: item.contentDetails.relatedPlaylists.uploads,
           },
         ])
       );
 
       // 5. 기존 데이터와 병합
       const timestamp = new Date().toISOString();
-      const updatedChannels = existingChannels.map((channel) => {
-        // 오늘 fetch 안 한 채널만 업데이트
-        if (channelIdsToFetch.includes(channel.channelId)) {
+      const updatedChannels = await Promise.all(
+        existingChannels.map(async (channel) => {
+          // 오늘 fetch 대상만 처리
+          if (!channelIdsToFetch.includes(channel.channelId)) return channel;
+
           const apiData = apiDataMap.get(channel.channelId);
+          if (!apiData) return channel;
 
-          if (apiData) {
-            return {
-              ...channel,
-              viewCount: apiData.viewCount,
-              subscriberCount: apiData.subscriberCount,
-              videoCount: apiData.videoCount,
-              icon: apiData.icon || channel.icon,
-              name: apiData.name || channel.name,
-              fetchedAt: timestamp,
-            };
+          let lastVideoPublishedAt = channel.lastVideoPublishedAt;
+
+          if (!lastVideoPublishedAt || channel.videoCount !== apiData.videoCount) {
+            lastVideoPublishedAt = await this.fetchLastPublishedAt(apiData.upload);
           }
-        }
-
-        return channel; // 오늘 이미 fetch했거나 API 응답 없으면 기존 데이터 유지
-      });
+          return {
+            ...channel,
+            viewCount: apiData.viewCount,
+            subscriberCount: apiData.subscriberCount,
+            videoCount: apiData.videoCount,
+            icon: apiData.icon || channel.icon,
+            name: apiData.name || channel.name,
+            fetchedAt: timestamp,
+            lastVideoPublishedAt,
+          };
+        })
+      );
 
       // 6. channels.xlsx 덮어쓰기
       const aoa = buildAoaFromObjects(updatedChannels, 'channel');

@@ -198,8 +198,8 @@ export function DataTable<TData, TValue>({
                   width: tableMeasure[1].width,
                 }}
               >
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <div className={'flex'} key={headerGroup.id}>
+                {table.getHeaderGroups().map((headerGroup, i) => (
+                  <div className={'flex'} key={'headerGroupFix' + i}>
                     {headerGroup.headers.map((h) => {
                       const canSort = h.column.getCanSort?.() ?? false;
                       const sortDir = h.column.getIsSorted?.(); // false | 'asc' | 'desc'
@@ -250,15 +250,15 @@ export function DataTable<TData, TValue>({
             <div className="absolute top-0 left-0 h-full w-full">
               <Table className="relative" ref={headerRef}>
                 <TableHeader className="bg-background z-10" ref={ref}>
-                  {table.getHeaderGroups().map((hg) => (
-                    <TableRow key={hg.id}>
-                      {hg.headers.map((h) => {
+                  {table.getHeaderGroups().map((hg, i) => (
+                    <TableRow key={'headerGroup' + i}>
+                      {hg.headers.map((h, i) => {
                         const canSort = h.column.getCanSort?.() ?? false;
                         const sortDir = h.column.getIsSorted?.(); // false | 'asc' | 'desc'
                         const onClick = h.column.getToggleSortingHandler?.();
                         return (
                           <TableHead
-                            key={h.id}
+                            key={'headerChild' + i}
                             headerKey={`${name}-${h.id}`}
                             onClick={canSort ? onClick : undefined}
                             className={cn(

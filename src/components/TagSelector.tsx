@@ -44,7 +44,7 @@ export default function TagSelector({
             <CommandEmpty>No Tag found.</CommandEmpty>
             <CommandGroup>
               <CommandItem
-                key="__clear__"
+                key="none"
                 value=""
                 className={cn(value === '' && 'bg-accent')}
                 onSelect={(currentValue) => {
@@ -54,9 +54,9 @@ export default function TagSelector({
               >
                 {'All Tags'}
               </CommandItem>
-              {tags.map((tag) => (
+              {tags.map((tag, i) => (
                 <CommandItem
-                  key={`${tag.name}-${tag.idx}`}
+                  key={i}
                   value={tag.name}
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? '' : currentValue);
