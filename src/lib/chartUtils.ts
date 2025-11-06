@@ -183,3 +183,77 @@ export function getOptimalDateFormat(dates: Date[]): {
     return { format: 'd일', interval: 1 }; // 일만
   }
 }
+
+/**
+ * 변화율 기반 Y축 포맷 전략 결정
+ */
+export function getYAxisFormatStrategy(
+  dataMin: number,
+  dataMax: number,
+  dataType?: 'videoCount' | 'subscriberCount' | 'viewCount'
+): {
+  useCompact: boolean;
+  changeRate: number;
+  threshold: number;
+} {
+  const thresholds = {
+    videoCount: 5,
+    subscriberCount: 3,
+    viewCount: 999, // 사실상 항상 포맷
+    default: 5,
+  };
+
+  // 🆕 절대값 기준 추가
+  const absoluteThreshold = 10000; // 10,000 이상이면 무조건 k/M/B
+
+  const threshold = dataType ? thresholds[dataType] : thresholds.default;
+  const range = dataMax - dataMin;
+  const changeRate = dataMin !== 0 ? (range / dataMin) * 100 : 100;
+
+  // 🆕 절대값이 크면 무조건 포맷
+  if (dataMax >= absoluteThreshold) {
+    return {
+      useCompact: true,
+      changeRate,
+      threshold,
+    };
+  }
+
+  return {
+    useCompact: changeRate >= threshold,
+    changeRate,
+    threshold,
+  };
+}
+
+/**
+ * 포맷된 라벨 중복 체크 및 소수점 자동 증가
+ */
+export function formatWithDuplicateCheck(
+  values: number[],
+  formatFn: (num: number, decimals?: number) => string
+): string[] {
+  let decimals = 1;
+  let formatted: string[] = [];
+  let maxTries = 3;
+
+  while (maxTries > 0) {
+    formatted = values.map((v) => formatFn(v, decimals));
+    const uniqueCount = new Set(formatted).size;
+
+    // 중복 없으면 성공
+    if (uniqueCount === formatted.length) {
+      break;
+    }
+
+    decimals++;
+    maxTries--;
+  }
+
+  // 여전히 중복이면 원본 숫자로 표시
+  if (new Set(formatted).size !== formatted.length) {
+    return values.map((v) => v.toLocaleString());
+  }
+
+  return formatted;
+}

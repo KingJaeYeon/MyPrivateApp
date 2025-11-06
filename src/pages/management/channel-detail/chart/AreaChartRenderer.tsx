@@ -9,8 +9,10 @@ import {
 import {
   calculateSmartScale,
   calculateXAxisTicks,
+  formatWithDuplicateCheck,
   getDataMinMax,
   getOptimalDateFormat,
+  getYAxisFormatStrategy,
 } from '@/lib/chartUtils.ts';
 import { useTheme } from '@/providers/theme-provider.tsx';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis } from 'recharts';
@@ -31,6 +33,15 @@ export default function AreaChartRenderer({ data, value, date, config, id }: Pro
   const { format: dateFormat } = getOptimalDateFormat(date);
   const xTicks = calculateXAxisTicks(data.length, 7);
   const { theme } = useTheme();
+
+  // 🆕 포맷 전략 결정
+  const formatStrategy = getYAxisFormatStrategy(min, max, 'viewCount'); // dataType 동적으로 전달
+
+  // 🆕 Y축 라벨 생성
+  const yAxisLabels = formatStrategy.useCompact
+    ? formatWithDuplicateCheck(scale.ticks, formatCompactNumber)
+    : scale.ticks.map((v) => v.toLocaleString());
+
   return (
     <div className="h-[300px] w-[100%]">
       <ResponsiveContainer width="100%" height="100%">
@@ -62,7 +73,7 @@ export default function AreaChartRenderer({ data, value, date, config, id }: Pro
               domain={[scale.min, scale.max]}
               ticks={scale.ticks}
               allowDataOverflow
-              tickFormatter={(value) => formatCompactNumber(value)}
+              tickFormatter={(value, index) => yAxisLabels[index] || value.toLocaleString()}
             />
             <ChartTooltip
               cursor={false}

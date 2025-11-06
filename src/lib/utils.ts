@@ -31,20 +31,23 @@ export const chunk = <T>(arr: T[], size: number) =>
   );
 
 /**
- * 숫자를 K, M, B, T 단위로 축약해서 반환
- * 예: 1500 → "1.5K", 2000000 → "2M"
+ * 숫자를 K, M, B, T 단위로 축약
+ * @param num 숫자
+ * @param decimals 소수점 자리수 (기본 1)
  */
-function formatCompactNumber(num: number): string {
+function formatCompactNumber(num: number, decimals: number = 1): string {
   if (num === null || num === undefined || isNaN(num)) return '0';
 
   const absNum = Math.abs(num);
   const sign = num < 0 ? '-' : '';
 
-  if (absNum >= 1_000_000_000_000) return `${sign}${(absNum / 1_000_000_000_000).toFixed(1)}T`;
-  if (absNum >= 1_000_000_000) return `${sign}${(absNum / 1_000_000_000).toFixed(1)}B`;
-  if (absNum >= 1_000_000) return `${sign}${(absNum / 1_000_000).toFixed(1)}M`;
-  if (absNum >= 1_000) return `${sign}${(absNum / 1_000).toFixed(1)}K`;
-  return `${sign}${absNum.toString()}`;
+  if (absNum >= 1_000_000_000_000)
+    return `${sign}${(absNum / 1_000_000_000_000).toFixed(decimals)}T`;
+  if (absNum >= 1_000_000_000) return `${sign}${(absNum / 1_000_000_000).toFixed(decimals)}B`;
+  if (absNum >= 1_000_000) return `${sign}${(absNum / 1_000_000).toFixed(decimals)}M`;
+  if (absNum >= 1_000) return `${sign}${(absNum / 1_000).toFixed(decimals)}K`;
+
+  return `${sign}${absNum.toLocaleString()}`;
 }
 
 function makeExcelFilename(prefixDate: string, filter: FilterUI, count: number) {
