@@ -57,7 +57,7 @@ function RenderList({ search }: { search: string }) {
   const { engWords, state } = useEnglishStore();
   const navigate = useNavigate();
   const { wordId } = useParams();
-  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const filteredWords = engWords.filter(

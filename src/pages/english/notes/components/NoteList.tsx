@@ -58,7 +58,7 @@ function RenderList({ search }: { search: string }) {
   const { engNotes, state } = useEnglishStore();
   const navigate = useNavigate();
   const { noteId } = useParams();
-  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const filteredNotes = engNotes.filter(
