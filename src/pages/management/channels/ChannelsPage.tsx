@@ -10,6 +10,8 @@ import TagSelector from '@/components/TagSelector.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
 import { useNavigate } from 'react-router-dom';
 import { useMemo, useState } from 'react';
+import { Search } from 'lucide-react';
+import { Input } from '@/components/ui/input.tsx';
 
 export default function ChannelsPage() {
   const { data } = useChannelStore();
@@ -26,6 +28,7 @@ export default function ChannelsPage() {
       return item.tag.split(',').includes(selectTag);
     });
   }, [data, selectTag]);
+
   return (
     <div className="flex h-full w-full flex-1 gap-5 px-4 pb-4">
       <DataTable<ChannelColumns, unknown>
@@ -37,7 +40,19 @@ export default function ChannelsPage() {
         tableControls={(table) => {
           return (
             <div className={'flex w-full justify-between'}>
-              <div className={'flex items-center gap-4'}>
+              <div className={'flex items-center gap-2'}>
+                <div className="relative">
+                  <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+                  <Input
+                    placeholder="검색..."
+                    value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      table.getColumn('name')?.setFilterValue(value);
+                    }}
+                    className="h-8 pl-9"
+                  />
+                </div>
                 <TagSelector
                   value={selectTag}
                   setValue={(tagName) => {
