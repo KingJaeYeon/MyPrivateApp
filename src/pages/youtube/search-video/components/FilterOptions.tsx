@@ -279,7 +279,7 @@ export function FilterOptions() {
                   onValueChange={(v) => setKeyword('regionCode', v as any)}
                 >
                   <SelectTrigger className="w-14 px-2" size={'sm'}>
-                    <img src={`/flag/${regionCode}.svg`} alt={'test'} />
+                    <img src={`./flag/${regionCode}.svg`} alt={'test'} />
                   </SelectTrigger>
                   <SelectContent className="min-w-40" align={'center'}>
                     <SelectGroup>
@@ -287,7 +287,7 @@ export function FilterOptions() {
                         const val = flag[v];
                         return (
                           <SelectItem key={val.slug} value={v}>
-                            <img src={`/flag/${v}.svg`} alt={val.language} className={'mr-1'} />{' '}
+                            <img src={`./flag/${v}.svg`} alt={val.language} className={'mr-1'} />{' '}
                             <span className="text-muted-foreground">{val['translation-ko']}</span>
                           </SelectItem>
                         );
