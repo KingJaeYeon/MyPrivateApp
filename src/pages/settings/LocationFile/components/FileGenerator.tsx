@@ -98,15 +98,15 @@ export function FileGenerator() {
         await window.excelApi.create(pathFiles.reference, [SheetKeys['reference']]);
       }
 
-      const hasResultDic = await window.fsApi.exists(pathDic.result.split('/')[1]);
+      const hasResultDic = await window.fsApi.exists(pathDic.result);
       if (!hasResultDic) {
         await window.fsApi.ensureDir(pathDic.result);
       }
-      const hasEnglishDic = await window.fsApi.exists(pathDic.english.split('/')[1]);
+      const hasEnglishDic = await window.fsApi.exists(pathDic.english);
       if (!hasEnglishDic) {
         await window.fsApi.ensureDir(pathDic.english);
       }
-      const hasEnglishImage = await window.fsApi.exists(pathDic.englishImage.split('/')[1]);
+      const hasEnglishImage = await window.fsApi.exists(pathDic.englishImage);
       if (!hasEnglishImage) {
         await window.fsApi.ensureDir(pathDic.englishImage);
       }
