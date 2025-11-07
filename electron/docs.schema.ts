@@ -56,7 +56,7 @@ const ResultSchema = {
   viewCount: 'number',
   viewsPerHour: 'number',
   subscriberCount: 'number',
-  viewsPerSubscribers: 'number', // number | null
+  viewsPerSubscriber: 'number', // number | null
   duration: 'string',
   link: 'string',
   channelId: 'string',

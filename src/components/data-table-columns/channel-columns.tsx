@@ -61,6 +61,7 @@ export const CHANNELS_MODAL_COLUMNS: ColumnDef<ChannelColumns>[] = [
           className={
             'h-0 shrink cursor-pointer px-0 text-start text-xs font-semibold break-words whitespace-break-spaces'
           }
+          onClick={() => window.electronAPI.openExternal(row.original.link)}
         >
           {row.original.name}
         </Button>
@@ -70,7 +71,8 @@ export const CHANNELS_MODAL_COLUMNS: ColumnDef<ChannelColumns>[] = [
   {
     accessorKey: 'handle',
     header: '핸들',
-    maxSize: 120,
+    size: 200,
+    minSize: 120,
     cell: ({ row }) => (
       <p
         className="cursor-pointer text-xs font-bold break-words whitespace-break-spaces"
@@ -221,6 +223,7 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
           className={
             'h-0 shrink cursor-pointer px-0 text-start text-xs font-semibold break-words whitespace-break-spaces'
           }
+          onClick={() => window.electronAPI.openExternal(row.original.link)}
         >
           {row.original.name}
         </Button>
@@ -230,7 +233,8 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
   {
     accessorKey: 'handle',
     header: '핸들',
-    maxSize: 120,
+    size: 200,
+    minSize: 120,
     cell: ({ row }) => (
       <p
         className="cursor-pointer text-xs font-bold break-words whitespace-break-spaces"
