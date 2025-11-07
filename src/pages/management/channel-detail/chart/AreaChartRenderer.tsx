@@ -29,7 +29,7 @@ type Props = {
 
 export default function AreaChartRenderer({ data, value, date, config, id }: Props) {
   const { min, max } = getDataMinMax(value);
-  const scale = calculateSmartScale(min, max);
+  const scale = calculateSmartScale(min, max, { excludeNegative: true });
   const { format: dateFormat } = getOptimalDateFormat(date);
   const xTicks = calculateXAxisTicks(data.length, 7);
   const { theme } = useTheme();

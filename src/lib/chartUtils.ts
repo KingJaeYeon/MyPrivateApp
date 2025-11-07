@@ -67,9 +67,15 @@ export function calculateSmartScale(
     desiredTicks?: number;
     padding?: number; // 0~1 (5% = 0.05)
     forceZero?: boolean; // 0을 포함할지
+    excludeNegative?: boolean; // 🆕 0 미만 tick 제외 여부
   }
 ): ScaleResult {
-  const { desiredTicks = 5, padding = 0.1, forceZero = false } = options || {};
+  const {
+    desiredTicks = 5,
+    padding = 0.1,
+    forceZero = false,
+    excludeNegative = false,
+  } = options || {};
 
   const range = dataMax - dataMin;
   const paddingValue = range * padding;
@@ -80,8 +86,18 @@ export function calculateSmartScale(
   if (forceZero && adjustedMin > 0) {
     adjustedMin = 0;
   }
+  // 🆕 0 미만 제외 옵션
+  if (excludeNegative && adjustedMin < 0) {
+    adjustedMin = 0;
+  }
 
-  return calculateYAxisScale(adjustedMin, adjustedMax, desiredTicks);
+  const scale = calculateYAxisScale(adjustedMin, adjustedMax, desiredTicks);
+
+  if (excludeNegative) {
+    scale.ticks = scale.ticks.filter((tick) => tick >= 0);
+    scale.min = Math.max(0, scale.min);
+  }
+  return scale;
 }
 
 /**

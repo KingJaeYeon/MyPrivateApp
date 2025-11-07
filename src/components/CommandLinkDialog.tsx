@@ -55,7 +55,11 @@ export function CommandLinkDialog() {
                 .map((item) => (
                   <CommandItem onSelect={() => handleSelect(item.url)} key={item.title}>
                     <route.icon />
-                    <span>{item.title}</span>
+                    <span>
+                      {item.prefix && item.prefix + ' '}
+                      {item.title}
+                      {item.suffix && ' ' + item.suffix}
+                    </span>
                   </CommandItem>
                 ))}
             </CommandGroup>
