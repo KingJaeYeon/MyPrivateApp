@@ -139,8 +139,7 @@ export const CHANNELS_MODAL_COLUMNS: ColumnDef<ChannelColumns>[] = [
   {
     accessorKey: 'memo',
     header: '메모',
-    maxSize: 400,
-    minSize: 100,
+    size: 400,
     cell: ({ row }) => (
       <Tip txt={row.original.memo} className="max-w-[400px]">
         <span className="ellipsisLine2 max-w-[300px] min-w-[100px] cursor-pointer text-xs break-words whitespace-normal">
@@ -208,7 +207,7 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
         </Tip>
       </span>
     ),
-    maxSize: 200,
+    maxSize: 220,
     minSize: 170,
     cell: ({ row }) => (
       <div className="flex items-center gap-2 py-2 text-xs">
@@ -300,8 +299,7 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
   {
     accessorKey: 'memo',
     header: '메모',
-    maxSize: 400,
-    minSize: 100,
+    size: 400,
     cell: ({ row }) => (
       <Tip txt={row.original.memo} className="max-w-[400px]">
         <span className="ellipsisLine2 max-w-[300px] min-w-[100px] cursor-pointer text-xs break-words whitespace-normal">

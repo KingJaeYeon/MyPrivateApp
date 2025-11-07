@@ -1,7 +1,6 @@
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useNavigate } from 'react-router-dom';
 import { IconEllipsis } from '@/assets/svg';
-import { Button } from '@/components/ui/button.tsx';
 
 export default function ColumnMenu({ data }: { data: any }) {
   const navigate = useNavigate();
@@ -13,9 +12,9 @@ export default function ColumnMenu({ data }: { data: any }) {
           e.stopPropagation();
         }}
       >
-        <Button variant={'ghost'} className={'text-muted-foreground' + ''}>
+        <button className={'text-muted-foreground cursor-pointer'}>
           <IconEllipsis />
-        </Button>
+        </button>
       </PopoverTrigger>
       <PopoverContent className="mt-[-0.5rem] w-24 p-1" align={'end'}>
         <div className="flex h-full w-full flex-col justify-between text-sm">
