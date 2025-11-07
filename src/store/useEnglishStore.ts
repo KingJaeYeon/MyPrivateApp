@@ -90,7 +90,7 @@ const useEnglishStore = create(
 
       set({ isChanged: false });
 
-      if (type === 'engNotes') {
+      if (type === 'engWords') {
         const jsonData = get().engWords.reduce(
           (acc, cur) => {
             acc[cur.id] = cur.word;
