@@ -26,7 +26,7 @@ export default function AlertModal({ onClose, data }: AlertModalProps) {
             />
           </AlertDialogTitle>
           <AlertDialogDescription
-            className={'text-0.5xs mt-3 px-1.5 text-center font-semibold text-white'}
+            className={'text-0.5xs text-foreground mt-3 px-1.5 text-center font-semibold'}
           >
             {data}
           </AlertDialogDescription>
