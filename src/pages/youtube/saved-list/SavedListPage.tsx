@@ -58,29 +58,32 @@ export default function SavedListPage() {
           <div className="flex flex-col gap-1 p-2">
             {savedFiles === null
               ? null
-              : savedFiles.map((fileName) => {
-                  const display = fileName.split('cid');
-                  const values = display[1].split('_');
-                  return (
-                    <button
-                      key={values[1]}
-                      onClick={() => setSelect({ fileName, label: values[1] })}
-                      className={cn(
-                        'flex flex-col gap-2 rounded-lg p-3 text-left transition-colors',
-                        'hover:bg-accent/50 active:bg-accent',
-                        fileName === select.fileName && 'text-destructive'
-                      )}
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="flex-1 truncate text-sm font-medium">{values[1]}</span>
-                      </div>
+              : savedFiles
+                  .slice()
+                  .reverse()
+                  .map((fileName) => {
+                    const display = fileName.split('cid');
+                    const values = display[1].split('_');
+                    return (
+                      <button
+                        key={values[1]}
+                        onClick={() => setSelect({ fileName, label: values[1] })}
+                        className={cn(
+                          'flex flex-col gap-2 rounded-lg p-3 text-left transition-colors',
+                          'hover:bg-accent/50 active:bg-accent',
+                          fileName === select.fileName && 'text-destructive'
+                        )}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="flex-1 truncate text-sm font-medium">{values[1]}</span>
+                        </div>
 
-                      <div className="text-muted-foreground flex items-center gap-2 text-xs">
-                        <span>{display[0].replace(/[\[\]]/g, '')}</span>
-                      </div>
-                    </button>
-                  );
-                })}
+                        <div className="text-muted-foreground flex items-center gap-2 text-xs">
+                          <span>{display[0].replace(/[\[\]]/g, '')}</span>
+                        </div>
+                      </button>
+                    );
+                  })}
           </div>
         </ScrollArea>
       </div>
