@@ -68,7 +68,7 @@ export function FileGenerator() {
         engNotes: `${location}/english/${folder.name.engNotes}`,
         prompt: `${location}/${folder.name.prompt}`,
         reference: `${location}/${folder.name.reference}`,
-        progress: `${location}/${folder.name.progress}`,
+        // progress: `${location}/${folder.name.progress}`,
       };
       const pathDic = {
         result: `${location}/${folder.name.result}`,
@@ -79,8 +79,6 @@ export function FileGenerator() {
       const hasTag = await window.fsApi.exists(pathFiles.tag);
       const hasChannel = await window.fsApi.exists(pathFiles.channel);
       const hasChannelHistory = await window.fsApi.exists(pathFiles.channelHistory);
-      const hasEngNotes = await window.fsApi.exists(pathFiles.engNotes);
-      const hasEngWords = await window.fsApi.exists(pathFiles.engWords);
       const hasPrompt = await window.fsApi.exists(pathFiles.prompt);
       const hasReference = await window.fsApi.exists(pathFiles.reference);
 
@@ -112,6 +110,9 @@ export function FileGenerator() {
       if (!hasEnglishImage) {
         await window.fsApi.ensureDir(pathDic.englishImage);
       }
+
+      const hasEngNotes = await window.fsApi.exists(pathFiles.engNotes);
+      const hasEngWords = await window.fsApi.exists(pathFiles.engWords);
       if (!hasEngNotes) {
         await window.excelApi.create(pathFiles.engNotes, [SheetKeys['engNotes']]);
       }
@@ -121,7 +122,8 @@ export function FileGenerator() {
       // const hasProgress = await window.fsApi.exists(`${location}/${name.progress}`)
       await updateIn('hasFile', true);
       openModal('alert', 'Excel 파일이 생성되었습니다');
-    } catch (e) {
+    } catch (e: any) {
+      console.log(e.message);
       toast.error('오류발생: 다시 시도해주세요.');
     }
   };
