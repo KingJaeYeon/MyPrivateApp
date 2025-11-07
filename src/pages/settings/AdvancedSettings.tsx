@@ -3,10 +3,12 @@ import { Button } from '@/components/ui/button';
 import { AlertTriangle } from 'lucide-react';
 import useSettingStore from '@/store/useSettingStore';
 import { useModalStore } from '@/store/modalStore.ts';
+import { useVideoSearchStore } from '@/store/useVideoSearchStore.ts';
 
 export function AdvancedSettings() {
   const { reset } = useSettingStore();
   const { openModal } = useModalStore();
+  const { resetFilter, clearResult, clearErrors } = useVideoSearchStore();
 
   const handleReset = () => {
     if (!confirm('모든 설정을 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
@@ -14,6 +16,9 @@ export function AdvancedSettings() {
     }
     try {
       reset();
+      resetFilter();
+      clearResult();
+      clearErrors();
       openModal('alert', '설정이 초기화되었습니다');
     } catch (e) {}
   };
