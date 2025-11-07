@@ -150,7 +150,7 @@ export function ActionsButtons() {
   };
 
   const onGetExcel = () => {
-    navigate('/');
+    navigate('/saved-list');
   };
 
   return (
