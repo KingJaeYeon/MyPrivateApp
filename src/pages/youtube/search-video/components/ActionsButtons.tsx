@@ -150,7 +150,7 @@ export function ActionsButtons() {
   };
 
   const onGetExcel = () => {
-    navigate('/saved-list');
+    navigate('/youtube/saved-list');
   };
 
   return (
