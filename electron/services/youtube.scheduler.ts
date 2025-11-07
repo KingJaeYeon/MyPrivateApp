@@ -69,7 +69,7 @@ class YouTubeScheduler {
       playlistId: upload,
       maxResults: '1',
     });
-    const url = `${this.baseURL}/channels?${params}`;
+    const url = `${this.baseURL}/playlistItems?${params}`;
     console.log(`📡 YouTube API 호출 (${url})`);
     const response = await fetch(url);
     const quota = configStore.get('settings.youtube.usedQuota', 0);
