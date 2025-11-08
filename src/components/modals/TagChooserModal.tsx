@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -9,6 +9,9 @@ import {
 import { Badge } from '@/components/ui/badge';
 import useTagStore from '@/store/useTagStore';
 import { toast } from 'sonner';
+import { Search } from 'lucide-react';
+import { Input } from '@/components/ui/input.tsx';
+import useDebounce from '@/hooks/use-debounce.ts';
 
 interface TagChooserModalProps {
   onClose: () => void;
@@ -23,6 +26,12 @@ export default function TagChooserModal({ onClose, data }: TagChooserModalProps)
 
   const { select: initialSelect, setSelect } = data;
   const { jsonData, data: tags } = useTagStore.getState();
+  const [search, setSearch] = useState('');
+  const debounce = useDebounce(search);
+
+  const displayTags = useMemo(() => {
+    return tags.filter((tag) => tag.name.toLowerCase().includes(debounce.toLowerCase()));
+  }, [debounce, tags]);
 
   // 모달 내부에서 선택 상태를 배열로 관리
   const [selectedTags, setSelectedTags] = useState<string[]>(() => {
@@ -78,8 +87,17 @@ export default function TagChooserModal({ onClose, data }: TagChooserModalProps)
           <DialogDescription>최대 5개까지 선택 가능합니다</DialogDescription>
         </DialogHeader>
 
+        <div className="relative">
+          <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+          <Input
+            placeholder="검색..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
         <div
-          className="mt-4 max-h-[60vh] space-y-4 overflow-y-auto"
+          className="max-h-[60vh] space-y-4 overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
           onPointerDown={(e) => e.stopPropagation()}
         >
@@ -104,19 +122,23 @@ export default function TagChooserModal({ onClose, data }: TagChooserModalProps)
           <div className="space-y-2">
             <p className="text-muted-foreground text-sm font-semibold">전체 태그:</p>
             <div className="flex flex-wrap gap-2">
-              {tags.map((tag) => {
-                const isSelected = selectedTags.includes(tag.idx.toString());
-                return (
-                  <Badge
-                    key={tag.idx}
-                    variant={isSelected ? 'green' : 'secondary'}
-                    className="cursor-pointer"
-                    onClick={(e) => handleTagClick(tag.idx.toString(), e)}
-                  >
-                    {tag.name}
-                  </Badge>
-                );
-              })}
+              {displayTags.length >= 1 ? (
+                displayTags.map((tag) => {
+                  const isSelected = selectedTags.includes(tag.idx.toString());
+                  return (
+                    <Badge
+                      key={tag.idx}
+                      variant={isSelected ? 'green' : 'secondary'}
+                      className="cursor-pointer"
+                      onClick={(e) => handleTagClick(tag.idx.toString(), e)}
+                    >
+                      {tag.name}
+                    </Badge>
+                  );
+                })
+              ) : (
+                <span className={'text-muted-foreground text-sm'}>태그를 찾을 수 없습니다.</span>
+              )}
             </div>
           </div>
         </div>
