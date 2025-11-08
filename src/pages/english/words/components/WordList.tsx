@@ -5,7 +5,7 @@ import useEnglishStore from '@/store/useEnglishStore.ts';
 import { useModalStore } from '@/store/modalStore.ts';
 import { cn } from '@/lib/utils.ts';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input.tsx';
 import useDebounce from '@/hooks/use-debounce.ts';
@@ -52,7 +52,6 @@ export function WordList() {
     </div>
   );
 }
-
 function RenderList({ search }: { search: string }) {
   const { engWords, state } = useEnglishStore();
   const navigate = useNavigate();
@@ -60,49 +59,57 @@ function RenderList({ search }: { search: string }) {
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  const filteredWords = engWords.filter(
-    (word) =>
-      word.word.toLowerCase().includes(search.toLowerCase()) ||
-      word.description?.toLowerCase().includes(search.toLowerCase())
-  );
+  // ✅ 정렬 + 검색 최적화
+  const filteredWords = useMemo(() => {
+    return [...engWords]
+      .sort((a, b) => {
+        const da = new Date(a.createdAt).getTime();
+        const db = new Date(b.createdAt).getTime();
+        return db - da; // 최신순
+      })
+      .filter(
+        (word) =>
+          word.word.toLowerCase().includes(search.toLowerCase()) ||
+          word.description?.toLowerCase().includes(search.toLowerCase())
+      );
+  }, [engWords, search]);
 
+  // ✅ URL 파라미터 기준으로 선택된 단어 인덱스 세팅
   useEffect(() => {
-    if (!wordId || !engWords.length) {
+    if (!wordId || !filteredWords.length) {
       setSelectedIndex(-1);
       return;
     }
 
-    const idx = engWords.findIndex((w) => w.id.toString() === wordId);
-    if (idx >= 0) {
-      setSelectedIndex(idx);
-    }
-  }, [wordId, engWords]);
+    const idx = filteredWords.findIndex((w) => w.id.toString() === wordId);
+    if (idx >= 0) setSelectedIndex(idx);
+  }, [wordId, filteredWords]);
 
-  // 키보드 이동
+  // ✅ 키보드 이동
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (state !== 'read') return;
-      if (!engWords.length) return;
+      if (!filteredWords.length) return;
+
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        const nextIndex = (selectedIndex + 1) % engWords.length;
+        const nextIndex = Math.min(selectedIndex + 1, filteredWords.length - 1);
         setSelectedIndex(nextIndex);
-        navigate(`/english/words/${engWords[nextIndex].id}`); // 바로 이동
+        navigate(`/english/words/${filteredWords[nextIndex].id}`);
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
-        const prevIndex = (selectedIndex - 1 + engWords.length) % engWords.length;
+        const prevIndex = Math.max(selectedIndex - 1, 0);
         setSelectedIndex(prevIndex);
-        navigate(`/english/words/${engWords[prevIndex].id}`); // 바로 이동
+        navigate(`/english/words/${filteredWords[prevIndex].id}`);
       }
     };
+
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [engWords, selectedIndex, navigate, state]);
+  }, [filteredWords, selectedIndex, navigate, state]);
 
-  // 선택 시 스크롤 자동 이동
+  // ✅ 선택된 카드 자동 스크롤
   useEffect(() => {
-    if (!cardRefs.current) return;
-
     const el = cardRefs.current[selectedIndex];
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, [selectedIndex]);
@@ -116,7 +123,7 @@ function RenderList({ search }: { search: string }) {
       {filteredWords.map((p, i) => (
         <Card
           ref={(el) => (cardRefs.current[i] = el)}
-          key={'word' + p.id}
+          key={`word-${p.id}`}
           onClick={() => {
             setSelectedIndex(i);
             navigate(`/english/words/${p.id}`);

@@ -5,7 +5,7 @@ import useEnglishStore from '@/store/useEnglishStore.ts';
 import { useModalStore } from '@/store/modalStore.ts';
 import { cn } from '@/lib/utils.ts';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import useDebounce from '@/hooks/use-debounce.ts';
@@ -53,7 +53,6 @@ export function NoteList() {
     </div>
   );
 }
-
 function RenderList({ search }: { search: string }) {
   const { engNotes, state } = useEnglishStore();
   const navigate = useNavigate();
@@ -61,46 +60,47 @@ function RenderList({ search }: { search: string }) {
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  const filteredNotes = engNotes.filter(
-    (note) =>
-      note.title.toLowerCase().includes(search.toLowerCase()) ||
-      note.description?.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredNotes = useMemo(() => {
+    return [...engNotes]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .filter(
+        (note) =>
+          note.title.toLowerCase().includes(search.toLowerCase()) ||
+          note.description?.toLowerCase().includes(search.toLowerCase())
+      );
+  }, [engNotes, search]);
 
   useEffect(() => {
-    if (!noteId || !engNotes.length) {
+    if (!noteId || !filteredNotes.length) {
       setSelectedIndex(-1);
       return;
     }
+    const idx = filteredNotes.findIndex((w) => w.id.toString() === noteId);
+    if (idx >= 0) setSelectedIndex(idx);
+  }, [noteId, filteredNotes]);
 
-    const idx = engNotes.findIndex((w) => w.id.toString() === noteId);
-    if (idx >= 0) {
-      setSelectedIndex(idx);
-    }
-  }, [noteId, engNotes]);
-
-  // 키보드 이동
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (state !== 'read') return;
-      if (!engNotes.length) return;
+      if (!filteredNotes.length) return;
+
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        const nextIndex = (selectedIndex + 1) % engNotes.length;
+        const nextIndex = (selectedIndex + 1) % filteredNotes.length;
         setSelectedIndex(nextIndex);
-        navigate(`/english/notes/${engNotes[nextIndex].id}`); // 바로 이동
+        navigate(`/english/notes/${filteredNotes[nextIndex].id}`);
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
-        const prevIndex = (selectedIndex - 1 + engNotes.length) % engNotes.length;
+        const prevIndex = (selectedIndex - 1 + filteredNotes.length) % filteredNotes.length;
         setSelectedIndex(prevIndex);
-        navigate(`/english/notes/${engNotes[prevIndex].id}`); // 바로 이동
+        navigate(`/english/notes/${filteredNotes[prevIndex].id}`);
       }
     };
+
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [engNotes, selectedIndex, navigate, state]);
+  }, [filteredNotes, selectedIndex, navigate, state]);
 
-  // 선택 시 스크롤 자동 이동
   useEffect(() => {
     const el = cardRefs.current[selectedIndex];
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
