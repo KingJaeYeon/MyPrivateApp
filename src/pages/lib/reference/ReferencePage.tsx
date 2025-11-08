@@ -10,6 +10,7 @@ import useTagStore from '@/store/useTagStore.ts';
 import useReferenceStore from '@/store/useReferenceStore.ts';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card.tsx';
 import ButtonSwitcher from '@/components/ButtonSwitcher.tsx';
+import { useNavigate } from 'react-router-dom';
 
 export default function ReferenceViewPage() {
   const [tagPopoverOpen, setTagPopoverOpen] = useState(false);
@@ -17,6 +18,7 @@ export default function ReferenceViewPage() {
   const [tagLogic, setTagLogic] = useState<string>('OR');
   const { jsonData, data: tags } = useTagStore();
   const { getData } = useReferenceStore();
+  const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState('');
   const debounceS = useDebounce(searchTerm);
@@ -168,7 +170,11 @@ export default function ReferenceViewPage() {
           </div>
 
           {/* Add 버튼 */}
-          <Button variant="default" className={'h-10'}>
+          <Button
+            variant="default"
+            className={'h-10'}
+            onClick={() => navigate('/lib/reference/edit')}
+          >
             Edit
           </Button>
         </div>
