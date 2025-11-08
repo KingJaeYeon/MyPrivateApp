@@ -11,6 +11,8 @@ import { CheckCircle2, FolderOpen } from 'lucide-react';
 import { Label } from '@/components/ui/label.tsx';
 import { Input } from '@/components/ui/input.tsx';
 import { Button } from '@/components/ui/button.tsx';
+import Tip from '@/components/Tip.tsx';
+import IconMoreInfo from '@/assets/svg/IconMoreInfo.tsx';
 
 export function LocationSetting() {
   const {
@@ -38,7 +40,12 @@ export function LocationSetting() {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label>폴더 경로</Label>
+          <div className={'flex items-start gap-1'}>
+            <Label>폴더 경로</Label>
+            <Tip txt={'경로를 변경하면 스케줄러가 자동 종료됩니다.'}>
+              <IconMoreInfo className={'mt-[-1px]'} />
+            </Tip>
+          </div>
           <div className="flex gap-2">
             <Input
               value={folder.location || '폴더를 선택하세요'}
