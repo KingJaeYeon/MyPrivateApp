@@ -3,18 +3,15 @@ import { DBSchema } from '../../../../../electron/docs.schema.ts';
 import useEnglishStore from '@/store/useEnglishStore.ts';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
 
 export default function PostHeader({
   data,
   onEdit,
   onChange,
-  refetch,
 }: {
   data: DBSchema['engNotes'];
   onEdit?: () => void;
   onChange: (type: string, value: string) => void;
-  refetch?: () => void;
 }) {
   const { state } = useEnglishStore();
   return (
@@ -35,31 +32,22 @@ export default function PostHeader({
           onChange={(e) => onChange('description', e.target.value)}
         />
       </div>
-      <ButtonRenderer data={data} onEdit={onEdit} refetch={refetch} />
+      <ButtonRenderer data={data} onEdit={onEdit} />
     </div>
   );
 }
 
-function ButtonRenderer({
-  data,
-  onEdit,
-  refetch,
-}: {
-  data: DBSchema['engNotes'];
-  onEdit?: () => void;
-  refetch?: () => void;
-}) {
+function ButtonRenderer({ data, onEdit }: { data: DBSchema['engNotes']; onEdit?: () => void }) {
   const { push, getData, remove, update, state, setState } = useEnglishStore();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+
   const onRemove = async () => {
     if (!confirm('삭제하시겠습니까?')) {
       return;
     }
+    navigate('/english/notes');
     remove('engNotes', [data.id]);
     toast.success('삭제되었습니다.');
-    await queryClient.setQueryData(['engNote', data.id], null);
-    navigate('/english/notes');
   };
 
   if (state === 'read')
@@ -90,7 +78,6 @@ function ButtonRenderer({
       });
       update('engNotes', temp);
       setState('read');
-      refetch && refetch();
       return;
     }
 

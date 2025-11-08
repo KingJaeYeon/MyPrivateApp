@@ -2,12 +2,11 @@ import PostHeader from '@/pages/english/words/components/PostHeader.tsx';
 import { useParams } from 'react-router-dom';
 import { useTheme } from '@/providers/theme-provider.tsx';
 import useEnglishStore from '@/store/useEnglishStore.ts';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import NotFound from '@/pages/NotFound.tsx';
 import { DBSchema } from '../../../../electron/docs.schema.ts';
 import MarkdownPreview from '@/components/MarkdownPreview.tsx';
 import MarkdownEditor from '@/components/MarkdownEditor.tsx';
-import { useQuery } from '@tanstack/react-query';
 
 const seed: DBSchema['engWords'] = {
   content: '',
@@ -24,23 +23,15 @@ export default function WordDetailPage() {
   const { getData, setState, state } = useEnglishStore();
   const [edit, setEdit] = useState<DBSchema['engWords']>(seed);
 
-  const { data, isPending, refetch } = useQuery({
-    queryKey: ['engWords', wordId],
-    queryFn: async () => {
-      console.log(getData('engWords'));
-      return getData('engWords').find((w) => w.id.toString() === wordId?.toString()) as
-        | DBSchema['engWords']
-        | undefined;
-    },
-  });
+  const data = useMemo(() => {
+    return getData('engWords').find((w) => w.id.toString() === wordId?.toString()) as
+      | DBSchema['engWords']
+      | undefined;
+  }, [wordId]);
 
   useEffect(() => {
     setState('read');
   }, [wordId]);
-
-  if (isPending) {
-    return <div>Loading...</div>;
-  }
 
   if (!data) {
     return <NotFound />;
@@ -58,12 +49,7 @@ export default function WordDetailPage() {
   return (
     <div data-color-mode={theme === 'dark' ? 'dark' : 'light'} className={'h-full space-y-4'}>
       {/* 헤더 */}
-      <PostHeader
-        data={state === 'edit' ? edit : data}
-        onEdit={onEdit}
-        onChange={onChangeValues}
-        refetch={refetch}
-      />
+      <PostHeader data={state === 'edit' ? edit : data} onEdit={onEdit} onChange={onChangeValues} />
       <div className="prose prose-sm dark:prose-invert flex h-[calc(100%-52px)] w-full max-w-none flex-1 border-t pt-2">
         {state === 'read' ? (
           <MarkdownPreview value={data.content} />

@@ -2,12 +2,11 @@ import PostHeader from '@/pages/english/notes/components/PostHeader.tsx';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTheme } from '@/providers/theme-provider.tsx';
 import useEnglishStore from '@/store/useEnglishStore.ts';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import NotFound from '@/pages/NotFound.tsx';
 import { DBSchema } from '../../../../electron/docs.schema.ts';
 import MarkdownPreview from '@/components/MarkdownPreview.tsx';
 import MarkdownEditor from '@/components/MarkdownEditor.tsx';
-import { useQuery } from '@tanstack/react-query';
 import { LinkedWordsEditor } from '@/pages/english/notes/components/LinkedWordsEditor.tsx';
 
 const seed: DBSchema['engNotes'] = {
@@ -27,22 +26,15 @@ export default function NoteDetailPage() {
   const [edit, setEdit] = useState<DBSchema['engNotes']>(seed);
   const navigate = useNavigate();
 
-  const { data, isPending, refetch } = useQuery({
-    queryKey: ['engNote', noteId],
-    queryFn: async () => {
-      return getData('engNotes').find((w) => w.id.toString() === noteId?.toString()) as
-        | DBSchema['engNotes']
-        | undefined;
-    },
-  });
+  const data = useMemo(() => {
+    return getData('engNotes').find((w) => w.id.toString() === noteId?.toString()) as
+      | DBSchema['engNotes']
+      | undefined;
+  }, [noteId]);
 
   useEffect(() => {
     setState('read');
   }, [noteId]);
-
-  if (isPending) {
-    return <div>Loading...</div>;
-  }
 
   if (!data) {
     return <NotFound />;
@@ -64,12 +56,7 @@ export default function NoteDetailPage() {
   return (
     <div data-color-mode={theme === 'dark' ? 'dark' : 'light'} className={'h-full space-y-4'}>
       {/* 헤더 */}
-      <PostHeader
-        data={state === 'edit' ? edit : data}
-        onEdit={onEdit}
-        onChange={onChangeValues}
-        refetch={refetch}
-      />
+      <PostHeader data={state === 'edit' ? edit : data} onEdit={onEdit} onChange={onChangeValues} />
       <div className="prose prose-sm dark:prose-invert flex h-[calc(100%-130px)] w-full max-w-none flex-1 border-t pt-2">
         {state === 'read' ? (
           <MarkdownPreview value={data.content} />
