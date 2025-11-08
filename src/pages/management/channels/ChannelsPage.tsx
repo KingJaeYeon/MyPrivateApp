@@ -62,6 +62,8 @@ export default function ChannelsPage() {
                   }}
                 />
                 <Badge>{`채널: ${table.getFilteredRowModel().rows.length}/${data.length}`}</Badge>
+                <Badge variant={'destructive'}>{`금일 업로드`}</Badge>
+                <Badge variant={'green'}>{`하루 전 업로드`}</Badge>
               </div>
               <div className={'flex gap-2'}>
                 <Button

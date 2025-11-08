@@ -5,10 +5,10 @@ import { Badge } from '@/components/ui/badge.tsx';
 import Tip from '@/components/Tip.tsx';
 import useTagStore from '@/store/useTagStore.ts';
 import ColumnMenu from '@/components/data-table-columns/ColumnMenu.tsx';
-import { formatNumber } from '@/lib/utils';
+import { cn, formatNumber } from '@/lib/utils';
 import { Button } from '@/components/ui/button.tsx';
 import IconMoreInfo from '@/assets/svg/IconMoreInfo.tsx';
-import { format } from 'date-fns';
+import { format, isToday, isYesterday } from 'date-fns';
 import { ko } from 'date-fns/locale';
 
 export type ChannelColumns = {
@@ -71,8 +71,7 @@ export const CHANNELS_MODAL_COLUMNS: ColumnDef<ChannelColumns>[] = [
   {
     accessorKey: 'handle',
     header: '핸들',
-    size: 200,
-    minSize: 120,
+    maxSize: 120,
     cell: ({ row }) => (
       <p
         className="cursor-pointer text-xs font-bold break-words whitespace-break-spaces"
@@ -157,8 +156,21 @@ export const CHANNELS_MODAL_COLUMNS: ColumnDef<ChannelColumns>[] = [
     cell: ({ row }) => {
       const published = row.original.lastVideoPublishedAt;
       const hasValue = typeof published === 'number';
+      let isTodayValue, isYesterdayValue;
+
+      if (hasValue) {
+        isTodayValue = isToday(new Date(published));
+        isYesterdayValue = isYesterday(new Date(published));
+      }
+
       return (
-        <span className="text-xs tabular-nums">
+        <span
+          className={cn(
+            'text-xs tabular-nums',
+            isTodayValue && 'text-destructive font-semibold',
+            isYesterdayValue && 'font-semibold text-green-500'
+          )}
+        >
           {hasValue ? format(new Date(published), 'yyyy.MM.dd', { locale: ko }) : ''}
         </span>
       );
@@ -233,8 +245,7 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
   {
     accessorKey: 'handle',
     header: '핸들',
-    size: 200,
-    minSize: 120,
+    maxSize: 120,
     cell: ({ row }) => (
       <p
         className="cursor-pointer text-xs font-bold break-words whitespace-break-spaces"
@@ -303,7 +314,7 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
   {
     accessorKey: 'memo',
     header: '메모',
-    size: 400,
+    size: 300,
     cell: ({ row }) => (
       <Tip txt={row.original.memo} className="max-w-[400px]">
         <span className="ellipsisLine2 max-w-[300px] min-w-[100px] cursor-pointer text-xs break-words whitespace-normal">
@@ -319,8 +330,21 @@ export const CHANNELS_COLUMNS: ColumnDef<ChannelColumns>[] = [
     cell: ({ row }) => {
       const published = row.original.lastVideoPublishedAt;
       const hasValue = typeof published === 'number';
+      let isTodayValue, isYesterdayValue;
+
+      if (hasValue) {
+        isTodayValue = isToday(new Date(published));
+        isYesterdayValue = isYesterday(new Date(published));
+      }
+
       return (
-        <span className="text-xs tabular-nums">
+        <span
+          className={cn(
+            'text-xs tabular-nums',
+            isTodayValue && 'text-destructive font-semibold',
+            isYesterdayValue && 'font-semibold text-green-500'
+          )}
+        >
           {hasValue ? format(new Date(published), 'yyyy.MM.dd', { locale: ko }) : ''}
         </span>
       );
