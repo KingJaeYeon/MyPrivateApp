@@ -11,7 +11,6 @@ import { CheckCircle2, FolderOpen } from 'lucide-react';
 import { Label } from '@/components/ui/label.tsx';
 import { Input } from '@/components/ui/input.tsx';
 import { Button } from '@/components/ui/button.tsx';
-import useInitializeStores from '@/hooks/use-initialize-stores.tsx';
 
 export function LocationSetting() {
   const {
@@ -19,13 +18,11 @@ export function LocationSetting() {
     updateIn,
   } = useSettingStore();
   const { handleStop } = useChannelsSchedule();
-  const { reload } = useInitializeStores();
 
   const handlePickFolder = async () => {
     const path = await window.electronAPI.pickFolder();
     if (path) {
       await updateIn('folder', { ...folder, location: path });
-      await reload();
     }
     handleStop();
   };
