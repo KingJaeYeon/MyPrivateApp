@@ -24,6 +24,7 @@ import NotesLayout from '@/pages/english/notes/NotesLayout.tsx';
 import NoteCreatePage from '@/pages/english/notes/NoteCreatePage.tsx';
 import NoteDetailPage from '@/pages/english/notes/NoteDetailPage.tsx';
 import DashboardPage from '@/pages/english/dashboard/DashboardPage.tsx';
+import ReferenceEditPage from '@/pages/lib/reference-edit/ReferenceEditPage.tsx';
 
 export const navigationRoutes: NavMainType = [
   {
@@ -83,6 +84,11 @@ export const navigationRoutes: NavMainType = [
       {
         title: 'Reference',
         url: '/lib/reference',
+      },
+      {
+        title: 'Edit',
+        url: '/lib/reference/edit',
+        suffix: 'Reference',
       },
     ],
   },
@@ -171,6 +177,7 @@ export const routes: RouteObject[] = [
           { index: true, element: <Navigate to="/lib/prompts" replace /> },
           { path: 'prompts', element: <PromptsPage /> },
           { path: 'reference', element: <ReferencePage /> },
+          { path: 'reference/edit', element: <ReferenceEditPage /> },
         ],
       },
       {

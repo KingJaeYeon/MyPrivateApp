@@ -13,6 +13,17 @@ export function Home() {
     >
       <Renderer width={width} />
       <div className={'absolute font-mono text-3xl text-green-500'}>WELCOME TO PRIVATE APP!!</div>
+      <div className={'absolute top-0 left-0 font-mono'}>
+        <div className={'text-2xl text-red-700'}>TODO:</div>
+        <p>English 게시물 삭제시 관련이미지 추적삭제</p>
+        <p>
+          비디오 페이지 - 좋아요 목록이랑 비슷한데 태그를 가지고 있고 체크된 비디오 리스트 원하는
+          구글계정에 바로 재생목록생성 되게
+        </p>
+        <p>폴더변경 시 바로바로 데이터 변경되게</p>
+        <p>레퍼런스페이지 View 페이지 - 테이블은 관리는 좋은데 보기 불편함</p>
+        <p>Task 페이지 - 할일 목록 정리/ 완료율 / 타이머 / 알림</p>
+      </div>
     </div>
   );
 }
