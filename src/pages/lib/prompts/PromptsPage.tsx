@@ -74,6 +74,7 @@ export default function PromptsPage() {
           enableRowClickSelection={true}
           enableMultiRowSelection={isDeleting}
           onSelectedRow={onSelectHandler}
+          initialSorting={[{ id: 'createdAt', desc: true }]}
           tableControls={(table) => {
             const onFilterChange = (value: string) => {
               // 이전 필터 값 초기화

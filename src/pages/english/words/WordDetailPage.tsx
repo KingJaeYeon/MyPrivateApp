@@ -14,7 +14,7 @@ const seed: DBSchema['engWords'] = {
   description: '',
   word: '',
   updatedAt: new Date().toLocaleString(),
-  createdAt: new Date().toLocaleString(),
+  createdAt: new Date().getTime(),
   id: '',
 };
 
@@ -27,6 +27,7 @@ export default function WordDetailPage() {
   const { data, isPending, refetch } = useQuery({
     queryKey: ['engWords', wordId],
     queryFn: async () => {
+      console.log(getData('engWords'));
       return getData('engWords').find((w) => w.id.toString() === wordId?.toString()) as
         | DBSchema['engWords']
         | undefined;

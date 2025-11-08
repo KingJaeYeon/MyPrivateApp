@@ -12,7 +12,7 @@ const seed: DBSchema['engNotes'] = {
   title: '',
   linkedWordIds: '',
   updatedAt: new Date().toLocaleString(),
-  createdAt: new Date().toLocaleString(),
+  createdAt: new Date().getTime(),
   id: '',
 };
 

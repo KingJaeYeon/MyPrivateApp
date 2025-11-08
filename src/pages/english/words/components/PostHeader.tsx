@@ -3,6 +3,7 @@ import { DBSchema } from '../../../../../electron/docs.schema.ts';
 import useEnglishStore from '@/store/useEnglishStore.ts';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function PostHeader({
   data,
@@ -50,13 +51,14 @@ function ButtonRenderer({
 }) {
   const { push, getData, remove, update, state, setState } = useEnglishStore();
   const navigate = useNavigate();
-
-  const onRemove = () => {
+  const queryClient = useQueryClient();
+  const onRemove = async () => {
     if (!confirm('삭제하시겠습니까?')) {
       return;
     }
     remove('engWords', [data.id]);
     toast.success('삭제되었습니다.');
+    await queryClient.setQueryData(['engWords', data.id], null);
     navigate('/english/words');
   };
 

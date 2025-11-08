@@ -74,6 +74,7 @@ export default function ReferenceEditPage() {
           isEdit={isDeleting}
           enableRowClickSelection={true}
           enableMultiRowSelection={isDeleting}
+          initialSorting={[{ id: 'createdAt', desc: true }]}
           onSelectedRow={onSelectHandler}
           tableControls={(table) => {
             const onFilterChange = (value: string) => {

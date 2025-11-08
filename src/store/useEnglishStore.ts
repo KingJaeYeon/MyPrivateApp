@@ -69,7 +69,11 @@ const useEnglishStore = create(
 
     push: (type, obj) => {
       const currentData = get()[type];
-      const newArr = [...currentData, obj as any];
+
+      const updatedAt = new Date().toLocaleString();
+      const createdAt = new Date().getTime();
+      const temp = { ...obj, updatedAt, createdAt };
+      const newArr = [...currentData, temp as any];
       set({ [type]: newArr, isChanged: true });
       return true;
     },

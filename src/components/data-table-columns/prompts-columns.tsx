@@ -122,4 +122,13 @@ export const PROMPTS_COLUMNS: ColumnDef<PromptsColumns>[] = [
       </Tip>
     ),
   },
+  {
+    accessorKey: 'createdAt',
+    header: '생성일',
+    sortingFn: (a, b) => {
+      const da = new Date(a.getValue('createdAt')).getTime();
+      const db = new Date(b.getValue('createdAt')).getTime();
+      return da - db;
+    },
+  },
 ];

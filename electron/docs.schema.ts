@@ -104,7 +104,7 @@ const EngWordsSchema = {
   word: 'string',
   description: 'string',
   content: 'string', // 마크다운
-  createdAt: 'string',
+  createdAt: 'number',
   updatedAt: 'string',
 } as const;
 
@@ -115,7 +115,7 @@ const EngNotesSchema = {
   description: 'string',
   content: 'string', // 마크다운
   linkedWordIds: 'string',
-  createdAt: 'string',
+  createdAt: 'number',
   updatedAt: 'string',
 } as const;
 

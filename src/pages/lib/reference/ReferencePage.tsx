@@ -56,7 +56,11 @@ export default function ReferenceViewPage() {
   };
 
   const reference = useMemo(() => {
-    const data = getData();
+    const data = getData().sort((a, b) => {
+      const da = new Date(a.createdAt).getTime();
+      const db = new Date(b.createdAt).getTime();
+      return db - da;
+    });
 
     return data.filter((item) => {
       // 1. 검색어 필터 (name 또는 memo에 포함)
