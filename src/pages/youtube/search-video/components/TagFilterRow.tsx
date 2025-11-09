@@ -187,7 +187,10 @@ function TagSelector({
               <div className={'absolute h-full w-full'}>
                 <div className="flex h-full w-full flex-1 flex-col rounded-md border px-4">
                   {selectedChannels.map((channel) => (
-                    <div className={'flex w-full items-center justify-between border-b py-2'}>
+                    <div
+                      key={channel.channelId}
+                      className={'flex w-full items-center justify-between border-b py-2'}
+                    >
                       <span
                         className="flex flex-1 items-center gap-1 py-2 text-xs tabular-nums"
                         key={channel.channelId}
@@ -198,7 +201,7 @@ function TagSelector({
                         </Avatar>
                         <p className={'font-bold'}>{channel.name}</p>
                       </span>
-                      <div className={'flex max-w-[180px] gap-0.5 text-end'}>
+                      <div className={'flex max-w-[180px] flex-wrap justify-end gap-0.5'}>
                         {channel.tag.split(',')[0] === '' ? (
                           <Badge variant="destructive" key={'none'} size={'sm'}>
                             N/A

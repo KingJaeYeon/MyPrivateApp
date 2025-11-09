@@ -70,13 +70,17 @@ async function fetchLastPublishedAt({ apiKey, upload }: { apiKey: string; upload
     playlistId: upload,
     maxResults: 1,
   };
-  const url = `${request_youtube.defaults.baseURL}/playlistItems?${new URLSearchParams(searchParams).toString()}`;
-  logApiRequest(url);
-  const { data } = await request_youtube.get('playlistItems', { params: searchParams });
-  await incrementQuota(1);
-
-  const latest = data?.items?.[0]?.snippet?.publishedAt;
-  return new Date(latest).getTime() ?? undefined;
+  try {
+    const url = `${request_youtube.defaults.baseURL}/playlistItems?${new URLSearchParams(searchParams).toString()}`;
+    logApiRequest(url);
+    const { data } = await request_youtube.get('playlistItems', { params: searchParams });
+    const latest = data?.items?.[0]?.snippet?.publishedAt;
+    return new Date(latest).getTime() ?? undefined;
+  } catch (e) {
+    return undefined;
+  } finally {
+    await incrementQuota(1);
+  }
 }
 
 // const statistics = {

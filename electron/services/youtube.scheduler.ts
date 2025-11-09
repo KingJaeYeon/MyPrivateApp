@@ -75,6 +75,12 @@ class YouTubeScheduler {
     const quota = configStore.get('settings.youtube.usedQuota', 0);
     configStore.set('settings.youtube.usedQuota', Number(quota) + 1);
 
+    // 404는 영상 없음으로 처리
+    if (response.status === 404) {
+      console.warn(`⚠️ 재생목록 비어있음 또는 비공개: ${upload}`);
+      return undefined;
+    }
+
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(
@@ -86,6 +92,7 @@ class YouTubeScheduler {
     const latest = data?.items?.[0]?.snippet?.publishedAt;
     return new Date(latest).getTime() ?? undefined;
   }
+
   // 채널 데이터 가져오기 (YouTube API)
   async fetchChannelData(channelIds: string[]): Promise<any[]> {
     const apiKey = this.getAPIKey();
@@ -222,12 +229,18 @@ class YouTubeScheduler {
           if (!channelIdsToFetch.includes(channel.channelId)) return channel;
 
           const apiData = apiDataMap.get(channel.channelId);
+          console.log('apiData::', apiData);
           if (!apiData) return channel;
 
           let lastVideoPublishedAt = channel.lastVideoPublishedAt;
 
           if (!lastVideoPublishedAt || channel.videoCount !== apiData.videoCount) {
-            lastVideoPublishedAt = await this.fetchLastPublishedAt(apiData.upload);
+            const res = await this.fetchLastPublishedAt(apiData.upload);
+            if (res === undefined) {
+              lastVideoPublishedAt = channel.lastVideoPublishedAt;
+            } else {
+              lastVideoPublishedAt = res;
+            }
           }
           return {
             ...channel,

@@ -90,26 +90,30 @@ async function fetchVideoIds({
     maxResults: 50,
     ...(pageToken && { pageToken }),
   };
-  const url = `${request_youtube.defaults.baseURL}/playlistItems?${new URLSearchParams(searchParams).toString()}`;
-  logApiRequest(url);
-  const { data } = await request_youtube.get('playlistItems', { params: searchParams });
-  await incrementQuota(1);
+  try {
+    const url = `${request_youtube.defaults.baseURL}/playlistItems?${new URLSearchParams(searchParams).toString()}`;
+    logApiRequest(url);
+    const response = await request_youtube.get('playlistItems', { params: searchParams });
+    const pItem = response?.data?.items ?? [];
+    if (pItem.length === 0) return { newPageToken: undefined, vIds: [], total: 0 };
 
-  const pItem = data?.items ?? [];
-  if (pItem.length === 0) return { newPageToken: undefined, vIds: [], total: 0 };
+    let newPageToken = response?.data.nextPageToken as string | undefined;
+    const vIds: string[] = [];
 
-  let newPageToken = data.nextPageToken as string | undefined;
-  const vIds: string[] = [];
-
-  for (const { contentDetails } of pItem) {
-    if (contentDetails.videoPublishedAt <= publishedAfter) {
-      newPageToken = undefined;
-      break;
+    for (const { contentDetails } of pItem) {
+      if (contentDetails.videoPublishedAt <= publishedAfter) {
+        newPageToken = undefined;
+        break;
+      }
+      vIds.push(contentDetails.videoId);
     }
-    vIds.push(contentDetails.videoId);
-  }
 
-  return { newPageToken, vIds, total: data.pageInfo.totalResults };
+    return { newPageToken, vIds, total: response?.data.pageInfo.totalResults };
+  } catch (error) {
+    return { newPageToken: undefined, vIds: [], total: 0 };
+  } finally {
+    await incrementQuota(1);
+  }
 }
 
 async function fetchVideos({ apiKey, vIds }: { apiKey: string; vIds: string[] }): Promise<any[]> {
