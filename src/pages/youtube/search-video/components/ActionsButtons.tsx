@@ -19,6 +19,7 @@ import { ko } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
 import { useModalStore } from '@/store/modalStore.ts';
 import { Input } from '@/components/ui/input.tsx';
+import { youtubeAbort } from '@/lib/abortController.ts';
 
 export function ActionsButtons() {
   const {
@@ -113,6 +114,7 @@ export function ActionsButtons() {
   const onStop = () => {
     // 실제 취소 토큰과 연결 예정이면 여기에서 처리
     Log.requestStop();
+    youtubeAbort.abort(); // ✅ 수정
     Log.stopped();
   };
 

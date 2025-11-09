@@ -8,6 +8,7 @@ import { ChannelPayload } from '@/schemas/filter.schema.ts';
 import useChannelStore from '@/store/useChannelStore.ts';
 import { incrementQuota, logApiRequest } from '@/lib/log.ts';
 import { chunk } from '@/lib/utils.ts';
+import { youtubeAbort } from '@/lib/abortController.ts';
 
 // ── 필터링 헬퍼 함수들 ──
 function filterByVph(items: any[], minVph: number) {
@@ -213,14 +214,28 @@ export async function getVideosByChannels({
   const uploads = await fetchPlaylistIds({ apiKey, channelIds });
   const collected: VideoRow[] = [];
 
+  youtubeAbort.reset(); // ✅ 추가
+
   for (const upload of uploads) {
     let pageToken: string | undefined = undefined;
+
+    // ✅ 추가: 새 채널 요청 전 중단 체크
+    if (youtubeAbort.isAborted()) {
+      console.log('⏸️ 중단 신호 감지, 수집 중단');
+      break;
+    }
 
     if (isPopularVideosOnly) {
       // 모든 페이지 수집 후 필터링
       const allVideos: any[] = [];
 
       do {
+        // ✅ 추가: 페이지 요청 전 중단 체크
+        if (youtubeAbort.isAborted()) {
+          console.log('⏸️ 중단됨, 현재까지 수집한 영상 처리 중...');
+          break;
+        }
+
         const { vIds, newPageToken } = await fetchVideoIds({
           apiKey,
           upload,
@@ -243,6 +258,12 @@ export async function getVideosByChannels({
     } else {
       const allVideos: any[] = [];
 
+      // ✅ 추가: 페이지 요청 전 중단 체크
+      if (youtubeAbort.isAborted()) {
+        console.log('⏸️ 중단됨, 현재까지 수집한 영상 처리 중...');
+        break;
+      }
+
       while (allVideos.length < maxChannels) {
         const { vIds, newPageToken } = await fetchVideoIds({
           apiKey,
@@ -261,6 +282,7 @@ export async function getVideosByChannels({
 
         if (!pageToken) break;
       }
+      // ✅ allVideos에 있는 것은 마저 처리
       const rows = toRowsWithSubscribers(allVideos.slice(0, maxChannels));
       collected.push(...rows);
     }

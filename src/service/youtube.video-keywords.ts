@@ -6,6 +6,7 @@ import { VideoRow } from '@/components/data-table-columns/result-columns.tsx';
 import { KeywordPayload } from '@/schemas/filter.schema.ts';
 import { incrementQuota, logApiRequest } from '@/lib/log.ts';
 import { ChannelColumns } from '@/components/data-table-columns/channel-columns.tsx';
+import { youtubeAbort } from '@/lib/abortController.ts';
 
 type FetchVideosParams = {
   apiKey: string;
@@ -238,7 +239,14 @@ export async function getVideoByKeywords({
   const MAX_REQUESTS = 20; // 무한루프방지
   let requestCount = 0;
 
+  youtubeAbort.reset(); // ✅ 추가
+
   while (requestCount < MAX_REQUESTS) {
+    if (youtubeAbort.isAborted()) {
+      console.log('⏸️ 중단 신호 감지, 수집 중단');
+      break;
+    }
+
     // VPH 빠른 검사 (있으면 조기 종료)
     if (minViewsPerHour > 0 && collected.length > 0) {
       const quick = quickVphPass({ list: collected, minVph: minViewsPerHour, maxResults });
