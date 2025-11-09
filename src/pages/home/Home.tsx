@@ -1,11 +1,13 @@
 import { useTheme } from '@/providers/theme-provider.tsx';
 import RobotSkinned, { RobotSkinnedRef } from './RobotSkinned';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import useMeasure from 'react-use-measure';
 import { Button } from '@/components/ui/button.tsx';
+import { cn } from '@/lib/utils.ts';
 
 export function Home() {
   const [ref1, { width }] = useMeasure();
+  const [isShow, setIsShow] = useState(true);
   return (
     <div
       ref={ref1}
@@ -21,6 +23,23 @@ export function Home() {
           구글계정에 바로 재생목록생성 되게
         </p>
         <p>Task 페이지 - 할일 목록 정리/ 완료율 / 타이머 / 알림</p>
+        <div className={cn('flex w-[200px] flex-col', isShow ? 'flex' : 'hidden')}>
+          <img src={'./AQR.png'} alt={'aqr.png'} width={'200px'} />
+          <Button
+            variant={'ghost'}
+            className={'btn-submit cursor-pointer text-sm'}
+            onClick={() => window.electronAPI.openExternal('https://aq.gy/f/lcX5G')}
+          >
+            커피 한잔만 기부하로가기 😍
+          </Button>
+          <Button
+            onClick={() => setIsShow(false)}
+            variant={'secondary'}
+            className={'w-full cursor-pointer text-sm hover:underline'}
+          >
+            뭔놈의 커피야. 꺼지쇼 😱
+          </Button>
+        </div>
       </div>
     </div>
   );
