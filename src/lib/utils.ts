@@ -50,8 +50,12 @@ function formatCompactNumber(num: number, decimals: number = 1): string {
   return `${sign}${absNum.toLocaleString()}`;
 }
 
-function makeExcelFilename(prefixDate: string, filter: FilterUI, count: number) {
-  const parts: string[] = [`cid_${createCid()}`, `mode-${filter.mode}`, `data-${count}`];
+function makeExcelFilename(prefixDate: string, filter: FilterUI, count: number, cid?: string) {
+  const parts: string[] = [
+    `cid_${!!cid ? cid : createCid()}`,
+    `mode-${filter.mode}`,
+    `data-${count}`,
+  ];
 
   if (filter.mode === 'keywords') {
     parts.push(`kw-${filter.keyword.replace(/\s+/g, '-')}`);

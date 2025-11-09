@@ -18,6 +18,7 @@ import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
 import { useModalStore } from '@/store/modalStore.ts';
+import { Input } from '@/components/ui/input.tsx';
 
 export function ActionsButtons() {
   const {
@@ -116,11 +117,16 @@ export function ActionsButtons() {
   };
 
   const onSaveExcel = async () => {
-    if (isChanged) {
-      if (confirm('현재 필터 설정을 기반으로 파일 이름이 저장됩니다.\n내용을 저장하시겠습니까?')) {
+    openModal('confirm', {
+      message: '현재 필터 설정을 기반으로 파일 이름이 저장됩니다.\n내용을 저장하시겠습니까?',
+      content: () => {
+        return <Input placeholder={'파일이름(기본값 랜덤문자열)'} id={'confirmInput'} />;
+      },
+      onConfirm: async () => {
         try {
-          await saved();
-          const date = new Date('2023-12-03T09:00:00');
+          const input = document.getElementById('confirmInput') as HTMLInputElement;
+          await saved(input.value);
+          const date = new Date();
           const formatted = format(date, 'yyyy년 MM월 dd일 (EEE) a h:mm', { locale: ko });
           toast('엑셀파일 생성완료', {
             description: formatted,
@@ -129,24 +135,13 @@ export function ActionsButtons() {
               onClick: () => window.electronAPI.openFolder(`${location}/${name.result}`),
             },
           });
-        } catch (e) {}
-      }
-    } else {
-      if (confirm('저장하시겠습니까?')) {
-        try {
-          await saved();
-          const date = new Date('2023-12-03T09:00:00');
-          const formatted = format(date, 'yyyy년 MM월 dd일 (EEE) a h:mm', { locale: ko });
-          toast('엑셀파일 생성완료', {
-            description: formatted,
-            action: {
-              label: 'Folder',
-              onClick: () => window.electronAPI.openFolder(`${location}/${name.result}`),
-            },
-          });
-        } catch (e) {}
-      }
-    }
+          return true;
+        } catch (e) {
+          toast.error('종료 후 다시 시도해주세요.');
+          return false;
+        }
+      },
+    });
   };
 
   const onGetExcel = () => {

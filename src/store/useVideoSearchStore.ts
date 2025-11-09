@@ -42,7 +42,7 @@ type ResultSlice = {
   result: { data: VideoRow[]; meta?: any };
   setResult: (rows: VideoRow[]) => void;
   clearResult: () => void;
-  saved: () => Promise<void>;
+  saved: (cid?: string) => Promise<void>;
 };
 
 type ErrorSlice = {
@@ -161,7 +161,7 @@ export const useVideoSearchStore = create<VideoSearchState>()(
         result: { data: [], meta: undefined },
         setResult: (rows) => set({ result: { data: rows }, isChanged: false }, false, 'result:set'),
         clearResult: () => set({ result: { data: [] }, isChanged: false }, false, 'result:clear'),
-        saved: async () => {
+        saved: async (cid?: string) => {
           const { name, location, exportFile } = useSettingStore.getState().data.folder;
           const aoa = buildAoaFromObjects(get().result.data, 'result');
           const prefix =
@@ -169,7 +169,7 @@ export const useVideoSearchStore = create<VideoSearchState>()(
               ? format(new Date(), 'yyyy-MM-dd')
               : format(new Date(), 'yyyy-MM-dd HH:mm');
           const payload = get().getFilterPayload();
-          const fileName = makeExcelFilename(prefix, payload, get().result.data.length);
+          const fileName = makeExcelFilename(prefix, payload, get().result.data.length, cid);
           await window.excelApi.overwrite(`${location}/${name.result}/${fileName}`, aoa, 'Sheet1');
         },
         // -------- Error
