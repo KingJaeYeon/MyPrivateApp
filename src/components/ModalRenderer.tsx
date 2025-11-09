@@ -6,6 +6,7 @@ import AlertModal from '@/components/modals/AlertModal.tsx';
 import FileResultModal from '@/components/modals/FileResultModal.tsx';
 import TagChooserModal from '@/components/modals/TagChooserModal.tsx';
 import { animated, config, useTransition } from '@react-spring/web';
+import CoffeModal from '@/components/modals/CoffeModal.tsx';
 
 export default function ModalRenderer() {
   const { type, isOpen, closeModal, data, resultData } = useModalStore();
@@ -28,6 +29,7 @@ export default function ModalRenderer() {
     alert: <AlertModal onClose={closeModal} data={data} />,
     result: <FileResultModal onClose={closeModal} data={resultData} />,
     tagChooser: <TagChooserModal onClose={closeModal} data={data} />,
+    coffee: <CoffeModal onClose={closeModal} />,
   };
 
   return transitions((style, item) =>

@@ -1,4 +1,4 @@
-import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut } from 'lucide-react';
+import { ChevronsUpDown, CoffeeIcon, LogOut, LucideMail } from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -16,6 +16,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { useModalStore } from '@/store/modalStore.ts';
 
 export function NavUser({
   user,
@@ -27,7 +28,9 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
-
+  const { openModal } = useModalStore();
+  const email = 'wodus331@gmail.com';
+  const body = `버그 제보 감사합니다. 아래에 내용을 써주세요. 사진까지 넣어주시면 정말 도움이 됩니다.`;
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -69,16 +72,17 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <BadgeCheck />
-                Account
+                <LucideMail />
+                <span
+                  className={'text-destructive'}
+                  onClick={() => window.electronAPI.openExternal(`mailto:${email}?body=${body}`)}
+                >
+                  버그 제보하기
+                </span>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
+              <DropdownMenuItem onClick={() => openModal('coffee')}>
+                <CoffeeIcon />
+                커피한잔만 먹고싶어요
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
