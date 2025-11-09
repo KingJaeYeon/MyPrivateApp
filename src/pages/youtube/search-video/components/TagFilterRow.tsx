@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/sheet.tsx';
 import { cn } from '@/lib/utils.ts';
 import useTagStore from '@/store/useTagStore.ts';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Label } from '@/components/ui/label.tsx';
 import ButtonSwitcher from '@/components/ButtonSwitcher.tsx';
 import { Alert, AlertTitle } from '@/components/ui/alert.tsx';
@@ -23,6 +23,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
 import { ChannelColumns } from '@/components/data-table-columns/channel-columns.tsx';
 import { useVideoSearchStore } from '@/store/useVideoSearchStore.ts';
 import { useChannelPair, useTagsPair } from '@/hooks/useVideoSearchSelectors.tsx';
+import { Search } from 'lucide-react';
+import { Input } from '@/components/ui/input.tsx';
+import useDebounce from '@/hooks/use-debounce.ts';
 
 export function TagFilterRow() {
   const { tagKey, tagLogic } = useTagsPair();
@@ -93,6 +96,8 @@ function TagSelector({
   const [tempTags, setTempTags] = useState<string[]>(selectedTags);
   const [open, setOpen] = useState(false);
   const { setChannel } = useVideoSearchStore();
+  const [search, setSearch] = useState('');
+  const debounce = useDebounce(search);
 
   useEffect(() => {
     let filteredChannels: ChannelColumns[] = [];
@@ -117,6 +122,10 @@ function TagSelector({
       filteredChannels.map((c) => c.channelId)
     );
   }, [selectedTags, logic, channels, jsonData, setSelectedChannels]);
+
+  const filteredTags = useMemo(() => {
+    return tags.filter((tag) => tag.name.includes(debounce));
+  }, [tags, debounce]);
 
   return (
     <Sheet
@@ -151,8 +160,17 @@ function TagSelector({
         <div className="flex flex-1 auto-rows-min flex-col gap-6">
           <div className={'flex flex-col gap-3'}>
             <Muted>태그를 선택해주세요: {selectedTags.length}</Muted>
-            <div className={'scrollWidth3 flex max-h-[250px] flex-wrap gap-1 overflow-auto'}>
-              {tags.map((tag) => {
+            <div className="relative">
+              <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+              <Input
+                placeholder="검색..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+            <div className={'scrollWidth3 flex max-h-[100px] flex-wrap gap-1 overflow-auto'}>
+              {filteredTags.map((tag) => {
                 const selected = tempTags.includes(tag.name);
                 return (
                   <Badge
