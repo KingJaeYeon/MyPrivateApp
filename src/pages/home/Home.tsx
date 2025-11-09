@@ -30,7 +30,7 @@ export function Home() {
             className={'btn-submit cursor-pointer text-sm'}
             onClick={() => window.electronAPI.openExternal('https://aq.gy/f/lcX5G')}
           >
-            커피 한잔만 기부하로가기 😍
+            커피 한잔만 기부하기 😍
           </Button>
           <Button
             onClick={() => setIsShow(false)}
