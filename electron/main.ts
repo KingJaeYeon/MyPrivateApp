@@ -51,7 +51,7 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.mjs'),
       contextIsolation: true,
       nodeIntegration: false,
-      webSecurity: false,
+      webSecurity: true,
       webviewTag: true,
     },
   });
@@ -89,6 +89,28 @@ app.on('window-all-closed', () => {
     app.quit();
     win = null;
   }
+});
+
+app.on('web-contents-created', (_, contents) => {
+  // 모든 webview에 적용됨
+  contents.on('will-attach-webview', (e, webPreferences, params) => {
+    // 보안 강화
+    delete webPreferences.preload; // 필요시 제거
+    webPreferences.nodeIntegration = false;
+    webPreferences.contextIsolation = true;
+
+    // URL 필터링 (허용 목록 외 차단)
+    if (!params.src.startsWith('https://')) {
+      console.warn('[Blocked WebView URL]', params.src);
+      e.preventDefault();
+    }
+  });
+
+  // webview 내부 페이지 탐색 차단
+  contents.on('will-navigate', (e, url) => {
+    console.log('[Blocked Navigation]', url);
+    e.preventDefault();
+  });
 });
 
 app.on('activate', () => {
