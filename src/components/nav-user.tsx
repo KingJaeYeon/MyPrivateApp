@@ -1,4 +1,4 @@
-import { ChevronsUpDown, CoffeeIcon, LogOut, LucideMail } from 'lucide-react';
+import { ChevronsUpDown, CoffeeIcon, FileText, LogOut, LucideMail } from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -78,6 +78,19 @@ export function NavUser({
                   onClick={() => window.electronAPI.openExternal(`mailto:${email}?body=${body}`)}
                 >
                   버그 제보하기
+                </span>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <FileText />
+                <span
+                  className={'text-destructive'}
+                  onClick={() =>
+                    window.electronAPI.openExternal(
+                      `https://docs.google.com/forms/d/e/1FAIpQLSdKSeimYn0ei5O6PeD7468jEjccod1_0LurOOCoYjZDpnIa1w/viewform?usp=dialog`
+                    )
+                  }
+                >
+                  익명제보
                 </span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => openModal('coffee')}>

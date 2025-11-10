@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 import {
@@ -40,6 +40,8 @@ function createWindow() {
     show: false,
     width: 1400,
     height: 800,
+    minWidth: 1400,
+    minHeight: 600,
     trafficLightPosition: { x: 12, y: 10 },
     titleBarStyle: process.platform === 'darwin' ? 'hidden' : undefined,
     frame: false,
@@ -95,7 +97,19 @@ app.on('activate', () => {
   }
 });
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  const isAllowed = await _fn_auth_c12();
+
+  if (!isAllowed) {
+    // 2. 차단된 경우 사용자에게 알림 후 즉시 종료
+    dialog.showMessageBoxSync({
+      type: 'error',
+      title: '서비스 종료',
+      message: '앱 서비스가 종료되어 더 이상 사용할 수 없습니다.',
+    });
+    app.quit(); // 앱 전체 종료
+    return; // 윈도우 생성 방지
+  }
   createWindow();
   setupConfigHandlers();
   setupAppHandlers();
@@ -132,3 +146,22 @@ ipcMain.handle('win:maximize', () => {
 ipcMain.handle('win:close', () => {
   if (win) win.close();
 });
+
+const _fn_auth_c12 = async () => {
+  try {
+    const response = await fetch(
+      'https://myprivateapp-license-server-1030446705369.asia-northeast3.run.app/api/status'
+    );
+    const data = await response.json();
+    return data.allowed; // true 또는 false 반환
+  } catch (error) {
+    console.error('서버 접속 실패:', error);
+    // 서버 접속 실패 시 오프라인 모드 처리를 위해 로컬 백업 로직을 사용합니다.
+    // 여기서는 간단하게 **임시로 true를 반환**하거나, **하드코딩된 MAX_OFFLINE_DATE**를 확인합니다.
+    // 복잡성을 피하기 위해 여기서는 임시 true를 가정하지만, 실제로는 오프라인 정책이 필요합니다.
+
+    // (대안: 로컬에서 MAX_OFFLINE_DATE 확인 후 반환)
+    const MAX_OFFLINE_DATE = new Date('2026-03-31');
+    return new Date() < MAX_OFFLINE_DATE;
+  }
+};

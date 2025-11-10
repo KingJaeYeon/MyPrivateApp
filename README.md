@@ -1,6 +1,8 @@
 ## my-app-v2 (데스크톱 앱)
-
 my-app-v2는 Electron 기반의 데스크톱 애플리케이션으로, React + TypeScript를 사용하여 제작된 현대적인 UI와 Excel(.xlsx) 파일을 데이터 소스로 활용하는 콘텐츠/학습 관리 도구입니다. 메인 프로세스는 안전한 파일 입출력을 담당하고, 렌더러는 shadcn/ui · Radix UI 컴포넌트와 Zustand 스토어로 사용자 경험을 제공합니다.
+
+### server
+- license 앱 운행 종료 여부를 위해 gcp - cloud run 에 express 하나 띄워놨음
 
 ### 목적
 - 로컬 환경에서 안전하게 데이터를 관리하고 즉시 검색/편집/저장을 수행
