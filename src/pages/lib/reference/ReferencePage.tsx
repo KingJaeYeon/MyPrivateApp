@@ -330,6 +330,7 @@ function Item({ reference }: { reference: any }) {
           style={{ paddingTop: '56.4%' }}
         >
           <webview
+            webpreferences="backgroundThrottling=true"
             src={reference.link}
             useragent="Mozilla/5.0 (Windows NT 10.0; Win64; x64)
                AppleWebKit/537.36 (KHTML, like Gecko)
