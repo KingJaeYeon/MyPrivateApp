@@ -56,7 +56,7 @@ export function ReferenceSidePanel({ isDeleting }: { isDeleting: boolean }) {
               value={edit.memo}
               disabled={isDeleting}
               showMaxLength={true}
-              maxLength={250}
+              maxLength={1000}
               className={'h-[200px] resize-none'}
               onChange={(e) => setEdit({ ...edit, memo: e.target.value })}
             />

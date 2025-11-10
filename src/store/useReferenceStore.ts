@@ -181,6 +181,9 @@ const useReferenceStore = create(
       const temp = get().data;
       const tempObj = {
         ...obj,
+        name: obj.name.trim(),
+        link: obj.link.trim(),
+        memo: obj.memo.trim(),
         updatedAt: new Date().toISOString(),
         createdAt: new Date().getTime(),
       };
