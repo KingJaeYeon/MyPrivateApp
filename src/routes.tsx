@@ -1,30 +1,39 @@
 import { Navigate, RouteObject } from 'react-router-dom';
 import App from '@/App';
-import SearchVideo from '@/pages/youtube/search-video/SearchVideo';
-import SearchVideoResult from '@/pages/youtube/search-video-result/SearchVideoResult';
-import TagPage from '@/pages/management/tag/TagPage';
-import ChannelsPage from '@/pages/management/channels/ChannelsPage';
 // import ReferencePage from '@/pages/lib/reference/ReferencePage.tsx';
-import PromptsPage from '@/pages/lib/prompts/PromptsPage.tsx';
-import ChannelDetailPage from '@/pages/management/channel-detail/ChannelDetailPage.tsx';
 import NotFound from '@/pages/NotFound.tsx';
-import { YouTubeAPISettings } from '@/pages/settings/youtube-api/YouTubeAPISettings.tsx';
-import { FilesSettings } from '@/pages/settings/LocationFile/FilesSettings.tsx';
-import { AdvancedSettings } from '@/pages/settings/AdvancedSettings.tsx';
 import { NavMainType } from '@/components/nav-main.tsx';
 import { Youtube } from '@/assets/svg';
 import { BookOpen, Database, Languages, Settings } from 'lucide-react';
-import SavedListPage from '@/pages/youtube/saved-list/SavedListPage.tsx';
-import ChannelsEditPage from '@/pages/management/channel-edit/ChannelsEditPage.tsx';
-import { Home } from '@/pages/home/Home.tsx';
-import WordsLayout from '@/pages/english/words/WordsLayout.tsx';
-import WordCreatePage from '@/pages/english/words/WordCreatePage.tsx';
-import WordDetailPage from '@/pages/english/words/WordDetailPage.tsx';
-import NotesLayout from '@/pages/english/notes/NotesLayout.tsx';
-import NoteCreatePage from '@/pages/english/notes/NoteCreatePage.tsx';
-import NoteDetailPage from '@/pages/english/notes/NoteDetailPage.tsx';
-import DashboardPage from '@/pages/english/dashboard/DashboardPage.tsx';
-import ReferenceEditPage from '@/pages/lib/reference-edit/ReferenceEditPage.tsx';
+
+import { lazy, Suspense } from 'react';
+
+const Home = lazy(() => import('@/pages/home/Home.tsx'));
+const SearchVideo = lazy(() => import('@/pages/youtube/search-video/SearchVideo.tsx'));
+const SearchVideoResult = lazy(
+  () => import('@/pages/youtube/search-video-result/SearchVideoResult.tsx')
+);
+const SavedListPage = lazy(() => import('@/pages/youtube/saved-list/SavedListPage.tsx'));
+const ChannelsPage = lazy(() => import('@/pages/management/channels/ChannelsPage.tsx'));
+const ChannelDetailPage = lazy(
+  () => import('@/pages/management/channel-detail/ChannelDetailPage.tsx')
+);
+const TagPage = lazy(() => import('@/pages/management/tag/TagPage.tsx'));
+const ChannelsEditPage = lazy(() => import('@/pages/management/channel-edit/ChannelsEditPage.tsx'));
+const PromptsPage = lazy(() => import('@/pages/lib/prompts/PromptsPage.tsx'));
+const ReferenceEditPage = lazy(() => import('@/pages/lib/reference-edit/ReferenceEditPage.tsx'));
+const DashboardPage = lazy(() => import('@/pages/english/dashboard/DashboardPage.tsx'));
+const WordsLayout = lazy(() => import('@/pages/english/words/WordsLayout.tsx'));
+const WordCreatePage = lazy(() => import('@/pages/english/words/WordCreatePage.tsx'));
+const WordDetailPage = lazy(() => import('@/pages/english/words/WordDetailPage.tsx'));
+const NotesLayout = lazy(() => import('@/pages/english/notes/NotesLayout.tsx'));
+const NoteCreatePage = lazy(() => import('@/pages/english/notes/NoteCreatePage.tsx'));
+const NoteDetailPage = lazy(() => import('@/pages/english/notes/NoteDetailPage.tsx'));
+const YouTubeAPISettings = lazy(
+  () => import('@/pages/settings/youtube-api/YouTubeAPISettings.tsx')
+);
+const FilesSettings = lazy(() => import('@/pages/settings/LocationFile/FilesSettings.tsx'));
+const AdvancedSettings = lazy(() => import('@/pages/settings/AdvancedSettings.tsx'));
 
 export const navigationRoutes: NavMainType = [
   {
@@ -140,23 +149,25 @@ export const navigationRoutes: NavMainType = [
 //   { label: 'Caching and Revalidating' },
 // ];
 
+// Suspense wrapper
+const withSuspense = (element: React.ReactNode) => (
+  <Suspense fallback={<div style={{ padding: 20 }}>Loading...</div>}>{element}</Suspense>
+);
+
 export const routes: RouteObject[] = [
   {
     path: '/',
     element: <App />,
     children: [
-      {
-        index: true,
-        element: <Home />,
-      },
+      { index: true, element: withSuspense(<Home />) },
       {
         path: 'youtube',
         element: null,
         children: [
           { index: true, element: <Navigate to="/youtube/search" replace /> },
-          { path: 'search', element: <SearchVideo /> },
-          { path: 'search/result', element: <SearchVideoResult /> },
-          { path: 'saved-list', element: <SavedListPage /> },
+          { path: 'search', element: withSuspense(<SearchVideo />) },
+          { path: 'search/result', element: withSuspense(<SearchVideoResult />) },
+          { path: 'saved-list', element: withSuspense(<SavedListPage />) },
         ],
       },
       {
@@ -164,10 +175,10 @@ export const routes: RouteObject[] = [
         element: null,
         children: [
           { index: true, element: <Navigate to="/manage/channels" replace /> },
-          { path: 'channels', element: <ChannelsPage /> },
-          { path: 'channels/:channelId', element: <ChannelDetailPage /> },
-          { path: 'tags', element: <TagPage /> },
-          { path: 'channels/edit', element: <ChannelsEditPage /> },
+          { path: 'channels', element: withSuspense(<ChannelsPage />) },
+          { path: 'channels/:channelId', element: withSuspense(<ChannelDetailPage />) },
+          { path: 'tags', element: withSuspense(<TagPage />) },
+          { path: 'channels/edit', element: withSuspense(<ChannelsEditPage />) },
         ],
       },
       {
@@ -175,9 +186,8 @@ export const routes: RouteObject[] = [
         element: null,
         children: [
           { index: true, element: <Navigate to="/lib/prompts" replace /> },
-          { path: 'prompts', element: <PromptsPage /> },
-          // { path: 'reference', element: <ReferencePage /> },
-          { path: 'reference', element: <ReferenceEditPage /> },
+          { path: 'prompts', element: withSuspense(<PromptsPage />) },
+          { path: 'reference', element: withSuspense(<ReferenceEditPage />) },
         ],
       },
       {
@@ -185,21 +195,21 @@ export const routes: RouteObject[] = [
         element: null,
         children: [
           { index: true, element: <Navigate to="/english/dashboard" replace /> },
-          { path: 'dashboard', element: <DashboardPage /> },
+          { path: 'dashboard', element: withSuspense(<DashboardPage />) },
           {
             path: 'words',
-            element: <WordsLayout />,
+            element: withSuspense(<WordsLayout />),
             children: [
-              { index: true, element: <WordCreatePage /> },
-              { path: ':wordId', element: <WordDetailPage /> },
+              { index: true, element: withSuspense(<WordCreatePage />) },
+              { path: ':wordId', element: withSuspense(<WordDetailPage />) },
             ],
           },
           {
             path: 'notes',
-            element: <NotesLayout />,
+            element: withSuspense(<NotesLayout />),
             children: [
-              { index: true, element: <NoteCreatePage /> },
-              { path: ':noteId', element: <NoteDetailPage /> },
+              { index: true, element: withSuspense(<NoteCreatePage />) },
+              { path: ':noteId', element: withSuspense(<NoteDetailPage />) },
             ],
           },
         ],
@@ -209,15 +219,12 @@ export const routes: RouteObject[] = [
         element: null,
         children: [
           { index: true, element: <Navigate to="/settings/youtube" replace /> },
-          { path: 'youtube', element: <YouTubeAPISettings /> },
-          { path: 'files', element: <FilesSettings /> },
-          { path: 'advanced', element: <AdvancedSettings /> },
+          { path: 'youtube', element: withSuspense(<YouTubeAPISettings />) },
+          { path: 'files', element: withSuspense(<FilesSettings />) },
+          { path: 'advanced', element: withSuspense(<AdvancedSettings />) },
         ],
       },
-      {
-        path: '*',
-        element: <NotFound />,
-      },
+      { path: '*', element: <NotFound /> },
     ],
   },
 ];

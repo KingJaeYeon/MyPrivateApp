@@ -13,7 +13,7 @@ import IconMoreInfo from '@/assets/svg/IconMoreInfo.tsx';
 import APISettings from '@/pages/settings/youtube-api/components/APISettings.tsx';
 import QuotaReset from '@/pages/settings/youtube-api/components/QuotaReset.tsx';
 
-export function YouTubeAPISettings() {
+export default function YouTubeAPISettings() {
   return (
     <div className="flex h-full w-[750px] flex-1 flex-col gap-5 px-4">
       <APISettings />

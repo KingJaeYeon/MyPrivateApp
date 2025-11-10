@@ -5,7 +5,7 @@ import useMeasure from 'react-use-measure';
 import { Button } from '@/components/ui/button.tsx';
 import { cn } from '@/lib/utils.ts';
 
-export function Home() {
+export default function Home() {
   const [ref1, { width }] = useMeasure();
   const [isShow, setIsShow] = useState(true);
   return (

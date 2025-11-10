@@ -5,7 +5,7 @@ import useSettingStore from '@/store/useSettingStore';
 import { useModalStore } from '@/store/modalStore.ts';
 import { useVideoSearchStore } from '@/store/useVideoSearchStore.ts';
 
-export function AdvancedSettings() {
+export default function AdvancedSettings() {
   const { reset } = useSettingStore();
   const { openModal } = useModalStore();
   const { resetFilter, clearResult, clearErrors } = useVideoSearchStore();
