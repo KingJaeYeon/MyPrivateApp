@@ -43,7 +43,7 @@ export function ReferenceSidePanel({ isDeleting }: { isDeleting: boolean }) {
           label={'링크'}
           value={edit.link}
           disabled={isDeleting}
-          onChangeValue={(value: string) => setEdit({ ...edit, link: value })}
+          onChangeValue={(value: string) => setEdit({ ...edit, link: value.trim() })}
         />
         <div className={'flex flex-col gap-4'}>
           <div className={'flex flex-col gap-1'}>
