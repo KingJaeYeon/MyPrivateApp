@@ -11,6 +11,8 @@ import useReferenceStore from '@/store/useReferenceStore.ts';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card.tsx';
 import ButtonSwitcher from '@/components/ButtonSwitcher.tsx';
 import { useNavigate } from 'react-router-dom';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import Tip from '@/components/Tip.tsx';
 
 export default function ReferenceViewPage() {
   const [tagPopoverOpen, setTagPopoverOpen] = useState(false);
@@ -19,6 +21,7 @@ export default function ReferenceViewPage() {
   const { jsonData, data: tags } = useTagStore();
   const { getData } = useReferenceStore();
   const navigate = useNavigate();
+  const parentRef = useRef<HTMLDivElement>(null);
 
   const [searchTerm, setSearchTerm] = useState('');
   const debounceS = useDebounce(searchTerm);
@@ -89,6 +92,14 @@ export default function ReferenceViewPage() {
       return matchesSearch && matchesTags;
     });
   }, [selectedTags, debounceS, getData, tagLogic]);
+
+  const rowVirtualizer = useVirtualizer({
+    count: Math.ceil(reference.length / 2), // 2열 그리드
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 400, // 초기 예상값 (첫 렌더용)
+    measureElement: (element) => element.getBoundingClientRect().height,
+    overscan: 0, // 화면 밖 2개까지 미리 렌더링
+  });
 
   return (
     <div className="flex h-full w-full flex-1 flex-col gap-5 px-4">
@@ -205,12 +216,36 @@ export default function ReferenceViewPage() {
       </div>
 
       {/* 컨텐츠 영역 */}
-      <div className="scrollWidth3 flex-1 overflow-auto pr-4">
-        <div className="grid grid-cols-2 gap-x-3 gap-y-4">
-          {/*{JSON.stringify(reference.map((r) => r.name))}*/}
-          {reference.map((reference) => (
-            <Item reference={reference} />
-          ))}
+      <div ref={parentRef} className="scrollWidth3 flex-1 overflow-auto pr-4">
+        <div
+          style={{
+            height: `${rowVirtualizer.getTotalSize()}px`,
+            position: 'relative',
+          }}
+        >
+          {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+            const startIdx = virtualRow.index * 2;
+            const items = reference.slice(startIdx, startIdx + 2);
+            return (
+              <div
+                key={virtualRow.key}
+                data-index={virtualRow.index} // ✅ 측정용 속성
+                ref={rowVirtualizer.measureElement} // ✅ 크기 측정
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  transform: `translateY(${virtualRow.start}px)`,
+                }}
+                className="grid grid-cols-2 gap-x-3"
+              >
+                {items.map((ref) => (
+                  <Item key={ref.idx} reference={ref} />
+                ))}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -255,15 +290,26 @@ function Item({ reference }: { reference: any }) {
     : [];
 
   return (
-    <Card className="flex flex-1 flex-col overflow-hidden transition hover:shadow-lg">
+    <Card className="bg-backgrounds flex flex-1 flex-col overflow-hidden border-none transition hover:shadow-lg">
       {/* 상단: 제목 + 링크 버튼 */}
       <CardHeader className="flex flex-row items-start justify-between space-y-0">
         <div className="flex flex-1 flex-col space-y-1">
           <h3 className="line-clamp-2 leading-tight font-semibold">
             {reference.name || '제목 없음'}
           </h3>
-          {reference.memo && (
-            <p className="text-muted-foreground line-clamp-2 text-xs">{reference.memo}</p>
+          {reference.memo ? (
+            <Tip
+              txt={reference.memo}
+              triggerClssName={'ellipsisLine1'}
+              side={'bottom'}
+              align={'start'}
+            >
+              <p className="text-muted-foreground ellipsisLine1 line-clamp-2 text-xs">
+                {reference.memo}
+              </p>
+            </Tip>
+          ) : (
+            <p className="text-muted-foreground ellipsisLine1 line-clamp-2 text-xs">N/A</p>
           )}
         </div>
         <Button
