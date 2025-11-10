@@ -4,7 +4,7 @@ import SearchVideo from '@/pages/youtube/search-video/SearchVideo';
 import SearchVideoResult from '@/pages/youtube/search-video-result/SearchVideoResult';
 import TagPage from '@/pages/management/tag/TagPage';
 import ChannelsPage from '@/pages/management/channels/ChannelsPage';
-import ReferencePage from '@/pages/lib/reference/ReferencePage.tsx';
+// import ReferencePage from '@/pages/lib/reference/ReferencePage.tsx';
 import PromptsPage from '@/pages/lib/prompts/PromptsPage.tsx';
 import ChannelDetailPage from '@/pages/management/channel-detail/ChannelDetailPage.tsx';
 import NotFound from '@/pages/NotFound.tsx';
@@ -85,11 +85,11 @@ export const navigationRoutes: NavMainType = [
         title: 'Reference',
         url: '/lib/reference',
       },
-      {
-        title: 'Edit',
-        url: '/lib/reference/edit',
-        suffix: 'Reference',
-      },
+      // {
+      //   title: 'Edit',
+      //   url: '/lib/reference/edit',
+      //   suffix: 'Reference',
+      // },
     ],
   },
   {
@@ -176,8 +176,8 @@ export const routes: RouteObject[] = [
         children: [
           { index: true, element: <Navigate to="/lib/prompts" replace /> },
           { path: 'prompts', element: <PromptsPage /> },
-          { path: 'reference', element: <ReferencePage /> },
-          { path: 'reference/edit', element: <ReferenceEditPage /> },
+          // { path: 'reference', element: <ReferencePage /> },
+          { path: 'reference', element: <ReferenceEditPage /> },
         ],
       },
       {

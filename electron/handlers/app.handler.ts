@@ -72,12 +72,28 @@ export function setupAppHandlers() {
   ipcMain.handle('app:getMemoryInfo', async (_e) => {
     const totalMem = os.totalmem();
     const freeMem = os.freemem();
-    const { cpu, memory, pid } = await pidusage(process.pid);
+
+    const metrics = app.getAppMetrics();
+    const usages = await Promise.all(
+      metrics.map(async (m) => {
+        try {
+          const { cpu, memory } = await pidusage(m.pid);
+          return { type: m.type, pid: m.pid, cpu, memory };
+        } catch {
+          return null;
+        }
+      })
+    );
+
+    const totalCPU = usages.reduce((acc, u) => acc + (u?.cpu ?? 0), 0);
+    const totalMemUsed = usages.reduce((acc, u) => acc + (u?.memory ?? 0), 0);
+
+    const { pid } = await pidusage(process.pid);
     return {
       totalMem,
       freeMem,
-      appMem: memory, // bytes
-      cpu, // percent (0–100)
+      appMem: totalMemUsed, // bytes
+      cpu: totalCPU, // percent (0–100)
       pid,
     };
   });
