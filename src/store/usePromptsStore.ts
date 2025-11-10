@@ -136,7 +136,12 @@ const usePromptsStore = create(
     },
     push: (obj) => {
       const temp = get().data;
-      const newArr = [...temp, obj];
+      const tempObj = {
+        ...obj,
+        updatedAt: new Date().toISOString(),
+        createdAt: new Date().getTime(),
+      };
+      const newArr = [...temp, tempObj];
       set({ data: newArr, isChanged: true });
       get().setEdit('initialize');
     },
