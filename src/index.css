@@ -270,7 +270,7 @@
 
 /* 2. <ul> 바로 다음에 <p>가 오는 경우, p의 위쪽 마진을 조정 */
 .markdown-content ul + p {
-    margin-top: 0; /* ul와 p 사이의 간격 */
+    margin-top: 1.5rem; /* ul와 p 사이의 간격 */
 }
 
 /* 3. 단락과 단락 사이의 간격 (p 다음에 p가 오는 경우) */
