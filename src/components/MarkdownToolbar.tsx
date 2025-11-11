@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Bold, Heading3, Image as ImageIcon, List } from 'lucide-react';
 import { Loading2 } from '@/assets/svg';
 import { cn } from '@/lib/utils.ts';
+import * as React from 'react';
 
 type MarkdownToolbarProps = {
   isImageLoading: boolean;
@@ -18,6 +19,37 @@ export default function MarkdownToolbar({
   onInsertText,
   onUpload,
 }: MarkdownToolbarProps) {
+  React.useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (preview) {
+        return;
+      }
+      if (e.key === '1' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        onInsertText('### ');
+      }
+      if (e.key === '2' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        onInsertText('**', '**');
+      }
+      if (e.key === '3' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        onInsertText('- ');
+      }
+      if (e.key === '4' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        onInsertText('<span class="md-primary">', '</span>');
+      }
+      if (e.key === '5' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        onInsertText('<span class="md-secondary">', '</span>');
+      }
+    };
+
+    document.addEventListener('keydown', down);
+    return () => document.removeEventListener('keydown', down);
+  }, []);
+
   return (
     <div className="flex items-center gap-2 pb-2">
       {/* Markdown 포맷팅 */}
@@ -89,7 +121,9 @@ export default function MarkdownToolbar({
           <ImageIcon className="h-4 w-4" />
         )}
       </Button>
-
+      <kbd className="bg-muted/70 text-foreground/80 border-border inline-flex items-center gap-1 rounded-md border px-2 py-0.5 font-mono text-[11px] font-semibold shadow-sm">
+        Ctrl 1 ~ 5
+      </kbd>
       {/* 우측 프리뷰 버튼 */}
       <div className="ml-auto flex gap-2">
         <Button

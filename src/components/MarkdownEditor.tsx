@@ -47,7 +47,8 @@ export default function MarkdownEditor({ value, onChange }: MarkdownEditorProps)
     if (!textarea) return;
 
     const start = textarea.selectionStart;
-    const selectedText = value.substring(start, textarea.selectionEnd);
+    const end = textarea.selectionEnd;
+    const selectedText = value.substring(start, end);
 
     const insertString = before + selectedText + after;
     const updatedSentence = insertToTextArea(insertString);

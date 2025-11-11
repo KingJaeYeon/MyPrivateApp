@@ -41,7 +41,7 @@ export function CommandLinkDialog() {
         </kbd>
         <kbd className="bg-muted/70 text-foreground/80 border-border inline-flex items-center gap-1 rounded-md border px-2 py-0.5 font-mono text-[11px] font-semibold shadow-sm">
           <span className="opacity-70">Ctrl</span>
-          <span className="text-primary text-xs font-bold">B</span>
+          <span className="text-primary text-xs font-bold">/</span>
         </kbd>
       </p>
       <CommandDialog open={open} onOpenChange={setOpen}>
