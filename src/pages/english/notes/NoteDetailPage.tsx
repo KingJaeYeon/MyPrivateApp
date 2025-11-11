@@ -2,7 +2,7 @@ import PostHeader from '@/pages/english/notes/components/PostHeader.tsx';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTheme } from '@/providers/theme-provider.tsx';
 import useEnglishStore from '@/store/useEnglishStore.ts';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import NotFound from '@/pages/NotFound.tsx';
 import { DBSchema } from '../../../../electron/docs.schema.ts';
 import MarkdownPreview from '@/components/MarkdownPreview.tsx';
@@ -26,11 +26,9 @@ export default function NoteDetailPage() {
   const [edit, setEdit] = useState<DBSchema['engNotes']>(seed);
   const navigate = useNavigate();
 
-  const data = useMemo(() => {
-    return getData('engNotes').find((w) => w.id.toString() === noteId?.toString()) as
-      | DBSchema['engNotes']
-      | undefined;
-  }, [noteId]);
+  const data = getData('engNotes').find((w) => w.id.toString() === noteId?.toString()) as
+    | DBSchema['engNotes']
+    | undefined;
 
   useEffect(() => {
     setState('read');

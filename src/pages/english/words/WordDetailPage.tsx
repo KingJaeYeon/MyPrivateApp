@@ -2,7 +2,7 @@ import PostHeader from '@/pages/english/words/components/PostHeader.tsx';
 import { useParams } from 'react-router-dom';
 import { useTheme } from '@/providers/theme-provider.tsx';
 import useEnglishStore from '@/store/useEnglishStore.ts';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import NotFound from '@/pages/NotFound.tsx';
 import { DBSchema } from '../../../../electron/docs.schema.ts';
 import MarkdownPreview from '@/components/MarkdownPreview.tsx';
@@ -23,11 +23,9 @@ export default function WordDetailPage() {
   const { getData, setState, state } = useEnglishStore();
   const [edit, setEdit] = useState<DBSchema['engWords']>(seed);
 
-  const data = useMemo(() => {
-    return getData('engWords').find((w) => w.id.toString() === wordId?.toString()) as
-      | DBSchema['engWords']
-      | undefined;
-  }, [wordId]);
+  const data = getData('engWords').find((w) => w.id.toString() === wordId?.toString()) as
+    | DBSchema['engWords']
+    | undefined;
 
   useEffect(() => {
     setState('read');

@@ -76,6 +76,7 @@ function ButtonRenderer({ data, onEdit }: { data: DBSchema['engNotes']; onEdit?:
         }
         return item;
       });
+
       update('engNotes', temp);
       setState('read');
       return;
