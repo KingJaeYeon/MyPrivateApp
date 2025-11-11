@@ -262,6 +262,9 @@
     margin-top: 0;
     margin-bottom: 0;
 }
+.markdown-content img {
+    margin: 0.5rem;
+}
 
 /* 1. <p> 바로 다음에 <ul>이 오는 경우, ul의 위쪽 마진을 조정 */
 .markdown-content p + ul {
