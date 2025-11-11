@@ -254,3 +254,26 @@
     font-weight: bold;
     color: oklch(57.7% 0.245 27.325)
 }
+
+
+.markdown-content p,
+.markdown-content ul {
+    /* 기본적으로 모든 p와 ul의 마진을 0으로 설정하여 prose의 마진을 무력화 */
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+/* 1. <p> 바로 다음에 <ul>이 오는 경우, ul의 위쪽 마진을 조정 */
+.markdown-content p + ul {
+    margin-top: 0; /* p와 ul 사이의 간격 */
+}
+
+/* 2. <ul> 바로 다음에 <p>가 오는 경우, p의 위쪽 마진을 조정 */
+.markdown-content ul + p {
+    margin-top: 0; /* ul와 p 사이의 간격 */
+}
+
+/* 3. 단락과 단락 사이의 간격 (p 다음에 p가 오는 경우) */
+.markdown-content p + p {
+    margin-top: 1rem; /* 단락 간의 일반적인 간격 */
+}

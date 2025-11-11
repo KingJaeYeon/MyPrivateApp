@@ -17,7 +17,7 @@ const mySchema = {
 
 export default function MarkdownPreview({ value }: { value: string }) {
   return (
-    <div className="prose prose-sm dark:prose-invert scrollWidth3 w-full max-w-none overflow-y-auto rounded-lg p-4">
+    <div className="markdown-content prose prose-sm dark:prose-invert scrollWidth3 w-full max-w-none overflow-y-auto rounded-lg p-4">
       <ReactMarkdown
         remarkPlugins={[remarkBreaks, remarkGfm]}
         rehypePlugins={[rehypeRaw, [rehypeSanitize, mySchema]]}
@@ -25,7 +25,7 @@ export default function MarkdownPreview({ value }: { value: string }) {
           // H3 스타일
           h3: ({ children }) => <h3 className="text-foreground text-lg font-bold">{children}</h3>,
           // Bold 스타일
-          strong: ({ children }) => <strong className="font-bold">{children}</strong>,
+          strong: ({ children }) => <strong className="m-0 font-bold">{children}</strong>,
           // 이미지 스타일
           img: ({ src, alt }) => {
             // 로컬 경로면 file:// 붙이기
@@ -45,7 +45,7 @@ export default function MarkdownPreview({ value }: { value: string }) {
             );
           },
           // 리스트 스타일
-          ul: ({ children }) => <ul className="list-disc pl-6">{children}</ul>,
+          ul: ({ children }) => <ul className="m-0 list-disc pl-6">{children}</ul>,
           li: ({ children }) => <li className="mb-0.5">{children}</li>,
           span: ({ children, className }) => <span className={className}>{children}</span>,
         }}
