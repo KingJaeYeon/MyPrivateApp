@@ -149,7 +149,7 @@ export const REFERENCE_COLUMNS: ColumnDef<ReferenceColumns>[] = [
     cell: ({ row }) => (
       <Tip
         txt={row.original.memo}
-        className="max-w-[600px]"
+        className="max-w-[300px]"
         side={'right'}
         triggerClssName={'w-full'}
       >

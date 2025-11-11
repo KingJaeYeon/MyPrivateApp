@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -9,9 +9,16 @@ import {
 import { Badge } from '@/components/ui/badge';
 import useTagStore from '@/store/useTagStore';
 import { toast } from 'sonner';
-import { Search } from 'lucide-react';
-import { Input } from '@/components/ui/input.tsx';
+import { SearchIcon } from 'lucide-react';
 import useDebounce from '@/hooks/use-debounce.ts';
+import { useKoreanSearch } from '@/hooks/use-korean-search.ts';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from '@/components/ui/input-group.tsx';
+import IconTrash from '@/assets/svg/IconTrash.tsx';
 
 interface TagChooserModalProps {
   onClose: () => void;
@@ -29,9 +36,7 @@ export default function TagChooserModal({ onClose, data }: TagChooserModalProps)
   const [search, setSearch] = useState('');
   const debounce = useDebounce(search);
 
-  const displayTags = useMemo(() => {
-    return tags.filter((tag) => tag.name.toLowerCase().includes(debounce.toLowerCase()));
-  }, [debounce, tags]);
+  const displayTags = useKoreanSearch(tags, debounce, (tag) => [tag.name]);
 
   // 모달 내부에서 선택 상태를 배열로 관리
   const [selectedTags, setSelectedTags] = useState<string[]>(() => {
@@ -86,16 +91,21 @@ export default function TagChooserModal({ onClose, data }: TagChooserModalProps)
           <DialogTitle>태그 선택</DialogTitle>
           <DialogDescription>최대 5개까지 선택 가능합니다</DialogDescription>
         </DialogHeader>
-
-        <div className="relative">
-          <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
-          <Input
+        <InputGroup>
+          <InputGroupAddon>
+            <SearchIcon />
+          </InputGroupAddon>
+          <InputGroupInput
             placeholder="검색..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9"
           />
-        </div>
+          <InputGroupAddon align="inline-end">
+            <InputGroupButton variant="ghost" onClick={() => setSearch('')}>
+              <IconTrash />
+            </InputGroupButton>
+          </InputGroupAddon>
+        </InputGroup>
         <div
           className="max-h-[60vh] space-y-4 overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
