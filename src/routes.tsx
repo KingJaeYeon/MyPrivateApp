@@ -1,6 +1,5 @@
 import { Navigate, RouteObject } from 'react-router-dom';
 import App from '@/App';
-// import ReferencePage from '@/pages/lib/reference/ReferencePage.tsx';
 import NotFound from '@/pages/NotFound.tsx';
 import { NavMainType } from '@/components/nav-main.tsx';
 import { Youtube } from '@/assets/svg';
@@ -22,6 +21,7 @@ const TagPage = lazy(() => import('@/pages/management/tag/TagPage.tsx'));
 const ChannelsEditPage = lazy(() => import('@/pages/management/channel-edit/ChannelsEditPage.tsx'));
 const PromptsPage = lazy(() => import('@/pages/lib/prompts/PromptsPage.tsx'));
 const ReferenceEditPage = lazy(() => import('@/pages/lib/reference-edit/ReferenceEditPage.tsx'));
+const ReferenceViewPage = lazy(() => import('@/pages/lib/reference/ReferencePage.tsx'));
 const DashboardPage = lazy(() => import('@/pages/english/dashboard/DashboardPage.tsx'));
 const WordsLayout = lazy(() => import('@/pages/english/words/WordsLayout.tsx'));
 const WordCreatePage = lazy(() => import('@/pages/english/words/WordCreatePage.tsx'));
@@ -94,11 +94,11 @@ export const navigationRoutes: NavMainType = [
         title: 'Reference',
         url: '/lib/reference',
       },
-      // {
-      //   title: 'Edit',
-      //   url: '/lib/reference/edit',
-      //   suffix: 'Reference',
-      // },
+      {
+        title: 'Edit',
+        url: '/lib/reference/edit',
+        suffix: 'Reference',
+      },
     ],
   },
   {
@@ -187,7 +187,8 @@ export const routes: RouteObject[] = [
         children: [
           { index: true, element: <Navigate to="/lib/prompts" replace /> },
           { path: 'prompts', element: withSuspense(<PromptsPage />) },
-          { path: 'reference', element: withSuspense(<ReferenceEditPage />) },
+          { path: 'reference', element: withSuspense(<ReferenceViewPage />) },
+          { path: 'reference/edit', element: withSuspense(<ReferenceEditPage />) },
         ],
       },
       {

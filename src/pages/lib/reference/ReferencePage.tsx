@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ChevronDown, ExternalLink, Search, Tag, TagIcon, X } from 'lucide-react';
+import { AlertCircleIcon, ChevronDown, ExternalLink, Search, Tag, TagIcon, X } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import useDebounce from '@/hooks/use-debounce.ts';
@@ -22,13 +22,12 @@ export default function ReferenceViewPage() {
   const { getData } = useReferenceStore();
   const navigate = useNavigate();
   const parentRef = useRef<HTMLDivElement>(null);
-
   const [searchTerm, setSearchTerm] = useState('');
+
   const debounceS = useDebounce(searchTerm);
-
   const [tagSearchTerm, setTagSearchTerm] = useState('');
-  const debounceT = useDebounce(tagSearchTerm);
 
+  const debounceT = useDebounce(tagSearchTerm);
   const curTags = useMemo(() => {
     const curTagIds = Array.from(
       new Set(
@@ -104,96 +103,104 @@ export default function ReferenceViewPage() {
   return (
     <div className="flex h-full w-full flex-1 flex-col gap-5 px-4">
       {/* 상단 필터 영역 */}
-      <div className="bg-background space-y-3 border-b pb-4">
+      <div className="bg-background border-b pb-4">
+        <div className={'text-destructive flex items-center gap-1 pb-1 font-semibold'}>
+          <AlertCircleIcon className={'h-4 w-4'} />
+          <div className={'text-xs'}>
+            이 페이지는 여러 웹 미리보기를 포함하고 있어 CPU와 메모리 사용량이 높습니다. 성능 저하를
+            방지하려면 다른 페이지에서 작업해 주세요.
+          </div>
+        </div>
         {/* 검색바 + 태그 선택 + 버튼들 */}
-        <div className="flex items-center gap-2">
-          {/* 태그 선택 Popover */}
-          <Popover open={tagPopoverOpen} onOpenChange={setTagPopoverOpen}>
-            <PopoverTrigger asChild>
-              <Button variant="outline" size="sm" className="h-10 w-[160px] justify-between">
-                <div className="flex items-center gap-1.5">
-                  <Tag className="h-3.5 w-3.5" />
-                  <span className="text-sm">
-                    {selectedTags.length > 0 ? `${selectedTags.length}개` : '태그'}
-                  </span>
+        <div className={'space-y-3 pb-4'}>
+          <div className="flex items-center gap-2">
+            {/* 태그 선택 Popover */}
+            <Popover open={tagPopoverOpen} onOpenChange={setTagPopoverOpen}>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm" className="h-10 w-[160px] justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <Tag className="h-3.5 w-3.5" />
+                    <span className="text-sm">
+                      {selectedTags.length > 0 ? `${selectedTags.length}개` : '태그'}
+                    </span>
+                  </div>
+                  <ChevronDown className="text-muted-foreground h-4 w-4" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[400px] p-3" align="start">
+                {/* 태그 검색 */}
+                <div className="relative mb-3">
+                  <Search className="text-muted-foreground absolute top-1/2 left-3 h-3 w-3 -translate-y-1/2" />
+                  <Input
+                    placeholder="태그 검색..."
+                    value={tagSearchTerm}
+                    onChange={(e) => setTagSearchTerm(e.target.value)}
+                    className="h-8 pl-8 text-sm"
+                  />
                 </div>
-                <ChevronDown className="text-muted-foreground h-4 w-4" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-[400px] p-3" align="start">
-              {/* 태그 검색 */}
-              <div className="relative mb-3">
-                <Search className="text-muted-foreground absolute top-1/2 left-3 h-3 w-3 -translate-y-1/2" />
-                <Input
-                  placeholder="태그 검색..."
-                  value={tagSearchTerm}
-                  onChange={(e) => setTagSearchTerm(e.target.value)}
-                  className="h-8 pl-8 text-sm"
-                />
-              </div>
 
-              {/* 태그 목록 */}
-              <ScrollArea className="">
-                <div className="flex flex-wrap gap-2 pr-2">
-                  {curTags.length > 0 ? (
-                    curTags.map((tag, i) => (
-                      <Badge
-                        key={i}
-                        variant={selectedTags.includes(tag.idx) ? 'default' : 'outline'}
-                        className="cursor-pointer"
-                        onClick={() => toggleTag(tag.idx)}
-                      >
-                        {tag.name}
-                      </Badge>
-                    ))
-                  ) : (
-                    <span className="text-muted-foreground text-xs">검색 결과가 없습니다</span>
+                {/* 태그 목록 */}
+                <ScrollArea className="">
+                  <div className="flex flex-wrap gap-2 pr-2">
+                    {curTags.length > 0 ? (
+                      curTags.map((tag, i) => (
+                        <Badge
+                          key={i}
+                          variant={selectedTags.includes(tag.idx) ? 'default' : 'outline'}
+                          className="cursor-pointer"
+                          onClick={() => toggleTag(tag.idx)}
+                        >
+                          {tag.name}
+                        </Badge>
+                      ))
+                    ) : (
+                      <span className="text-muted-foreground text-xs">검색 결과가 없습니다</span>
+                    )}
+                  </div>
+                </ScrollArea>
+
+                {/* Clear 버튼 */}
+
+                <div className="mt-3 flex justify-between border-t pt-3">
+                  <ButtonSwitcher
+                    state={tagLogic}
+                    setState={setTagLogic}
+                    size={'sm'}
+                    list={[
+                      { label: 'AND', value: 'AND' },
+                      { label: 'OR', value: 'OR' },
+                    ]}
+                  />
+                  {selectedTags.length > 0 && (
+                    <Button size="sm" variant="ghost" onClick={clearAllTags} className="text-xs">
+                      모두 지우기
+                    </Button>
                   )}
                 </div>
-              </ScrollArea>
+              </PopoverContent>
+            </Popover>
 
-              {/* Clear 버튼 */}
+            {/* 검색바 */}
+            <div className="relative flex-1">
+              <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+              <Input
+                placeholder="참조명 또는 메모로 검색..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="h-10 pl-9"
+              />
+            </div>
 
-              <div className="mt-3 flex justify-between border-t pt-3">
-                <ButtonSwitcher
-                  state={tagLogic}
-                  setState={setTagLogic}
-                  size={'sm'}
-                  list={[
-                    { label: 'AND', value: 'AND' },
-                    { label: 'OR', value: 'OR' },
-                  ]}
-                />
-                {selectedTags.length > 0 && (
-                  <Button size="sm" variant="ghost" onClick={clearAllTags} className="text-xs">
-                    모두 지우기
-                  </Button>
-                )}
-              </div>
-            </PopoverContent>
-          </Popover>
-
-          {/* 검색바 */}
-          <div className="relative flex-1">
-            <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
-            <Input
-              placeholder="참조명 또는 메모로 검색..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="h-10 pl-9"
-            />
+            {/* Add 버튼 */}
+            <Button
+              variant="default"
+              className={'h-10'}
+              onClick={() => navigate('/lib/reference/edit')}
+            >
+              Edit
+            </Button>
           </div>
-
-          {/* Add 버튼 */}
-          <Button
-            variant="default"
-            className={'h-10'}
-            onClick={() => navigate('/lib/reference/edit')}
-          >
-            Edit
-          </Button>
         </div>
-
         {/* 선택된 태그 표시 */}
         {selectedTags.length > 0 && (
           <div className="flex flex-wrap items-center gap-1.5">
