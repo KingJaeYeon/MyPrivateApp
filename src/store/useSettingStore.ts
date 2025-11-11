@@ -19,10 +19,9 @@ export type SchedulerConfig = {
   autoStart: boolean;
   updatedAt: Date | null;
 };
-export type SCHEDULES_RULE = '0 9 * * *' | '0 0 * * *' | '0 9 * * 1' | '32 12 * * *';
+export type SCHEDULES_RULE = '0 9 * * *' | '0 0 * * *' | '0 9 * * 1';
 export const SCHEDULES = [
   { label: '매일 오전 9시', value: '0 9 * * *' },
-  { label: '매일 오후 12시 32분', value: '32 12 * * *' },
   { label: '매일 자정', value: '0 0 * * *' },
   { label: '매주 월요일 오전 9시', value: '0 9 * * 1' },
 ];
