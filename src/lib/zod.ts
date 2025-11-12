@@ -1,11 +1,5 @@
 import { z, ZodError, ZodType } from 'zod';
 
-export function getIssueFieldKeys(issues: z.core.$ZodIssue[]): string[] {
-  return issues
-    .map((i) => (typeof i.path?.[0] === 'string' ? String(i.path[0]) : ''))
-    .filter(Boolean);
-}
-
 export function zodParseSafe<T extends ZodType<any, any, any>>(
   zodSchema: T,
   data: unknown
