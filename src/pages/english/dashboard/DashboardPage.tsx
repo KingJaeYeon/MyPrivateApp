@@ -17,11 +17,11 @@ export default function DashboardPage() {
   const { data, refetch, isPending } = useQuery({
     queryFn: async () => {
       const tagNames = ['영어', 'english'];
-      const findTags = tagData.filter(
-        (tag) => tag.name.includes(tagNames[0]) || tag.name.includes(tagNames[1])
+      const findTags = tagData?.filter(
+        (tag) => tag?.name?.includes(tagNames[0]) || tag?.name?.includes(tagNames[1])
       );
 
-      if (!findTags.length) return { channels: [], references: [] };
+      if (!findTags || findTags.length === 0) return { channels: [], references: [] };
 
       // 3️⃣ 태그 idx 목록
       const tagIds = findTags.map((tag) => tag.idx);
@@ -31,7 +31,7 @@ export default function DashboardPage() {
         const channelTags = ch.tag
           .toString()
           .split(',')
-          .map((id) => parseInt(id.trim()));
+          ?.map((id) => parseInt(id.trim()));
         return channelTags.some((id) => tagIds.includes(id.toString()));
       });
 
@@ -98,10 +98,10 @@ function MainContent({ isPending, data }: { isPending: boolean; data: any }) {
         <CardContent>
           <ScrollArea className="h-[280px] pr-2">
             <ul className="space-y-2 text-sm">
-              {data.findChannels.length === 0 ? (
+              {data?.findChannels?.length === 0 ? (
                 <div>관련된 Reference가 없습니다. 추가해주세요.</div>
               ) : (
-                data.findChannels.map((r: any) => (
+                data?.findChannels?.map((r: any) => (
                   <li className="flex items-center justify-between border-b pb-2">
                     <div className={'flex items-center justify-between gap-2'}>
                       <Avatar className="h-6 w-6">
@@ -138,10 +138,10 @@ function MainContent({ isPending, data }: { isPending: boolean; data: any }) {
         <CardContent>
           <ScrollArea className="h-[280px] pr-2">
             <ul className="space-y-2 text-sm">
-              {data.findReference.length === 0 ? (
+              {data?.findReference?.length === 0 ? (
                 <div>관련된 Reference가 없습니다. 추가해주세요.</div>
               ) : (
-                data.findReference.map((r: any) => (
+                data?.findReference?.map((r: any) => (
                   <li className="border-b pb-2">
                     <Button
                       size={'sm'}
