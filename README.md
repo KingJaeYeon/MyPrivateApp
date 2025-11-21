@@ -1,8 +1,6 @@
 ## my-app-v2 (데스크톱 앱)
 my-app-v2는 Electron 기반의 데스크톱 애플리케이션으로, React + TypeScript를 사용하여 제작된 현대적인 UI와 Excel(.xlsx) 파일을 데이터 소스로 활용하는 콘텐츠/학습 관리 도구입니다. 메인 프로세스는 안전한 파일 입출력을 담당하고, 렌더러는 shadcn/ui · Radix UI 컴포넌트와 Zustand 스토어로 사용자 경험을 제공합니다.
 
-### server
-- license 앱 운행 종료 여부를 위해 gcp - cloud run 에 express 하나 띄워놨음
 
 ### 목적
 - 로컬 환경에서 안전하게 데이터를 관리하고 즉시 검색/편집/저장을 수행
@@ -97,25 +95,24 @@ Excel 저장 시에는 객체 배열을 AoA(array-of-arrays)로 변환하는 유
 
 ### 사전 준비
 - Node.js LTS 18+ (또는 20+)
-- 패키지 매니저: pnpm 권장 (npm/yarn 사용 가능)
+- 패키지 매니저: yarn 권장 
 
 ### 설치
 ```bash
-pnpm install
+yarn install
 # or
 npm install
 ```
 
 ### 개발 모드 실행
 ```bash
-pnpm dev
+yarn dev
 # 렌더러 + Electron 동시 실행
 ```
 
 ### 프로덕션 빌드/패키징
 ```bash
-pnpm build
-pnpm electron:build
+yarn build
 ```
 
 ---
@@ -134,7 +131,3 @@ pnpm electron:build
 - 컴포넌트는 표현에 집중하고, 비즈니스 로직은 스토어/훅에 배치
 - 긴 함수보다는 작은 유닛으로 분리, 의미 있는 이름 사용
 
----
-
-## 라이선스
-해당 저장소의 라이선스 정책을 따릅니다. (필요 시 업데이트)
