@@ -74,20 +74,23 @@
         border-radius: 6px;
         padding: 4px 0;
     }
+
+    .text-2xs {
+        line-height: 0.875rem;
+        font-size: 0.625rem;
+    }
+
+    .text-0\.5xs {
+        line-height: 1.1rem;
+        font-size: 0.8125rem; /* 13px */
+    }
+
+    . text-1\.5xs {
+        line-height: 0.95rem;
+        font-size: 0.6875rem; /* 13px */
+    }
 }
 
-@utility text-2xs {
-    line-height: 0.875rem;
-    font-size: 0.625rem;
-}
-@utility text-0.5xs {
-    line-height: 1.1rem;
-    font-size: 0.8125rem; /* 13px */
-}
-@utility text-1.5xs {
-    line-height: 0.95rem;
-    font-size: 0.6875rem; /* 13px */
-}
 
 @theme inline {
     --radius-sm: calc(var(--radius) - 4px);
@@ -262,6 +265,7 @@
     margin-top: 0;
     margin-bottom: 0;
 }
+
 .markdown-content img {
     margin: 0.5rem;
 }
