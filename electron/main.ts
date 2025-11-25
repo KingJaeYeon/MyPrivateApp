@@ -40,7 +40,7 @@ function createWindow() {
     show: false,
     width: 1400,
     height: 800,
-    minWidth: 1400,
+    minWidth: 800,
     minHeight: 600,
     trafficLightPosition: { x: 12, y: 10 },
     titleBarStyle: process.platform === 'darwin' ? 'hidden' : undefined,
