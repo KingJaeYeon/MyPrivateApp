@@ -134,7 +134,7 @@ export default function MarkdownEditor({ value, onChange }: MarkdownEditorProps)
 
       {/* 에디터 / 미리보기 */}
 
-      <div className={'relative flex w-full flex-1 overflow-hidden rounded-lg border-2'}>
+      <div className={'relative flex h-full w-full flex-1 overflow-hidden rounded-lg border-2'}>
         {!preview ? (
           <div
             onDrop={async (e) => {
@@ -156,7 +156,7 @@ export default function MarkdownEditor({ value, onChange }: MarkdownEditorProps)
               setIsImageLoading(false);
             }}
             className={cn(
-              `absolute z-20 w-full transition`,
+              `absolute z-20 h-full w-full transition`,
               isDragging ? 'border-primary bg-primary/10' : 'border-border'
             )}
           >
@@ -166,7 +166,7 @@ export default function MarkdownEditor({ value, onChange }: MarkdownEditorProps)
               maxLength={10000}
               onChange={(e) => onChange(e.target.value)}
               placeholder="마크다운을 입력하세요... (이미지를 드래그해서 추가할 수 있습니다)"
-              className="scrollWidth3 min-h-svw resize-none border-0 focus-visible:ring-0"
+              className="scrollWidth3 h-full resize-none border-0 focus-visible:ring-0"
             />
           </div>
         ) : (

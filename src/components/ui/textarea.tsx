@@ -55,7 +55,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div
         className={cn(
-          'scrollWidth3 relative w-full max-w-full text-sm placeholder:text-sm',
+          'scrollWidth3 relative h-full w-full max-w-full text-sm placeholder:text-sm',
           disabled && 'cursor-not-allowed'
         )}
       >
