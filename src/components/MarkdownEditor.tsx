@@ -21,7 +21,7 @@ export default function MarkdownEditor({ value, onChange }: MarkdownEditorProps)
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.code === 'Backquote' && e.ctrlKey) {
+      if (e.code === 'Backquote' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setPreview((prev) => !prev);
       }
