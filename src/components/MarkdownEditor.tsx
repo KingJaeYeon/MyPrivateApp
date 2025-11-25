@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils.ts';
 import MarkdownPreview from '@/components/MarkdownPreview.tsx';
@@ -18,6 +18,18 @@ export default function MarkdownEditor({ value, onChange }: MarkdownEditorProps)
   const { upload } = useUpload();
   const [isImageLoading, setIsImageLoading] = useState(false);
   const folder = useSettingStore((r) => r.data.folder);
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.code === 'Backquote' && e.ctrlKey) {
+        e.preventDefault();
+        setPreview((prev) => !prev);
+      }
+    };
+
+    document.addEventListener('keydown', down);
+    return () => document.removeEventListener('keydown', down);
+  }, []);
 
   const insertToTextArea = (insertString: string) => {
     const textarea = document.querySelector('textarea');
