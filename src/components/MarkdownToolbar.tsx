@@ -122,7 +122,10 @@ export default function MarkdownToolbar({
         )}
       </Button>
       <kbd className="bg-muted/70 text-foreground/80 border-border inline-flex items-center gap-1 rounded-md border px-2 py-0.5 font-mono text-[11px] font-semibold shadow-sm">
-        Ctrl 1 ~ 5 / ~
+        Ctrl/⌘ + 1 ~ 5
+      </kbd>
+      <kbd className="bg-muted/70 text-foreground/80 border-border inline-flex items-center gap-1 rounded-md border px-2 py-0.5 font-mono text-[11px] font-semibold shadow-sm">
+        Ctrl/⌘ + shift + w
       </kbd>
       {/* 우측 프리뷰 버튼 */}
       <div className="ml-auto flex gap-2">
