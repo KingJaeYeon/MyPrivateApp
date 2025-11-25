@@ -3,6 +3,7 @@ import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
+import { useModalStore } from '@/store/modalStore.ts';
 
 const mySchema = {
   ...defaultSchema,
@@ -16,6 +17,7 @@ const mySchema = {
 };
 
 export default function MarkdownPreview({ value }: { value: string }) {
+  const { openModal } = useModalStore();
   return (
     <div className="markdown-content prose prose-sm dark:prose-invert scrollWidth3 w-full max-w-none overflow-y-auto rounded-lg p-4">
       <ReactMarkdown
@@ -40,6 +42,7 @@ export default function MarkdownPreview({ value }: { value: string }) {
               <img
                 src={safeSrc}
                 alt={alt ?? ''}
+                onClick={() => openModal('lightbox', { imgUrl: safeSrc })}
                 className="max-h-[400px] rounded-md border object-contain"
               />
             );

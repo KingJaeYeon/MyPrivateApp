@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type ModalType = 'confirm' | 'alert' | 'result' | 'tagChooser' | 'coffee';
+export type ModalType = 'confirm' | 'alert' | 'result' | 'tagChooser' | 'coffee' | 'lightbox';
 
 export interface ModalState {
   type: ModalType | null;
