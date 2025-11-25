@@ -7,9 +7,11 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  CommandSeparator,
 } from '@/components/ui/command';
 import { navigationRoutes } from '@/routes.tsx';
 import { useNavigate } from 'react-router-dom';
+import { Languages } from 'lucide-react';
 
 export function CommandLinkDialog() {
   const [open, setOpen] = React.useState(false);
@@ -48,6 +50,17 @@ export function CommandLinkDialog() {
         <CommandInput placeholder="Type a command or search..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
+          <CommandGroup heading={'Suggestions'}>
+            <CommandItem onSelect={() => handleSelect('/english/words')}>
+              <Languages />
+              <span>Words</span>
+            </CommandItem>
+            <CommandItem onSelect={() => handleSelect('/english/notes')}>
+              <Languages />
+              <span>Notes</span>
+            </CommandItem>
+          </CommandGroup>
+          <CommandSeparator />
           {navigationRoutes.map((route) => (
             <CommandGroup heading={route.title.toLocaleUpperCase()} key={route.title}>
               {route.items
